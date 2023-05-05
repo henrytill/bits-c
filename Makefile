@@ -16,6 +16,7 @@ threadtest: threadtest.c
 
 .PHONY: check test
 check test: $(BIN)
+	./threadtest foo bar baz
 
 .PHONY: clean
 clean:
