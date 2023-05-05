@@ -15,23 +15,20 @@ struct ThreadInfo { /* Used as argument to thread_start() */
   char *arg;        /* From command-line argument */
 };
 
-static inline void handle_errno(int err, const char *msg)
-{
+static inline void handle_errno(int err, const char *msg) {
   errno = err;
   perror(msg);
   exit(EXIT_FAILURE);
 }
 
-static inline void handle_error(const char *msg)
-{
+static inline void handle_error(const char *msg) {
   perror(msg);
   exit(EXIT_FAILURE);
 }
 
 /* Thread start function: display address near top of our stack,
    and return upper-cased copy of argv_string. */
-static void *start(void *arg)
-{
+static void *start(void *arg) {
   struct ThreadInfo *tinfo = arg;
   char *ret;
 
@@ -44,8 +41,7 @@ static void *start(void *arg)
   return ret;
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
   int rc, opt, nthreads;
   pthread_attr_t attr;
   size_t stacksz;
