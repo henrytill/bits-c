@@ -2,7 +2,7 @@
 .SUFFIXES:
 
 CC      = cc
-CFLAGS  = -std=c99 -Wall -Wextra -Wconversion -Wsign-conversion -g
+CFLAGS  = -std=c11 -Wall -Wextra -Wconversion -Wsign-conversion -g
 LDFLAGS =
 
 SOURCES = \
