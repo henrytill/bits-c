@@ -43,12 +43,9 @@ static void draw_quad(void) {
 }
 
 int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[]) {
-  int rc = 0;
-
   Display *dpy = XOpenDisplay(NULL);
   if (dpy == NULL) {
-    rc = fprintf(stderr, "Failed to connect to X server\n");
-    assert(rc > 0);
+    (void)fprintf(stderr, "Failed to connect to X server\n");
     return EXIT_FAILURE;
   }
 
@@ -56,8 +53,7 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
 
   XVisualInfo *vi = glXChooseVisual(dpy, 0, att);
   if (vi == NULL) {
-    rc = fprintf(stderr, "No visual found\n");
-    assert(rc > 0);
+    (void)fprintf(stderr, "No visual found\n");
     XCloseDisplay(dpy);
     return EXIT_FAILURE;
   }
