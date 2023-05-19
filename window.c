@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -10,33 +11,36 @@
 static GLint att[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None};
 
 static void draw_quad(void) {
-  glClearColor(1.0, 1.0, 1.0, 1.0);
+  glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(-1., 1., -1., 1., 1., 20.);
+  glOrtho(-1.0, 1.0, -1.0, 1.0, 1.0, 20.0);
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  gluLookAt(0., 0., 10., 0., 0., 0., 0., 1., 0.);
+  gluLookAt(0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
   glBegin(GL_QUADS);
-  glColor3f(1., 0., 0.);
-  glVertex3f(-.75, -.75, 0.);
-  glColor3f(0., 1., 0.);
-  glVertex3f(.75, -.75, 0.);
-  glColor3f(0., 0., 1.);
-  glVertex3f(.75, .75, 0.);
-  glColor3f(1., 1., 0.);
-  glVertex3f(-.75, .75, 0.);
+  glColor3f(1.0F, 0.0F, 0.0F);
+  glVertex3f(-0.75F, -0.75F, 0.0F);
+  glColor3f(0.0F, 1.0F, 0.0F);
+  glVertex3f(0.75F, -0.75F, 0.0F);
+  glColor3f(0.0F, 0.0F, 1.0F);
+  glVertex3f(0.75F, 0.75F, 0.0F);
+  glColor3f(1.0F, 1.0F, 0.0F);
+  glVertex3f(-0.75F, 0.75F, 0.0F);
   glEnd();
 }
 
 int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[]) {
+  int rc = 0;
+
   Display *dpy = XOpenDisplay(NULL);
   if (dpy == NULL) {
-    fprintf(stderr, "Failed to connect to X server\n");
+    rc = fprintf(stderr, "Failed to connect to X server\n");
+    assert(rc > 0);
     return EXIT_FAILURE;
   }
 
@@ -44,7 +48,8 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
 
   XVisualInfo *vi = glXChooseVisual(dpy, 0, att);
   if (vi == NULL) {
-    fprintf(stderr, "No visual found\n");
+    rc = fprintf(stderr, "No visual found\n");
+    assert(rc > 0);
     XCloseDisplay(dpy);
     return EXIT_FAILURE;
   }

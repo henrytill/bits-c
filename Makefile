@@ -5,6 +5,10 @@ CC      = cc
 CFLAGS  = -std=c99 -Wall -Wextra -Wconversion -Wsign-conversion -g
 LDFLAGS =
 
+SOURCES = \
+	threadtest.c \
+	window.c
+
 BIN =\
 	threadtest \
 	window
@@ -25,6 +29,10 @@ window: window.c
 .PHONY: check test
 check test: $(BIN)
 	./threadtest foo bar baz
+
+.PHONY: lint
+lint:
+	clang-tidy -p compile_commands.json $(SOURCES)
 
 .PHONY: clean
 clean:

@@ -1,6 +1,7 @@
 /* This allows us to use strdup */
-#define _POSIX_C_SOURCE 200809L
+#define _POSIX_C_SOURCE 200809L /* NOLINT */
 
+#include <assert.h>
 #include <ctype.h>
 #include <errno.h>
 #include <pthread.h>
@@ -43,7 +44,9 @@ static void *start(void *arg) {
 }
 
 int main(int argc, char *argv[]) {
-  int rc, opt, nthreads;
+  int rc;
+  int opt;
+  int nthreads;
   pthread_attr_t attr;
   size_t stacksz;
   void *res;
@@ -56,7 +59,8 @@ int main(int argc, char *argv[]) {
       stacksz = strtoul(optarg, NULL, 0);
       break;
     default:
-      fprintf(stderr, "Usage: %s [-s stack-size] arg...\n", argv[0]);
+      rc = fprintf(stderr, "Usage: %s [-s stack-size] arg...\n", argv[0]);
+      assert(rc > 0);
       exit(EXIT_FAILURE);
     }
   }
