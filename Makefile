@@ -19,7 +19,7 @@ all: $(BIN)
 threadtest: CFLAGS += -pthread
 threadtest: threadtest.c
 
-window: LDFLAGS += -lX11 -lGL -lGLU
+window: LDFLAGS += -lX11 -lGL -lGLU -lGLEW
 window: window.c
 
 .SUFFIXES: .c
@@ -32,7 +32,7 @@ check test: $(BIN)
 
 .PHONY: lint
 lint:
-	clang-tidy -p compile_commands.json $(SOURCES)
+	clang-tidy --quiet -p compile_commands.json $(SOURCES)
 
 .PHONY: clean
 clean:

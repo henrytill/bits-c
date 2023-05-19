@@ -18,7 +18,7 @@ IndentCaseLabels: false
 IndentWidth: 2
 PointerAlignment: Right
 ReflowComments: true
-SortIncludes: true
+SortIncludes: false
 SpacesBeforeTrailingComments: 1
 
 # This does horrible things to nested designated initializers when set

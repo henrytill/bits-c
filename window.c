@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glx.h>
@@ -16,6 +17,24 @@ static void print_gl_version(void) {
   glGetIntegerv(GL_MAJOR_VERSION, &major);
   glGetIntegerv(GL_MINOR_VERSION, &minor);
   printf("OpenGL Version: %d.%d\n", major, minor);
+}
+
+static void print_glew_version(void) {
+  const GLubyte *version = glewGetString(GLEW_VERSION);
+  printf("GLEW Version: %s\n", version);
+}
+
+void GLAPIENTRY message_callback(__attribute__((unused)) GLenum source,
+                                 GLenum type,
+                                 __attribute__((unused)) GLuint id,
+                                 GLenum severity,
+                                 __attribute__((unused)) GLsizei length,
+                                 const GLchar *message,
+                                 __attribute__((unused)) const void *user) {
+  (void)fprintf(stderr,
+                "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+                (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
+                type, severity, message);
 }
 
 static void draw_quad(void) {
@@ -74,11 +93,34 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
   XStoreName(dpy, win, "VERY SIMPLE APPLICATION");
 
   GLXContext glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
+  if (glc == NULL) {
+    (void)fprintf(stderr, "Failed to create OpenGL context\n");
+    XCloseDisplay(dpy);
+    free(vi);
+    return EXIT_FAILURE;
+  }
+
   glXMakeCurrent(dpy, win, glc);
 
+  GLenum err = glewInit();
+  if (err != GLEW_OK) {
+    (void)fprintf(stderr, "Failed to initialize GLEW: %s\n",
+                  glewGetErrorString(err));
+    XCloseDisplay(dpy);
+    free(vi);
+    return EXIT_FAILURE;
+  }
+
   print_gl_version();
+  print_glew_version();
 
   glEnable(GL_DEPTH_TEST);
+
+  if (GLEW_ARB_debug_output) {
+    glEnable(GL_DEBUG_OUTPUT);
+    glDebugMessageCallback(message_callback, NULL);
+    printf("Enabled debug output\n");
+  }
 
   XEvent xev;
   XWindowAttributes gwa;
