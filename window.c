@@ -10,6 +10,14 @@
 
 static GLint att[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None};
 
+static void print_gl_version(void) {
+  int major = 0;
+  int minor = 0;
+  glGetIntegerv(GL_MAJOR_VERSION, &major);
+  glGetIntegerv(GL_MINOR_VERSION, &minor);
+  printf("OpenGL Version: %d.%d\n", major, minor);
+}
+
 static void draw_quad(void) {
   glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -54,8 +62,6 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
     return EXIT_FAILURE;
   }
 
-  printf("visual: %p", (void *)vi->visualid);
-
   Colormap cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
 
   XSetWindowAttributes swa = {
@@ -73,6 +79,8 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
 
   GLXContext glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
   glXMakeCurrent(dpy, win, glc);
+
+  print_gl_version();
 
   glEnable(GL_DEPTH_TEST);
 
