@@ -98,12 +98,25 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
   XMapWindow(dpy, win);
   XStoreName(dpy, win, "c_bits_window");
 
+  XClassHint *class_hint = XAllocClassHint();
+  if (class_hint == NULL) {
+    (void)fprintf(stderr, "Failed to allocate class hint\n");
+    XDestroyWindow(dpy, win);
+    free(vi);
+    XCloseDisplay(dpy);
+    return EXIT_FAILURE;
+  }
+
+  class_hint->res_class = "c_bits_window";
+  XSetClassHint(dpy, win, class_hint);
+
   Atom wm_delete_window = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
   XSetWMProtocols(dpy, win, &wm_delete_window, 1);
 
   GLXContext glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
   if (glc == NULL) {
     (void)fprintf(stderr, "Failed to create OpenGL context\n");
+    free(class_hint);
     XDestroyWindow(dpy, win);
     free(vi);
     XCloseDisplay(dpy);
@@ -116,6 +129,7 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
   if (err != GLEW_OK) {
     (void)fprintf(stderr, "Failed to initialize GLEW: %s\n",
                   glewGetErrorString(err));
+    free(class_hint);
     XDestroyWindow(dpy, win);
     free(vi);
     XCloseDisplay(dpy);
@@ -157,6 +171,7 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
 
   glXMakeCurrent(dpy, None, NULL);
   glXDestroyContext(dpy, glc);
+  free(class_hint);
   XDestroyWindow(dpy, win);
   free(vi);
   XCloseDisplay(dpy);
