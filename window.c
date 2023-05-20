@@ -96,7 +96,7 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
                              &swa);
 
   XMapWindow(dpy, win);
-  XStoreName(dpy, win, "VERY SIMPLE APPLICATION");
+  XStoreName(dpy, win, "c_bits_window");
 
   Atom wm_delete_window = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
   XSetWMProtocols(dpy, win, &wm_delete_window, 1);
