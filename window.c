@@ -101,8 +101,9 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
   GLXContext glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
   if (glc == NULL) {
     (void)fprintf(stderr, "Failed to create OpenGL context\n");
-    XCloseDisplay(dpy);
+    XDestroyWindow(dpy, win);
     free(vi);
+    XCloseDisplay(dpy);
     return EXIT_FAILURE;
   }
 
@@ -112,8 +113,9 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
   if (err != GLEW_OK) {
     (void)fprintf(stderr, "Failed to initialize GLEW: %s\n",
                   glewGetErrorString(err));
-    XCloseDisplay(dpy);
+    XDestroyWindow(dpy, win);
     free(vi);
+    XCloseDisplay(dpy);
     return EXIT_FAILURE;
   }
 
@@ -149,8 +151,8 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
   }
 
   glXDestroyContext(dpy, glc);
-  free(vi);
   XDestroyWindow(dpy, win);
+  free(vi);
   XCloseDisplay(dpy);
   return EXIT_SUCCESS;
 }
