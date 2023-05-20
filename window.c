@@ -1,9 +1,9 @@
-//
-// Basic X11 + OpenGL usage
-//
-// Adapted from:
-// https://www.khronos.org/opengl/wiki/Programming_OpenGL_in_Linux:_GLX_and_Xlib
-//
+///
+/// Basic X11 + OpenGL usage
+///
+/// Adapted from:
+/// https://www.khronos.org/opengl/wiki/Programming_OpenGL_in_Linux:_GLX_and_Xlib
+///
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

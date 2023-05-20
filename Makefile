@@ -5,7 +5,7 @@ CC      = cc
 CFLAGS  = -std=c11 -Wall -Wextra -Wconversion -Wsign-conversion -g
 LDFLAGS =
 
-SOURCES = \
+SOURCES =\
 	threadtest.c \
 	window.c
 
