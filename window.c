@@ -98,6 +98,9 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
   XMapWindow(dpy, win);
   XStoreName(dpy, win, "VERY SIMPLE APPLICATION");
 
+  Atom wm_delete_window = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
+  XSetWMProtocols(dpy, win, &wm_delete_window, 1);
+
   GLXContext glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
   if (glc == NULL) {
     (void)fprintf(stderr, "Failed to create OpenGL context\n");
@@ -143,13 +146,16 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
       draw_quad();
       glXSwapBuffers(dpy, win);
       break;
-    case KeyPress:
-      glXMakeCurrent(dpy, None, NULL);
-      loop_stat = 0;
+    case ClientMessage:
+      if (xev.xclient.data.l[0] == (long)wm_delete_window) {
+        printf("Received WM_DELETE_WINDOW\n");
+        loop_stat = 0;
+      }
       break;
     }
   }
 
+  glXMakeCurrent(dpy, None, NULL);
   glXDestroyContext(dpy, glc);
   XDestroyWindow(dpy, win);
   free(vi);
