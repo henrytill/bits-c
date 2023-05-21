@@ -6,15 +6,20 @@ CFLAGS  = -std=c11 -Wall -Wextra -Wconversion -Wsign-conversion -g
 LDFLAGS =
 
 SOURCES =\
+	base64.c \
 	threadtest.c \
 	window.c
 
 BIN =\
+	base64 \
 	threadtest \
 	window
 
 .PHONY: all
 all: $(BIN)
+
+base64: LDFLAGS += -lcrypto
+base64: base64.c
 
 threadtest: CFLAGS += -pthread
 threadtest: threadtest.c
