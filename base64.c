@@ -10,42 +10,45 @@ static size_t base64_length(const char *in)
     return ((strlen(in) + 2) / 3) * 4;
 }
 
-static long base64_encode(const unsigned char *in, int in_len, unsigned char *out)
+static long base64_encode(const unsigned char *in, int in_len,
+                          unsigned char *out)
 {
     return EVP_EncodeBlock(out, in, in_len);
 }
 
-static long base64_decode(const unsigned char *in, int in_len, unsigned char *out)
+static long base64_decode(const unsigned char *in, int in_len,
+                          unsigned char *out)
 {
     return EVP_DecodeBlock(out, in, in_len);
 }
 
 int main(void)
 {
-    const char *input = "Hello, World!\n";
-
+    long len = 0L;
+    const char *const input = "foobar";
+    const size_t input_len = strlen(input);
     const size_t base64_len = base64_length(input);
+
+    printf("input: %s\n", input);
+    printf("strlen(input): %ld\n", input_len);
+    printf("base64_len: %ld\n\n", base64_len);
+
     char *base64 = malloc(base64_len + 1);
+    len = base64_encode((const unsigned char *)input,
+                        (int)input_len,
+                        (unsigned char *)base64);
 
-    long len = base64_encode((const unsigned char *)input,
-                             (int)strlen(input),
-                             (unsigned char *)base64);
+    printf("len: %ld\n", len);
+    printf("strlen(base64): %ld\n", strlen(base64));
+    printf("base64: %s\n\n", base64);
 
-    assert(len == (long)base64_len);
-
-    printf("base64_len: %ld\n", base64_len);
-    printf("base64: %s\n", base64);
-
-    const size_t output_len = strlen(input) + 1;
-    char *output = malloc(output_len);
-
+    char *output = malloc(input_len + 1);
     len = base64_decode((const unsigned char *)base64,
-                        (int)base64_len,
+                        (int)len,
                         (unsigned char *)output);
 
-    assert(len == (long)output_len);
-
-    printf("output_len: %ld\n", output_len);
+    printf("len: %ld\n", len);
+    printf("strlen(output): %ld\n", strlen(output));
     printf("output: %s\n", output);
 
     if (strcmp(input, output) != 0) {
