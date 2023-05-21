@@ -7,7 +7,7 @@
 
 #include "prelude.h"
 
-static size_t base64_length(const char *in)
+static size_t base64_strlen(const char *in)
 {
     return ((strlen(in) + 2) / 3) * 4;
 }
@@ -29,7 +29,7 @@ int main(void)
     long codec_len = 0L;
     const char *const input = "foobar";
     const size_t input_len = strlen(input);
-    const size_t input_base64_len = base64_length(input);
+    const size_t input_base64_len = base64_strlen(input);
 
     printf("input: %s\n", input);
     printf("strlen(input): %ld\n", input_len);
