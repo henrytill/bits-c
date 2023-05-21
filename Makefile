@@ -7,6 +7,7 @@ LDFLAGS =
 
 SOURCES =\
 	base64.c \
+	prelude.c \
 	threadtest.c \
 	window.c
 
@@ -15,17 +16,26 @@ BIN =\
 	threadtest \
 	window
 
+OBJ =\
+	prelude.o
+
 .PHONY: all
 all: $(BIN)
 
+prelude.o: prelude.c prelude.h
+
 base64: LDFLAGS += -lcrypto
-base64: base64.c
+base64: base64.c prelude.o
 
 threadtest: CFLAGS += -pthread
 threadtest: threadtest.c
 
 window: LDFLAGS += -lX11 -lGL -lGLU -lGLEW
 window: window.c
+
+.SUFFIXES: .c .o
+.c.o:
+	$(CC) $(CFLAGS) -o $@ -c $<
 
 .SUFFIXES: .c
 .c:
@@ -41,7 +51,7 @@ lint:
 
 .PHONY: clean
 clean:
-	rm -f $(BIN)
+	rm -f $(BIN) $(OBJ)
 
 # Local Variables:
 # mode: makefile-bsdmake

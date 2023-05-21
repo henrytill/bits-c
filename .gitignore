@@ -1,3 +1,5 @@
 /base64
+/prelude.o
 /threadtest
 /window
+compile_commands.json

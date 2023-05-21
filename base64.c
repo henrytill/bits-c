@@ -5,6 +5,8 @@
 
 #include <openssl/evp.h>
 
+#include "prelude.h"
+
 static size_t base64_length(const char *in)
 {
     return ((strlen(in) + 2) / 3) * 4;
@@ -24,30 +26,30 @@ static long base64_decode(const unsigned char *in, int in_len,
 
 int main(void)
 {
-    long len = 0L;
+    long codec_len = 0L;
     const char *const input = "foobar";
     const size_t input_len = strlen(input);
-    const size_t base64_len = base64_length(input);
+    const size_t input_base64_len = base64_length(input);
 
     printf("input: %s\n", input);
     printf("strlen(input): %ld\n", input_len);
-    printf("base64_len: %ld\n\n", base64_len);
+    printf("base64_len: %ld\n\n", input_base64_len);
 
-    char *base64 = malloc(base64_len + 1);
-    len = base64_encode((const unsigned char *)input,
-                        (int)input_len,
-                        (unsigned char *)base64);
+    char *base64 = emalloc(input_base64_len + 1);
+    codec_len = base64_encode((const unsigned char *)input,
+                              (int)input_len,
+                              (unsigned char *)base64);
 
-    printf("len: %ld\n", len);
+    printf("len: %ld\n", codec_len);
     printf("strlen(base64): %ld\n", strlen(base64));
     printf("base64: %s\n\n", base64);
 
-    char *output = malloc(input_len + 1);
-    len = base64_decode((const unsigned char *)base64,
-                        (int)len,
-                        (unsigned char *)output);
+    char *output = emalloc(input_len + 1);
+    codec_len = base64_decode((const unsigned char *)base64,
+                              (int)codec_len,
+                              (unsigned char *)output);
 
-    printf("len: %ld\n", len);
+    printf("len: %ld\n", codec_len);
     printf("strlen(output): %ld\n", strlen(output));
     printf("output: %s\n", output);
 
