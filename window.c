@@ -73,6 +73,8 @@ static void draw_quad(void)
 
 int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
 {
+    int ret = EXIT_FAILURE;
+
     Display *dpy = XOpenDisplay(NULL);
     if (dpy == NULL) {
         (void)fprintf(stderr, "Failed to connect to X server\n");
@@ -84,8 +86,7 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
     XVisualInfo *vi = glXChooseVisual(dpy, 0, att);
     if (vi == NULL) {
         (void)fprintf(stderr, "No visual found\n");
-        XCloseDisplay(dpy);
-        return EXIT_FAILURE;
+        goto out_close_display;
     }
 
     Colormap cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
@@ -106,10 +107,7 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
     XClassHint *class_hint = XAllocClassHint();
     if (class_hint == NULL) {
         (void)fprintf(stderr, "Failed to allocate class hint\n");
-        XDestroyWindow(dpy, win);
-        free(vi);
-        XCloseDisplay(dpy);
-        return EXIT_FAILURE;
+        goto out_destroy_window;
     }
 
     class_hint->res_class = "c_bits_window";
@@ -121,11 +119,7 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
     GLXContext glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
     if (glc == NULL) {
         (void)fprintf(stderr, "Failed to create OpenGL context\n");
-        free(class_hint);
-        XDestroyWindow(dpy, win);
-        free(vi);
-        XCloseDisplay(dpy);
-        return EXIT_FAILURE;
+        goto out_free_class_hint;
     }
 
     glXMakeCurrent(dpy, win, glc);
@@ -134,11 +128,7 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
     if (err != GLEW_OK) {
         (void)fprintf(stderr, "Failed to initialize GLEW: %s\n",
                       glewGetErrorString(err));
-        free(class_hint);
-        XDestroyWindow(dpy, win);
-        free(vi);
-        XCloseDisplay(dpy);
-        return EXIT_FAILURE;
+        goto out_destroy_context;
     }
 
     print_gl_version();
@@ -174,11 +164,16 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
         }
     }
 
+    ret = EXIT_SUCCESS;
     glXMakeCurrent(dpy, None, NULL);
+out_destroy_context:
     glXDestroyContext(dpy, glc);
+out_free_class_hint:
     free(class_hint);
+out_destroy_window:
     XDestroyWindow(dpy, win);
     free(vi);
+out_close_display:
     XCloseDisplay(dpy);
-    return EXIT_SUCCESS;
+    return ret;
 }
