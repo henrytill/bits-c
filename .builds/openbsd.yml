@@ -1,0 +1,17 @@
+image: openbsd/latest
+packages:
+  - glew
+secrets:
+  - fff26745-7b06-40da-b5b9-5f4bd6f29596
+sources:
+  - git@git.sr.ht:~henrytill/c-bits
+tasks:
+  - configure: |
+      cd c-bits
+      cat << EOF >> local.mk
+      CFLAGS  += -I/usr/X11R6/include/ -I/usr/local/include/
+      LDFLAGS += -L/usr/X11R6/lib/ -L/usr/local/lib/
+      EOF
+  - build: |
+      cd c-bits
+      make
