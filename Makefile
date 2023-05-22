@@ -5,6 +5,8 @@ CC      = cc
 CFLAGS  = -std=c11 -Wall -Wextra -Wconversion -Wsign-conversion -g
 LDFLAGS =
 
+-include local.mk
+
 SOURCES =\
 	base64.c \
 	prelude.c \
