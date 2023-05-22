@@ -1,0 +1,13 @@
+image: alpine/latest
+packages:
+  - glew-dev
+  - mesa-dev
+  - openssl-dev
+secrets:
+  - fff26745-7b06-40da-b5b9-5f4bd6f29596
+sources:
+  - git@git.sr.ht:~henrytill/c-bits
+tasks:
+  - build: |
+      cd c-bits
+      make
