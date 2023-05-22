@@ -24,14 +24,14 @@ all: $(BIN)
 
 prelude.o: prelude.c prelude.h
 
-base64: LDFLAGS += -lcrypto
 base64: base64.c prelude.o
+	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -lcrypto -o $@
 
-threadtest: CFLAGS += -pthread
 threadtest: threadtest.c prelude.o
+	$(CC) $(CFLAGS) -pthread $(.ALLSRC) $(LDFLAGS) -o $@
 
-window: LDFLAGS += -lX11 -lGL -lGLU -lGLEW
 window: window.c
+	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -lX11 -lGL -lGLU -lGLEW -o $@
 
 .SUFFIXES: .c .o
 .c.o:
