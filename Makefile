@@ -5,6 +5,7 @@ CC      = cc
 CFLAGS  = -std=c11 -Wall -Wextra -Wconversion -Wsign-conversion -g
 LDFLAGS =
 
+WINDOW_CFLAGS  = $(CFLAGS)
 WINDOW_LDFLAGS = $(LDFLAGS)
 
 -include local.mk
@@ -35,7 +36,7 @@ threadtest: threadtest.c prelude.o
 	$(CC) $(CFLAGS) -pthread $(.ALLSRC) $(LDFLAGS) -o $@
 
 window: window.c
-	$(CC) $(CFLAGS) $(.ALLSRC) $(WINDOW_LDFLAGS) -lX11 -lGL -lGLU -lGLEW -o $@
+	$(CC) $(WINDOW_CFLAGS) $(.ALLSRC) $(WINDOW_LDFLAGS) -lX11 -lGL -lGLU -lGLEW -o $@
 
 .SUFFIXES: .c .o
 .c.o:
