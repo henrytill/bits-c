@@ -28,7 +28,7 @@ base64: LDFLAGS += -lcrypto
 base64: base64.c prelude.o
 
 threadtest: CFLAGS += -pthread
-threadtest: threadtest.c
+threadtest: threadtest.c prelude.o
 
 window: LDFLAGS += -lX11 -lGL -lGLU -lGLEW
 window: window.c
