@@ -3,7 +3,7 @@
 
 #include "prelude.h"
 
-static const char *const ALLOCATION_FAILURE_MSG = "Failed to allocate.\n";
+#define ALLOCATION_FAILURE_MSG "Failed to allocate.\n"
 
 void *emalloc(size_t size)
 {
