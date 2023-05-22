@@ -3,11 +3,18 @@ packages:
   - glew-dev
   - mesa-dev
   - openssl-dev
+  - openssl-libs-static
 secrets:
   - fff26745-7b06-40da-b5b9-5f4bd6f29596
 sources:
   - git@git.sr.ht:~henrytill/c-bits
 tasks:
+  - configure: |
+      cd c-bits
+      cat << EOF >> local.mk
+      LDFLAGS += -static
+      WINDOW_LDFLAGS =
+      EOF
   - build: |
       cd c-bits
       make
