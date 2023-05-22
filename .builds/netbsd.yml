@@ -11,6 +11,7 @@ tasks:
       cat << EOF >> local.mk
       CFLAGS  += -I/usr/X11R7/include/ -I/usr/pkg/include/
       LDFLAGS += -L/usr/X11R7/lib/ -L/usr/pkg/lib/
+      WINDOW_LDFLAGS += -Wl,-R,/usr/X11R7/lib/ -Wl,-R,/usr/pkg/lib/
       EOF
   - build: |
       cd c-bits

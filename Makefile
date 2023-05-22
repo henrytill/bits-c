@@ -33,7 +33,7 @@ threadtest: threadtest.c prelude.o
 	$(CC) $(CFLAGS) -pthread $(.ALLSRC) $(LDFLAGS) -o $@
 
 window: window.c
-	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -lX11 -lGL -lGLU -lGLEW -o $@
+	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) $(WINDOW_LDFLAGS) -lX11 -lGL -lGLU -lGLEW -o $@
 
 .SUFFIXES: .c .o
 .c.o:
