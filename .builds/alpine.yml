@@ -11,7 +11,7 @@ sources:
 tasks:
   - configure: |
       cd c-bits
-      cat << EOF >> local.mk
+      cat <<EOF >config.mk
       LDFLAGS += -static
       WINDOW_LDFLAGS =
       EOF

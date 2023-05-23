@@ -8,7 +8,7 @@ LDFLAGS =
 WINDOW_CFLAGS  = $(CFLAGS)
 WINDOW_LDFLAGS = $(LDFLAGS)
 
--include local.mk
+-include config.mk
 
 SOURCES =\
 	base64.c \

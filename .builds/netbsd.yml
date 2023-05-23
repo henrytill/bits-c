@@ -8,10 +8,7 @@ sources:
 tasks:
   - configure: |
       cd c-bits
-      cat << EOF >> local.mk
-      WINDOW_CFLAGS  += -I/usr/X11R7/include/ -I/usr/pkg/include/
-      WINDOW_LDFLAGS += -L/usr/X11R7/lib/ -L/usr/pkg/lib/ -Wl,-R,/usr/X11R7/lib/ -Wl,-R,/usr/pkg/lib/
-      EOF
+      ./configure
   - build: |
       cd c-bits
       make

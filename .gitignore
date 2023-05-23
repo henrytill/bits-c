@@ -2,5 +2,5 @@ base64
 prelude.o
 threadtest
 window
-local.mk
+config.mk
 compile_commands.json
