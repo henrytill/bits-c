@@ -1,11 +1,11 @@
 .POSIX:
 .SUFFIXES:
 
-CC      = cc
-CFLAGS  = -std=c11 -Wall -Wextra -Wconversion -Wsign-conversion -g
+CC = cc
+CFLAGS = -std=c11 -Wall -Wextra -Wconversion -Wsign-conversion -g
 LDFLAGS =
 
-WINDOW_CFLAGS  = $(CFLAGS)
+WINDOW_CFLAGS = $(CFLAGS)
 WINDOW_LDFLAGS = $(LDFLAGS)
 
 -include config.mk
