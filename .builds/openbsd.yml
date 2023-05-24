@@ -9,6 +9,7 @@ tasks:
   - configure: |
       cd c-bits
       ./configure
+      cat config.mk
   - build: |
       cd c-bits
       make
