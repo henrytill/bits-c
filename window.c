@@ -71,7 +71,7 @@ static void draw_quad(void)
     glEnd();
 }
 
-int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
+int main(void)
 {
     int ret = EXIT_FAILURE;
 
