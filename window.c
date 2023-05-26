@@ -101,9 +101,6 @@ int main(void)
                                vi->visual, CWColormap | CWEventMask,
                                &swa);
 
-    XMapWindow(dpy, win);
-    XStoreName(dpy, win, "c_bits_window");
-
     XClassHint *class_hint = XAllocClassHint();
     if (class_hint == NULL) {
         (void)fprintf(stderr, "Failed to allocate class hint\n");
@@ -114,7 +111,14 @@ int main(void)
     XSetClassHint(dpy, win, class_hint);
 
     Atom wm_delete_window = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
-    XSetWMProtocols(dpy, win, &wm_delete_window, 1);
+    int rc = XSetWMProtocols(dpy, win, &wm_delete_window, 1);
+    if (rc != 1) {
+        (void)fprintf(stderr, "Failed to XSetWMProtocols\n");
+        goto out_free_class_hint;
+    }
+
+    XMapWindow(dpy, win);
+    XStoreName(dpy, win, "c_bits_window");
 
     GLXContext glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
     if (glc == NULL) {
