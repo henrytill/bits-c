@@ -12,6 +12,7 @@ WINDOW_LDFLAGS = $(LDFLAGS)
 
 SOURCES =\
 	base64.c \
+	hashtable.c \
 	overflow.c \
 	prelude.c \
 	threadtest.c \
@@ -19,6 +20,7 @@ SOURCES =\
 
 BIN =\
 	base64 \
+	hashtable \
 	overflow \
 	threadtest \
 	window
