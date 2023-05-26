@@ -173,10 +173,10 @@ int main(void)
 out_destroy_context:
     glXDestroyContext(dpy, glc);
 out_free_class_hint:
-    free(class_hint);
+    XFree(class_hint);
 out_destroy_window:
     XDestroyWindow(dpy, win);
-    free(vi);
+    XFree(vi);
 out_close_display:
     XCloseDisplay(dpy);
     return ret;
