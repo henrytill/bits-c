@@ -12,12 +12,14 @@ WINDOW_LDFLAGS = $(LDFLAGS)
 
 SOURCES =\
 	base64.c \
+	overflow.c \
 	prelude.c \
 	threadtest.c \
 	window.c
 
 BIN =\
 	base64 \
+	overflow \
 	threadtest \
 	window
 
@@ -31,6 +33,9 @@ prelude.o: prelude.c prelude.h
 
 base64: base64.c prelude.o
 	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -lcrypto -o $@
+
+overflow: overflow.c
+	$(CC) $(CFLAGS) -ftrapv $(.ALLSRC) $(LDFLAGS) -o $@
 
 threadtest: threadtest.c prelude.o
 	$(CC) $(CFLAGS) -pthread $(.ALLSRC) $(LDFLAGS) -o $@
