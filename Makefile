@@ -14,6 +14,7 @@ SOURCES =\
 	base64.c \
 	hashtable.c \
 	overflow.c \
+	poll.c \
 	prelude.c \
 	threadtest.c \
 	window.c
@@ -22,6 +23,7 @@ BIN =\
 	base64 \
 	hashtable \
 	overflow \
+	poll \
 	threadtest \
 	window
 
