@@ -22,8 +22,7 @@ static const struct test_vector {
     {NULL, NULL},
 };
 
-static size_t
-base64_strlen(const char *in)
+static size_t base64_strlen(const char *in)
 {
     return ((strlen(in) + 2) / 3) * 4;
 }
