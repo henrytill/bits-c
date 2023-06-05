@@ -4,12 +4,12 @@
 
 static int add1(int x)
 {
-    return x + 1;
+	return x + 1;
 }
 
 int main(void)
 {
-    int ret = add1(INT_MAX);
-    printf("ret: %d", ret);
-    return EXIT_SUCCESS;
+	int ret = add1(INT_MAX);
+	printf("ret: %d", ret);
+	return EXIT_SUCCESS;
 }

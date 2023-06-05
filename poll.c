@@ -7,87 +7,87 @@
 
 static inline void handle_error(const char *msg)
 {
-    perror(msg);
-    exit(EXIT_FAILURE);
+	perror(msg);
+	exit(EXIT_FAILURE);
 }
 
 static nfds_t handle_events(nfds_t nfds_open, nfds_t nfds, struct pollfd *pfds)
 {
-    char buf[10];
-    ssize_t num_bytes = 0;
+	char buf[10];
+	ssize_t num_bytes = 0;
 
-    for (nfds_t i = 0; i < nfds; ++i) {
-        if (pfds[i].revents == 0) {
-            continue;
-        }
+	for (nfds_t i = 0; i < nfds; ++i) {
+		if (pfds[i].revents == 0) {
+			continue;
+		}
 
-        printf("  fd=%d; events: %s%s%s\n", pfds[i].fd,
-               (pfds[i].revents & POLLIN) ? "POLLIN " : "",
-               (pfds[i].revents & POLLHUP) ? "POLLHUP " : "",
-               (pfds[i].revents & POLLERR) ? "POLLERR " : "");
+		printf("  fd=%d; events: %s%s%s\n", pfds[i].fd,
+			(pfds[i].revents & POLLIN) ? "POLLIN " : "",
+			(pfds[i].revents & POLLHUP) ? "POLLHUP " : "",
+			(pfds[i].revents & POLLERR) ? "POLLERR " : "");
 
-        if (pfds[i].revents & POLLIN) {
-            num_bytes = read(pfds[i].fd, buf, sizeof(buf));
-            if (num_bytes == -1) {
-                handle_error("read");
-            }
-            printf("    read %zd bytes: %.*s\n", num_bytes, (int)num_bytes, buf);
-        } else {
-            printf("    closing fd %d\n", pfds[i].fd);
-            if (close(pfds[i].fd) == -1) {
-                handle_error("close");
-            }
-            nfds_open -= 1;
-        }
-    }
+		if (pfds[i].revents & POLLIN) {
+			num_bytes = read(pfds[i].fd, buf, sizeof(buf));
+			if (num_bytes == -1) {
+				handle_error("read");
+			}
+			printf("    read %zd bytes: %.*s\n", num_bytes, (int)num_bytes, buf);
+		} else {
+			printf("    closing fd %d\n", pfds[i].fd);
+			if (close(pfds[i].fd) == -1) {
+				handle_error("close");
+			}
+			nfds_open -= 1;
+		}
+	}
 
-    return nfds_open;
+	return nfds_open;
 }
 
 int main(int argc, char *argv[])
 {
-    int ready = -1;
-    nfds_t nfds_open = 0;
-    nfds_t nfds = 0;
-    struct pollfd *pfds = NULL;
+	int ready = -1;
+	nfds_t nfds_open = 0;
+	nfds_t nfds = 0;
+	struct pollfd *pfds = NULL;
 
-    if (argc < 2) {
-        (void)fprintf(stderr, "Usage: %s file...\n", argv[0]);
-        exit(EXIT_FAILURE);
-    }
+	if (argc < 2) {
+		(void)fprintf(stderr, "Usage: %s file...\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
 
-    nfds_open = nfds = (nfds_t)argc - 1;
+	nfds_open = nfds = (nfds_t)argc - 1;
 
-    pfds = calloc(nfds, sizeof(struct pollfd));
-    if (pfds == NULL) {
-        handle_error("malloc");
-    }
+	pfds = calloc(nfds, sizeof(struct pollfd));
+	if (pfds == NULL) {
+		handle_error("malloc");
+	}
 
-    for (nfds_t i = 0; i < nfds; ++i) {
-        pfds[i].fd = open(argv[i + 1], O_RDONLY);
-        if (pfds[i].fd == -1) {
-            handle_error("open");
-        }
+	for (nfds_t i = 0; i < nfds; ++i) {
+		pfds[i].fd = open(argv[i + 1], O_RDONLY);
+		if (pfds[i].fd == -1) {
+			handle_error("open");
+		}
 
-        printf("Opened \"%s\" on fd %d\n", argv[i + 1], pfds[i].fd);
+		printf("Opened \"%s\" on fd %d\n", argv[i + 1], pfds[i].fd);
 
-        pfds[i].events = POLLIN;
-    }
+		pfds[i].events = POLLIN;
+	}
 
-    while (nfds_open > 0) {
-        printf("About to poll()\n");
+	while (nfds_open > 0) {
+		printf("About to poll()\n");
 
-        ready = poll(pfds, nfds, -1);
-        if (ready == -1) {
-            handle_error("poll");
-        }
+		ready = poll(pfds, nfds, -1);
+		if (ready == -1) {
+			handle_error("poll");
+		}
 
-        printf("Ready: %d\n", ready);
+		printf("Ready: %d\n", ready);
 
-        nfds_open = handle_events(nfds_open, nfds, pfds);
-    }
+		nfds_open = handle_events(nfds_open, nfds, pfds);
+	}
 
-    printf("All file descriptors closed; bye\n");
+	printf("All file descriptors closed; bye\n");
 
-    return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
