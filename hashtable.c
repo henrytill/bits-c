@@ -25,8 +25,7 @@ static const uint64_t FNV_PRIME = 0x100000001b3;
 _Static_assert(CHAR_BIT == 8, "CHAR_BIT != 8");
 
 /// Return FNV-1a hash of input
-static uint64_t fnv_hash(const size_t data_len,
-	const unsigned char data[data_len])
+static uint64_t fnv_hash(const size_t data_len, const unsigned char data[data_len])
 {
 	extern const uint64_t FNV_OFFSET_BASIS;
 	extern const uint64_t FNV_PRIME;

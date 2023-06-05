@@ -32,14 +32,17 @@ static void print_glew_version(void)
 	printf("GLEW Version: %s\n", version);
 }
 
-void GLAPIENTRY message_callback(__attribute__((unused)) GLenum source,
-	GLenum type,
-	__attribute__((unused)) GLuint id,
-	GLenum severity,
-	__attribute__((unused)) GLsizei length,
-	const GLchar *message,
-	__attribute__((unused)) const void *user)
+void GLAPIENTRY message_callback(
+	GLenum source, GLenum type,
+	GLuint id, GLenum severity,
+	GLsizei length, const GLchar *message,
+	const void *user)
 {
+	(void)source;
+	(void)id;
+	(void)length;
+	(void)user;
+
 	(void)fprintf(stderr,
 		"GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
 		(type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
