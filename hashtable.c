@@ -44,7 +44,7 @@ static bool test_fnv_hash(void)
 {
 	extern const struct test_vector TEST_VECTORS[];
 
-	printf("testing fnv_hash\n");
+	(void)printf("testing fnv_hash\n");
 
 	const char *input = NULL;
 	for (size_t i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i) {

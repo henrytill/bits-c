@@ -48,8 +48,8 @@ int main(void)
 	for (size_t i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i) {
 		const size_t input_len = strlen(input);
 
-		printf("input: %s\n", input);
-		printf("input_len: %ld\n", input_len);
+		(void)printf("input: %s\n", input);
+		(void)printf("input_len: %ld\n", input_len);
 
 		const size_t input_base64_len = base64_strlen(input);
 		const char *expected = TEST_VECTORS[i].base64;
@@ -85,8 +85,8 @@ int main(void)
 		codec_len = base64_decode((const int)codec_len, (const unsigned char *)actual_base64,
 			(unsigned char *)actual_input);
 		const size_t actual_input_len = strlen(actual_input);
-		printf("codec_len: %ld\n", codec_len);
-		printf("\n");
+		(void)printf("codec_len: %ld\n", codec_len);
+		(void)printf("\n");
 
 		if (actual_input_len != input_len) {
 			(void)fprintf(stderr, "input: %s, input_len: %ld, actual_input: %s, actual_input_len: %ld\n",

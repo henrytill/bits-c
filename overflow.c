@@ -10,6 +10,6 @@ static int add1(int x)
 int main(void)
 {
 	int ret = add1(INT_MAX);
-	printf("ret: %d", ret);
+	(void)printf("ret: %d", ret);
 	return EXIT_SUCCESS;
 }

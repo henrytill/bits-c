@@ -32,7 +32,7 @@ static inline void handle_errno(int err, const char *msg)
 static void *start(void *arg)
 {
 	thread_info *info = arg;
-	printf("Thread %d: top of stack near %p; argv_string=%s\n",
+	(void)printf("Thread %d: top of stack near %p; argv_string=%s\n",
 		info->thread_num, (void *)&info, info->arg);
 	char *ret = strdup(info->arg);
 	if (ret == NULL) {
@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
 		if (rc != 0) {
 			handle_errno(rc, "pthread_join");
 		}
-		printf("Joined with thread %d; returned value was %s\n",
+		(void)printf("Joined with thread %d; returned value was %s\n",
 			info[i].thread_num, (char *)res);
 		free(res); // Free memory allocated by thread
 	}
