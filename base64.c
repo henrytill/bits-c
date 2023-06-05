@@ -27,13 +27,13 @@ static size_t base64_strlen(const char *in)
 	return ((strlen(in) + 2) / 3) * 4;
 }
 
-static long base64_encode(const unsigned char *in, int in_len,
+static long base64_encode(const int in_len, const unsigned char in[in_len + 1],
 	unsigned char *out)
 {
 	return EVP_EncodeBlock(out, in, in_len);
 }
 
-static long base64_decode(const unsigned char *in, int in_len,
+static long base64_decode(const int in_len, const unsigned char in[in_len + 1],
 	unsigned char *out)
 {
 	return EVP_DecodeBlock(out, in, in_len);
@@ -62,8 +62,7 @@ int main(void)
 		}
 
 		char *actual_base64 = ecalloc(input_base64_len + 1, sizeof(*actual_base64));
-		codec_len = base64_encode((const unsigned char *)input,
-			(int)input_len,
+		codec_len = base64_encode((const int)input_len, (const unsigned char *)input,
 			(unsigned char *)actual_base64);
 		const size_t actual_base64_len = strlen(actual_base64);
 		assert((size_t)codec_len == actual_base64_len);
@@ -83,8 +82,7 @@ int main(void)
 		}
 
 		char *actual_input = ecalloc(input_len + 1, sizeof(*actual_input));
-		codec_len = base64_decode((const unsigned char *)actual_base64,
-			(int)codec_len,
+		codec_len = base64_decode((const int)codec_len, (const unsigned char *)actual_base64,
 			(unsigned char *)actual_input);
 		const size_t actual_input_len = strlen(actual_input);
 		printf("codec_len: %ld\n", codec_len);
