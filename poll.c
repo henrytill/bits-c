@@ -11,8 +11,7 @@ static inline void handle_error(const char *msg)
 	exit(EXIT_FAILURE);
 }
 
-static nfds_t handle_events(nfds_t nfds_open, nfds_t nfds,
-	struct pollfd *pfds)
+static nfds_t handle_events(nfds_t nfds_open, nfds_t nfds, struct pollfd *pfds)
 {
 	char buf[10];
 	ssize_t num_bytes = 0;
