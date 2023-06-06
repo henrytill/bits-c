@@ -11,11 +11,11 @@
 
 #include "prelude.h"
 
-typedef struct thread_info { // Used as argument to thread_start()
+struct thread_info {         // Used as argument to thread_start()
 	pthread_t thread_id; // ID returned by pthread_create()
 	int thread_num;      // Application-defined thread #
 	char *arg;           // From command-line argument
-} thread_info;
+};
 
 static inline void handle_errno(int err, const char *msg)
 {
@@ -31,7 +31,7 @@ static inline void handle_errno(int err, const char *msg)
 ///
 static void *start(void *arg)
 {
-	thread_info *info = arg;
+	struct thread_info *info = arg;
 	(void)printf("Thread %d: top of stack near %p; argv_string=%s\n",
 		info->thread_num, (void *)&info, info->arg);
 	char *ret = strdup(info->arg);
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 	}
 
 	// Allocate memory for pthread_create() arguments.
-	thread_info *info = ecalloc((size_t)num_threads, sizeof(*info));
+	struct thread_info *info = ecalloc((size_t)num_threads, sizeof(*info));
 
 	// Create one thread for each command-line argument.
 	for (int i = 0; i < num_threads; ++i) {
