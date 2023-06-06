@@ -2,7 +2,7 @@
 .SUFFIXES:
 
 CC = cc
-CFLAGS = -std=c11 -Wall -Wextra -Wconversion -Wsign-conversion -g
+CFLAGS = -std=gnu11 -Wall -Wextra -Wconversion -Wsign-conversion -g
 LDFLAGS =
 
 WINDOW_CFLAGS = $(CFLAGS)
@@ -12,6 +12,7 @@ WINDOW_LDFLAGS = $(LDFLAGS)
 
 SOURCES =\
 	base64.c \
+	demo_oop.c \
 	hashtable.c \
 	overflow.c \
 	poll.c \
@@ -21,6 +22,7 @@ SOURCES =\
 
 BIN =\
 	base64 \
+	demo_oop \
 	hashtable \
 	overflow \
 	poll \
