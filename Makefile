@@ -44,7 +44,7 @@ overflow: overflow.c
 	$(CC) $(CFLAGS) -ftrapv $(.ALLSRC) $(LDFLAGS) -o $@
 
 threadtest: threadtest.c prelude.o
-	$(CC) $(CFLAGS) -pthread $(.ALLSRC) $(LDFLAGS) -o $@
+	$(CC) $(CFLAGS) -D_POSIX_C_SOURCE=200809L -pthread $(.ALLSRC) $(LDFLAGS) -o $@
 
 window: window.c
 	$(CC) $(WINDOW_CFLAGS) $(.ALLSRC) $(WINDOW_LDFLAGS) -lX11 -lGL -lGLU -lGLEW -o $@
