@@ -7,106 +7,108 @@
 
 #include "prelude.h"
 
+#define STATIC_ASSERT(e) _Static_assert((e), #e)
+
+#define BASE64_STRLEN(s) (((strlen((s)) + 2) / 3) * 4)
+
+#define TEST(e, l)                                                          \
+	if (!(e)) {                                                         \
+		(void)fprintf(stderr, "%s:%d: %s", __FILE__, __LINE__, #e); \
+		goto l;                                                     \
+	}
+
 // https://boringssl.googlesource.com/boringssl/+/master/crypto/base64/base64_test.cc#49
+#define TEST_VECTORS_ENTRIES   \
+	X("", "")              \
+	X("f", "Zg==")         \
+	X("fo", "Zm8=")        \
+	X("foo", "Zm9v")       \
+	X("foob", "Zm9vYg==")  \
+	X("fooba", "Zm9vYmE=") \
+	X("foobar", "Zm9vYmFy")
+
+#define X(s, b) STATIC_ASSERT(BASE64_STRLEN(s) == strlen(b));
+TEST_VECTORS_ENTRIES
+#undef X
+
 static const struct test_vector {
 	const char *input;
+	const size_t input_len;
 	const char *base64;
+	const size_t base64_len;
 } TEST_VECTORS[] = {
-	{"", ""},
-	{"f", "Zg=="},
-	{"fo", "Zm8="},
-	{"foo", "Zm9v"},
-	{"foob", "Zm9vYg=="},
-	{"fooba", "Zm9vYmE="},
-	{"foobar", "Zm9vYmFy"},
-	{NULL, NULL},
+#define X(s, b) {(s), strlen((s)), (b), strlen((b))},
+	TEST_VECTORS_ENTRIES
+#undef X
+	{NULL, 0, NULL, 0},
 };
 
-static size_t base64_strlen(const char *in)
+static size_t base64_encode(const size_t in_len, const char in[in_len + 1], char *out)
 {
-	return ((strlen(in) + 2) / 3) * 4;
+	return (size_t)EVP_EncodeBlock((unsigned char *)out, (const unsigned char *)in, (int)in_len);
 }
 
-static long base64_encode(const int in_len, const unsigned char in[in_len + 1],
-	unsigned char *out)
+static size_t base64_decode(const size_t in_len, const char in[in_len + 1], char *out)
 {
-	return EVP_EncodeBlock(out, in, in_len);
-}
-
-static long base64_decode(const int in_len, const unsigned char in[in_len + 1],
-	unsigned char *out)
-{
-	return EVP_DecodeBlock(out, in, in_len);
+	return (size_t)EVP_DecodeBlock((unsigned char *)out, (const unsigned char *)in, (int)in_len);
 }
 
 int main(void)
 {
 	extern const struct test_vector TEST_VECTORS[];
 
-	long codec_len = 0L;
 	const char *input = NULL;
+	size_t input_len = 0;
+	const char *expected_base64 = NULL;
+	size_t expected_base64_len = 0;
+
+	size_t codec_len = 0;
+
+	char *actual_base64 = NULL;
+	size_t actual_base64_len = 0;
+	char *output = NULL;
+	size_t output_len = 0;
+
 	for (size_t i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i) {
-		const size_t input_len = strlen(input);
+		input_len = TEST_VECTORS[i].input_len;
+		expected_base64 = TEST_VECTORS[i].base64;
+		expected_base64_len = TEST_VECTORS[i].base64_len;
 
 		(void)printf("input: %s\n", input);
 		(void)printf("input_len: %ld\n", input_len);
+		(void)printf("expected_base64: %s\n", expected_base64);
+		(void)printf("expected_base64_len: %ld\n", expected_base64_len);
 
-		const size_t input_base64_len = base64_strlen(input);
-		const char *expected = TEST_VECTORS[i].base64;
-		const size_t expected_len = strlen(expected);
+		actual_base64 = ecalloc(expected_base64_len + 1, sizeof(*actual_base64));
+		codec_len = base64_encode(input_len, input, actual_base64);
+		actual_base64_len = strlen(actual_base64);
 
-		if (expected_len != input_base64_len) {
-			(void)fprintf(stderr, "expected_len: %ld, input_base64_len: %ld\n",
-				expected_len, input_base64_len);
-			return EXIT_FAILURE;
-		}
+		TEST(codec_len == actual_base64_len, out_free_actual_base64);
 
-		char *actual_base64 = ecalloc(input_base64_len + 1, sizeof(*actual_base64));
-		codec_len = base64_encode((const int)input_len, (const unsigned char *)input,
-			(unsigned char *)actual_base64);
-		const size_t actual_base64_len = strlen(actual_base64);
-		assert((size_t)codec_len == actual_base64_len);
+		TEST(actual_base64_len == expected_base64_len, out_free_actual_base64);
 
-		if (actual_base64_len != input_base64_len) {
-			(void)fprintf(stderr, "input: %s, input_base64_len: %ld, actual_base64: %s, actual_base64_len: %ld\n",
-				input, input_base64_len, actual_base64, actual_base64_len);
-			free(actual_base64);
-			return EXIT_FAILURE;
-		}
+		TEST(strcmp(actual_base64, expected_base64) == 0, out_free_actual_base64);
 
-		if (strcmp(actual_base64, expected) != 0) {
-			(void)fprintf(stderr, "input: %s, actual_base64: %s, base64: %s\n",
-				input, actual_base64, expected);
-			free(actual_base64);
-			return EXIT_FAILURE;
-		}
+		output = ecalloc(input_len + 1, sizeof(*output));
+		codec_len = base64_decode(codec_len, actual_base64, output);
+		output_len = strlen(output);
 
-		char *actual_input = ecalloc(input_len + 1, sizeof(*actual_input));
-		codec_len = base64_decode((const int)codec_len, (const unsigned char *)actual_base64,
-			(unsigned char *)actual_input);
-		const size_t actual_input_len = strlen(actual_input);
 		(void)printf("codec_len: %ld\n", codec_len);
 		(void)printf("\n");
 
-		if (actual_input_len != input_len) {
-			(void)fprintf(stderr, "input: %s, input_len: %ld, actual_input: %s, actual_input_len: %ld\n",
-				input, input_len, actual_input, actual_input_len);
-			free(actual_input);
-			free(actual_base64);
-			return EXIT_FAILURE;
-		}
+		TEST(output_len == input_len, out_free_output);
 
-		if (strcmp(actual_input, input) != 0) {
-			(void)fprintf(stderr, "input: %s, actual_input: %s",
-				input, actual_input);
-			free(actual_input);
-			free(actual_base64);
-			return EXIT_FAILURE;
-		}
+		TEST(strcmp(output, input) == 0, out_free_output);
 
-		free(actual_input);
+		free(output);
 		free(actual_base64);
 	}
 
 	return EXIT_SUCCESS;
+
+out_free_output:
+	free(output);
+out_free_actual_base64:
+	free(actual_base64);
+	return EXIT_FAILURE;
 }
