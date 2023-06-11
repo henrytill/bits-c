@@ -13,3 +13,6 @@ tasks:
   - build: |
       cd c-bits
       make
+  - test: |
+      cd c-bits
+      make check

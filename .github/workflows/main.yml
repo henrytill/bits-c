@@ -17,3 +17,5 @@ jobs:
           libopengl-dev libglew-dev
     - name: make
       run: make
+    - name: make check
+      run: make check

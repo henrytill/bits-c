@@ -59,7 +59,9 @@ window: window.c
 
 .PHONY: check test
 check test: $(BIN)
-	./threadtest foo bar baz
+	./base64 >/dev/null
+	./hashtable >/dev/null
+	./threadtest foo bar baz >/dev/null
 
 .PHONY: lint
 lint:
