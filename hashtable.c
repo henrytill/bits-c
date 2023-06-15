@@ -62,7 +62,9 @@ static bool test_fnv_hash(void)
 
 int main(void)
 {
-	assert(test_fnv_hash());
+	if (test_fnv_hash() == false) {
+		return EXIT_FAILURE;
+	}
 
 	return EXIT_SUCCESS;
 }
