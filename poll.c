@@ -2,7 +2,6 @@
 #include <poll.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/poll.h>
 #include <unistd.h>
 
 static inline void handle_error(const char *msg)
