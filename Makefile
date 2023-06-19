@@ -40,6 +40,8 @@ prelude.o: prelude.c prelude.h
 base64: base64.c prelude.o
 	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -lcrypto -o $@
 
+hashtable: hashtable.c prelude.o
+
 overflow: overflow.c
 	$(CC) $(CFLAGS) -ftrapv $(.ALLSRC) $(LDFLAGS) -o $@
 
