@@ -54,10 +54,15 @@ static void table_destroy(struct table *t)
 	free(t);
 }
 
-static int table_put(struct table *t, const char *key, void *value)
+static uint64_t get_index(size_t columns_len, const char *key)
 {
 	const uint64_t hash = fnv_hash(strlen(key) + 1, (const unsigned char *)key);
-	const ptrdiff_t index = (ptrdiff_t)(hash & (uint64_t)(t->columns_len - 1));
+	return hash & (uint64_t)(columns_len - 1);
+}
+
+static int table_put(struct table *t, const char *key, void *value)
+{
+	const uint64_t index = get_index(t->columns_len, key);
 	struct entry *curr = t->columns + index;
 	struct entry *prev = NULL;
 
@@ -75,16 +80,12 @@ static int table_put(struct table *t, const char *key, void *value)
 
 	// existing node
 	if (curr != NULL && curr->key != NULL) {
-		assert(strcmp(curr->key, key) == 0);
 		curr->value = value;
 		return 0;
 	}
 
 	// new node
-	assert(curr == NULL);
-
 	curr = ecalloc(1, sizeof(*curr));
-
 	curr->next = NULL;
 	curr->key = key;
 	curr->value = value;
@@ -95,8 +96,7 @@ static int table_put(struct table *t, const char *key, void *value)
 
 static void *table_get(struct table *t, const char *key)
 {
-	const uint64_t hash = fnv_hash(strlen(key) + 1, (const unsigned char *)key);
-	const ptrdiff_t index = (ptrdiff_t)(hash & (uint64_t)(t->columns_len - 1));
+	const uint64_t index = get_index(t->columns_len, key);
 	struct entry *curr = t->columns + index;
 
 	while (curr != NULL && strcmp(key, curr->key) != 0) {
@@ -120,7 +120,7 @@ int main(void)
 
 	const char *key = "foo";
 	char *value = "bar";
-	struct table *t = table_create(16);
+	struct table *t = table_create(32);
 
 	(void)table_put(t, key, value);
 	char *ret_value = table_get(t, key);
