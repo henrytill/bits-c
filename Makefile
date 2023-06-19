@@ -30,17 +30,20 @@ BIN =\
 	window
 
 OBJ =\
+	fnv.o \
 	prelude.o
 
 .PHONY: all
 all: $(BIN)
+
+fnv.o: fnv.c fnv.h
 
 prelude.o: prelude.c prelude.h
 
 base64: base64.c prelude.o
 	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -lcrypto -o $@
 
-hashtable: hashtable.c prelude.o
+hashtable: hashtable.c prelude.o fnv.o
 
 overflow: overflow.c
 	$(CC) $(CFLAGS) -ftrapv $(.ALLSRC) $(LDFLAGS) -o $@
