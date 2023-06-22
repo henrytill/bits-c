@@ -10,6 +10,9 @@
 #include "fnv.h"
 #include "prelude.h"
 
+/// Returns 1 if x is a power of 2
+#define ISPOW2(x) (((x) & ((x)-1)) == 0)
+
 struct entry {
 	struct entry *next;
 	const char *key;
@@ -23,11 +26,10 @@ struct table {
 
 static struct table *table_create(const size_t columns_len)
 {
-	if ((columns_len & (columns_len - 1)) != 0) {
+	if (!ISPOW2(columns_len)) {
 		(void)fprintf(stderr, "Error: columns_len must be a power of 2\n");
 		return NULL;
 	}
-
 	struct table *ret = emalloc(sizeof(*ret));
 	ret->columns = ecalloc(columns_len, sizeof(*ret->columns));
 	ret->columns_len = columns_len;
@@ -50,12 +52,14 @@ static void table_destroy(struct table *t)
 			curr = next;
 		}
 	}
+
 	free(t->columns);
 	free(t);
 }
 
 static uint64_t get_index(size_t columns_len, const char *key)
 {
+	assert(ISPOW2(columns_len));
 	const uint64_t hash = fnv_hash(strlen(key) + 1, (const unsigned char *)key);
 	return hash & (uint64_t)(columns_len - 1);
 }
@@ -71,15 +75,15 @@ static int table_put(struct table *t, const char *key, void *value)
 		curr = curr->next;
 	}
 
-	// first node
-	if (curr != NULL && curr->key == NULL) {
-		curr->key = key;
+	// existing node
+	if (curr != NULL && curr->key != NULL) {
 		curr->value = value;
 		return 0;
 	}
 
-	// existing node
-	if (curr != NULL && curr->key != NULL) {
+	// uninitialized key (first or deleted node)
+	if (curr != NULL) {
+		curr->key = key;
 		curr->value = value;
 		return 0;
 	}
