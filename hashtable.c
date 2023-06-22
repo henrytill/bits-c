@@ -30,7 +30,7 @@ static struct table *table_create(const size_t columns_len)
 		(void)fprintf(stderr, "Error: columns_len must be a power of 2\n");
 		return NULL;
 	}
-	struct table *ret = emalloc(sizeof(*ret));
+	struct table *ret = ecalloc(1, sizeof(*ret));
 	ret->columns = ecalloc(columns_len, sizeof(*ret->columns));
 	ret->columns_len = columns_len;
 	return ret;
@@ -67,6 +67,7 @@ static uint64_t get_index(size_t columns_len, const char *key)
 static int table_put(struct table *t, const char *key, void *value)
 {
 	const uint64_t index = get_index(t->columns_len, key);
+	(void)printf("key %s, index: %ld\n", key, index);
 	struct entry *curr = t->columns + index;
 	struct entry *prev = NULL;
 
@@ -114,6 +115,16 @@ static void *table_get(struct table *t, const char *key)
 	return curr->value;
 }
 
+static const struct test_vector {
+	const char *key;
+	char *value;
+} TEST_VECTORS[] = {
+#define X(prefix) {#prefix "_key", #prefix "_value"},
+#include "hashtable_vectors.def"
+#undef X
+	{NULL, NULL},
+};
+
 int main(void)
 {
 	int ret = EXIT_FAILURE;
@@ -122,17 +133,19 @@ int main(void)
 		return EXIT_FAILURE;
 	}
 
-	const char *key = "foo";
-	char *value = "bar";
-	struct table *t = table_create(32);
+	struct table *t = table_create(8);
 
-	(void)table_put(t, key, value);
-	char *ret_value = table_get(t, key);
-	if (ret_value == NULL) {
-		goto out_table_destroy;
+	const char *key;
+	char *value;
+	for (size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
+		value = TEST_VECTORS[i].value;
+		(void)table_put(t, key, value);
+		char *ret_value = table_get(t, key);
+		if (strcmp(value, ret_value) != 0) {
+			goto out_table_destroy;
+		}
+		(void)printf("%s: %s\n", key, ret_value);
 	}
-
-	(void)printf("%s: %s\n", key, ret_value);
 
 	ret = EXIT_SUCCESS;
 out_table_destroy:
