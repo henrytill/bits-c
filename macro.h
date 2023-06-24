@@ -1,4 +1,5 @@
-#pragma once
+#ifndef C_BITS_MACRO
+#define C_BITS_MACRO
 
 #include <stddef.h>
 #include <stdio.h>
@@ -68,3 +69,5 @@
 			debug_printf("%s(*%p)\n", #func, (void *)p);                 \
 		}                                                                    \
 	}
+
+#endif // #define C_BITS_MACRO
