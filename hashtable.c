@@ -95,6 +95,8 @@ static int table_put(struct table *t, const char *key, void *value)
 	curr->next = NULL;
 	curr->key = key;
 	curr->value = value;
+
+	assert(prev != NULL);
 	prev->next = curr;
 
 	return 0;
