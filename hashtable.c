@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <inttypes.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -67,7 +68,7 @@ static uint64_t get_index(size_t columns_len, const char *key)
 static int table_put(struct table *t, const char *key, void *value)
 {
 	const uint64_t index = get_index(t->columns_len, key);
-	(void)printf("key %s, index: %ld\n", key, index);
+	(void)printf("key: %s, index: %" PRIu64 "\n", key, index);
 	struct entry *curr = t->columns + index;
 	struct entry *prev = NULL;
 

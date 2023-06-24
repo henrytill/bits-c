@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <inttypes.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -53,7 +54,7 @@ bool fnv_hash_test(void)
 		const uint64_t expected = TEST_VECTORS[i].expected;
 		const uint64_t actual = fnv_hash(strlen(input) + 1, (const unsigned char *)input);
 		if (expected != actual) {
-			(void)fprintf(stderr, "input: \"%s\", expected: %ld, actual: %ld\n",
+			(void)fprintf(stderr, "input: \"%s\", expected: %" PRIu64 ", actual: %" PRIu64 "\n",
 				input, expected, actual);
 			return false;
 		}
