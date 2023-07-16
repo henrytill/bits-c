@@ -45,12 +45,18 @@ static const struct test_vector {
 
 static size_t base64_encode(const size_t in_len, const char in[in_len + 1], char *out)
 {
-	return (size_t)EVP_EncodeBlock((unsigned char *)out, (const unsigned char *)in, (int)in_len);
+	return (size_t)EVP_EncodeBlock(
+		(unsigned char *)out,
+		(const unsigned char *)in,
+		(int)in_len);
 }
 
 static size_t base64_decode(const size_t in_len, const char in[in_len + 1], char *out)
 {
-	return (size_t)EVP_DecodeBlock((unsigned char *)out, (const unsigned char *)in, (int)in_len);
+	return (size_t)EVP_DecodeBlock(
+		(unsigned char *)out,
+		(const unsigned char *)in,
+		(int)in_len);
 }
 
 int main(void)
