@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	int num_threads = argc - optind;
+	const int num_threads = argc - optind;
 
 	// Initialize thread creation attributes.
 	int rc = -1;
