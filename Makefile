@@ -11,12 +11,12 @@ WINDOW_LDFLAGS = $(LDFLAGS)
 -include config.mk
 
 SOURCES =\
+	alloc.c \
 	base64.c \
 	demo_oop.c \
 	hashtable.c \
 	overflow.c \
 	poll.c \
-	prelude.c \
 	threadtest.c \
 	window.c
 
@@ -30,25 +30,25 @@ BIN =\
 	window
 
 OBJ =\
-	fnv.o \
-	prelude.o
+	alloc.o \
+	fnv.o
 
 .PHONY: all
 all: $(BIN)
 
 fnv.o: fnv.c fnv.h
 
-prelude.o: prelude.c prelude.h
+alloc.o: alloc.c alloc.h
 
-base64: base64.c prelude.o
+base64: base64.c alloc.o
 	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -lcrypto -o $@
 
-hashtable: hashtable.c prelude.o fnv.o
+hashtable: hashtable.c alloc.o fnv.o
 
 overflow: overflow.c
 	$(CC) $(CFLAGS) -ftrapv $(.ALLSRC) $(LDFLAGS) -o $@
 
-threadtest: threadtest.c prelude.o
+threadtest: threadtest.c alloc.o
 	$(CC) $(CFLAGS) -D_POSIX_C_SOURCE=200809L -pthread $(.ALLSRC) $(LDFLAGS) -o $@
 
 window: window.c

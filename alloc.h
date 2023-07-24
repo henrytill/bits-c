@@ -1,5 +1,5 @@
-#ifndef C_BITS_PRELUDE
-#define C_BITS_PRELUDE
+#ifndef C_BITS_ALLOC
+#define C_BITS_ALLOC
 
 #include <stddef.h>
 

@@ -5,7 +5,7 @@
 
 #include <openssl/evp.h>
 
-#include "prelude.h"
+#include "alloc.h"
 
 #define STATIC_ASSERT(e) _Static_assert((e), #e)
 

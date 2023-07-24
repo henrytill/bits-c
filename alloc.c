@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "prelude.h"
+#include "alloc.h"
 
 #define ALLOCATION_FAILURE_MSG "Failed to allocate.\n"
 

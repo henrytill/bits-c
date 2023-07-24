@@ -1,10 +1,10 @@
+/.vscode
+*.o
 base64
 demo_oop
-fnv.o
 hashtable
 overflow
 poll
-prelude.o
 threadtest
 window
 config.mk

@@ -8,8 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "alloc.h"
 #include "fnv.h"
-#include "prelude.h"
 
 /// Returns 1 if x is a power of 2
 #define ISPOW2(x) (((x) & ((x)-1)) == 0)

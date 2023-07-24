@@ -7,7 +7,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "prelude.h"
+#include "alloc.h"
 
 struct thread_info {         // Used as argument to thread_start()
 	pthread_t thread_id; // ID returned by pthread_create()
