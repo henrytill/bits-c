@@ -31,11 +31,10 @@ static void print_glew_version(void) {
   printf("GLEW Version: %s\n", version);
 }
 
-void GLAPIENTRY message_callback(
-  GLenum source, GLenum type,
-  GLuint id, GLenum severity,
-  GLsizei length, const GLchar *message,
-  const void *user) {
+void GLAPIENTRY message_callback(GLenum source, GLenum type,
+                                 GLuint id, GLenum severity,
+                                 GLsizei length, const GLchar *message,
+                                 const void *user) {
   (void)source;
   (void)id;
   (void)length;
