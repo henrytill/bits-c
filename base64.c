@@ -103,15 +103,15 @@ int main(void) {
 
     TEST(strcmp(output, input) == 0, out_free_output);
 
-    free(output);
-    free(actual_base64);
+    NFREE(output);
+    NFREE(actual_base64);
   }
 
   return EXIT_SUCCESS;
 
 out_free_output:
-  free(output);
+  NFREE(output);
 out_free_actual_base64:
-  free(actual_base64);
+  NFREE(actual_base64);
   return EXIT_FAILURE;
 }

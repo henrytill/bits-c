@@ -103,9 +103,9 @@ int main(int argc, char *argv[]) {
     }
     (void)printf("Joined with thread %d; returned value was %s\n",
                  info[i].thread_num, (char *)res);
-    free(res); // Free memory allocated by thread
+    NFREE(res); // Free memory allocated by thread
   }
 
-  free(info);
+  NFREE(info);
   return EXIT_SUCCESS;
 }
