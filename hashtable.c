@@ -45,6 +45,10 @@ static void table_destroy(struct table *t) {
     return;
   }
 
+  if (t->columns == NULL) {
+    return;
+  }
+
   for (size_t i = 0; i < t->columns_len; ++i) {
     for (curr = t->columns[i].next; curr != NULL;) {
       next = curr->next;
