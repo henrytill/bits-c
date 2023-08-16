@@ -9,13 +9,13 @@
 
 #include "alloc.h"
 
-struct thread_info {   // Used as argument to thread_start()
-  pthread_t thread_id; // ID returned by pthread_create()
-  int thread_num;      // Application-defined thread #
-  char *arg;           // From command-line argument
+struct thread_info {
+  pthread_t thread_id;
+  int thread_num;
+  char *arg;
 };
 
-static inline void handle_errno(int err, const char *msg) {
+static void handle_errno(int err, const char *msg) {
   errno = err;
   perror(msg);
   exit(EXIT_FAILURE);
@@ -26,10 +26,10 @@ static inline void handle_errno(int err, const char *msg) {
 ///
 /// Display address near top of our stack and return upper-cased copy of argv_string.
 ///
-static void *start(void *arg) {
-  struct thread_info *info = arg;
-  (void)printf("Thread %d: top of stack near %p; argv_string=%s\n",
-               info->thread_num, (void *)&info, info->arg);
+static void *start(void *data) {
+  struct thread_info *info = data;
+  printf("Thread %d: top of stack near %p; argv_string=%s\n",
+         info->thread_num, (void *)&info, info->arg);
   char *ret = strdup(info->arg);
   if (ret == NULL) {
     perror("strdup");
@@ -101,8 +101,8 @@ int main(int argc, char *argv[]) {
     if (rc != 0) {
       handle_errno(rc, "pthread_join");
     }
-    (void)printf("Joined with thread %d; returned value was %s\n",
-                 info[i].thread_num, (char *)res);
+    printf("Joined with thread %d; returned value was %s\n",
+           info[i].thread_num, (char *)res);
     NFREE(res); // Free memory allocated by thread
   }
 

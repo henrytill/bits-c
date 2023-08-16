@@ -44,17 +44,15 @@ static const struct test_vector {
 };
 
 static size_t base64_encode(const size_t in_len, const char in[in_len + 1], char *out) {
-  return (size_t)EVP_EncodeBlock(
-    (unsigned char *)out,
-    (const unsigned char *)in,
-    (int)in_len);
+  return (size_t)EVP_EncodeBlock((unsigned char *)out,
+                                 (const unsigned char *)in,
+                                 (int)in_len);
 }
 
 static size_t base64_decode(const size_t in_len, const char in[in_len + 1], char *out) {
-  return (size_t)EVP_DecodeBlock(
-    (unsigned char *)out,
-    (const unsigned char *)in,
-    (int)in_len);
+  return (size_t)EVP_DecodeBlock((unsigned char *)out,
+                                 (const unsigned char *)in,
+                                 (int)in_len);
 }
 
 int main(void) {
@@ -77,10 +75,10 @@ int main(void) {
     expected_base64 = TEST_VECTORS[i].base64;
     expected_base64_len = TEST_VECTORS[i].base64_len;
 
-    (void)printf("input: %s\n", input);
-    (void)printf("input_len: %ld\n", input_len);
-    (void)printf("expected_base64: %s\n", expected_base64);
-    (void)printf("expected_base64_len: %ld\n", expected_base64_len);
+    printf("input: %s\n", input);
+    printf("input_len: %ld\n", input_len);
+    printf("expected_base64: %s\n", expected_base64);
+    printf("expected_base64_len: %ld\n", expected_base64_len);
 
     actual_base64 = ecalloc(expected_base64_len + 1, sizeof(*actual_base64));
     codec_len = base64_encode(input_len, input, actual_base64);
@@ -96,8 +94,8 @@ int main(void) {
     codec_len = base64_decode(codec_len, actual_base64, output);
     output_len = strlen(output);
 
-    (void)printf("codec_len: %ld\n", codec_len);
-    (void)printf("\n");
+    printf("codec_len: %ld\n", codec_len);
+    printf("\n");
 
     TEST(output_len == input_len, out_free_output);
 

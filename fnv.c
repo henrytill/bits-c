@@ -42,18 +42,26 @@ uint64_t fnv_hash(const size_t data_len, const unsigned char data[data_len]) {
   return hash;
 }
 
+static bool check(const char *input, const uint64_t expected, const uint64_t actual) {
+  if (expected == actual) {
+    return true;
+  }
+  (void)fprintf(stderr,
+                "input: \"%s\", expected: %" PRIu64 ", actual: %" PRIu64 "\n",
+                input, expected, actual);
+  return false;
+}
+
 bool fnv_hash_test(void) {
   extern const struct test_vector TEST_VECTORS[];
 
-  (void)printf("testing fnv_hash\n");
+  printf("testing fnv_hash\n");
 
   const char *input = NULL;
   for (size_t i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i) {
     const uint64_t expected = TEST_VECTORS[i].expected;
     const uint64_t actual = fnv_hash(strlen(input) + 1, (const unsigned char *)input);
-    if (expected != actual) {
-      (void)fprintf(stderr, "input: \"%s\", expected: %" PRIu64 ", actual: %" PRIu64 "\n",
-                    input, expected, actual);
+    if (!check(input, expected, actual)) {
       return false;
     }
   }

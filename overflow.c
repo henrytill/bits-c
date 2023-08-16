@@ -8,6 +8,6 @@ static int add1(const int x) {
 
 int main(void) {
   int ret = add1(INT_MAX);
-  (void)printf("ret: %d", ret);
+  printf("ret: %d", ret);
   return EXIT_SUCCESS;
 }

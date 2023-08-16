@@ -18,24 +18,25 @@ static nfds_t handle_events(nfds_t nfds_open, nfds_t nfds, struct pollfd *pfds) 
       continue;
     }
 
-    (void)printf("  fd=%d; events: %s%s%s\n", pfds[i].fd,
-                 (pfds[i].revents & POLLIN) ? "POLLIN " : "",
-                 (pfds[i].revents & POLLHUP) ? "POLLHUP " : "",
-                 (pfds[i].revents & POLLERR) ? "POLLERR " : "");
+    printf("fd=%d; events: %s%s%s\n", pfds[i].fd,
+           (pfds[i].revents & POLLIN) ? "POLLIN " : "",
+           (pfds[i].revents & POLLHUP) ? "POLLHUP " : "",
+           (pfds[i].revents & POLLERR) ? "POLLERR " : "");
 
-    if (pfds[i].revents & POLLIN) {
-      num_bytes = read(pfds[i].fd, buf, sizeof(buf));
-      if (num_bytes == -1) {
-        handle_error("read");
-      }
-      (void)printf("    read %zd bytes: %.*s\n", num_bytes, (int)num_bytes, buf);
-    } else {
-      (void)printf("    closing fd %d\n", pfds[i].fd);
+    if (pfds[i].revents & POLLHUP || pfds[i].revents & POLLERR) {
+      printf("closing fd %d\n", pfds[i].fd);
       if (close(pfds[i].fd) == -1) {
         handle_error("close");
       }
       nfds_open -= 1;
+      continue;
     }
+
+    num_bytes = read(pfds[i].fd, buf, sizeof(buf));
+    if (num_bytes == -1) {
+      handle_error("read");
+    }
+    printf("read %zd bytes: %.*s\n", num_bytes, (int)num_bytes, buf);
   }
 
   return nfds_open;
@@ -49,7 +50,7 @@ int main(int argc, char *argv[]) {
 
   if (argc < 2) {
     (void)fprintf(stderr, "Usage: %s file...\n", argv[0]);
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
 
   nfds_open = nfds = (nfds_t)argc - 1;
@@ -64,26 +65,21 @@ int main(int argc, char *argv[]) {
     if (pfds[i].fd == -1) {
       handle_error("open");
     }
-
-    (void)printf("Opened \"%s\" on fd %d\n", argv[i + 1], pfds[i].fd);
-
+    printf("Opened \"%s\" on fd %d\n", argv[i + 1], pfds[i].fd);
     pfds[i].events = POLLIN;
   }
 
   while (nfds_open > 0) {
-    (void)printf("About to poll()\n");
-
+    printf("About to poll()\n");
     ready = poll(pfds, nfds, -1);
     if (ready == -1) {
       handle_error("poll");
     }
-
-    (void)printf("Ready: %d\n", ready);
-
+    printf("Ready: %d\n", ready);
     nfds_open = handle_events(nfds_open, nfds, pfds);
   }
 
-  (void)printf("All file descriptors closed; bye\n");
+  printf("All file descriptors closed; bye\n");
 
   return EXIT_SUCCESS;
 }

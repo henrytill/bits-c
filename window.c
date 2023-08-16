@@ -141,7 +141,7 @@ int main(void) {
   if (GLEW_ARB_debug_output) {
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(message_callback, NULL);
-    (void)printf("Enabled debug output\n");
+    printf("Enabled debug output\n");
   }
 
   XEvent xev;
@@ -159,7 +159,7 @@ int main(void) {
       break;
     case ClientMessage:
       if (xev.xclient.data.l[0] == (long)wm_delete_window) {
-        (void)printf("Received WM_DELETE_WINDOW\n");
+        printf("Received WM_DELETE_WINDOW\n");
         loop_stat = 0;
       }
       break;

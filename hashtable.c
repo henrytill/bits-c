@@ -43,6 +43,7 @@ static void table_destroy(struct table *t) {
   }
   if (t->columns == NULL) {
     NFREE(t);
+    return;
   }
   struct entry *curr = NULL;
   struct entry *next = NULL;
@@ -72,7 +73,7 @@ static int table_put(struct table *t, const char *key, void *value) {
   }
 
   const uint64_t index = get_index(t->columns_len, key);
-  (void)debug_printf("%s: key: %s, index: %" PRIu64 "\n", __func__, key, index);
+  debug_printf("%s: key: %s, index: %" PRIu64 "\n", __func__, key, index);
   struct entry *curr = t->columns + index;
   struct entry *prev = NULL;
 
@@ -131,17 +132,16 @@ static const struct test_vector {
 int main(void) {
   extern const struct test_vector TEST_VECTORS[];
 
-  int ret = EXIT_FAILURE;
-  const char *key = NULL;
-
   if (fnv_hash_test() == false) {
     return EXIT_FAILURE;
   }
 
+  int ret = EXIT_FAILURE;
+  const char *key = NULL;
   struct table *t = table_create(8);
 
   for (size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
-    (void)table_put(t, key, TEST_VECTORS[i].value);
+    table_put(t, key, TEST_VECTORS[i].value);
   }
 
   for (size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {

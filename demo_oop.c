@@ -19,8 +19,8 @@ struct person {
 };
 
 static void person_hello(const struct person *self) {
-  (void)printf("Hello, my name is %s, I'm %d years old.\n",
-               self->name, self->age);
+  printf("Hello, my name is %s, I'm %d years old.\n",
+         self->name, self->age);
 }
 
 /// Base class vtable.
@@ -37,8 +37,8 @@ struct student {
 /// Derived class override of person_operations::hello
 static void student_hello(const struct person *self) {
   const struct student *student = CONTAINER_OF(self, struct student, person);
-  (void)printf("Hello, my name is %s, I'm %d years old, I'm a student of %s.\n",
-               student->person.name, student->person.age, student->school);
+  printf("Hello, my name is %s, I'm %d years old, I'm a student of %s.\n",
+         student->person.name, student->person.age, student->school);
 }
 
 /// Derived class vtable.
