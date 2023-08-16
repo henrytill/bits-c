@@ -38,17 +38,11 @@ static struct table *table_create(const size_t columns_len) {
 }
 
 static void table_destroy(struct table *t) {
-  struct entry *curr;
-  struct entry *next;
-
-  if (t == NULL) {
+  if (t == NULL || t->columns == NULL) {
     return;
   }
-
-  if (t->columns == NULL) {
-    return;
-  }
-
+  struct entry *curr = NULL;
+  struct entry *next = NULL;
   for (size_t i = 0; i < t->columns_len; ++i) {
     for (curr = t->columns[i].next; curr != NULL;) {
       next = curr->next;
@@ -56,7 +50,6 @@ static void table_destroy(struct table *t) {
       curr = next;
     }
   }
-
   free(t->columns);
   free(t);
 }
@@ -68,8 +61,15 @@ static uint64_t get_index(size_t columns_len, const char *key) {
 }
 
 static int table_put(struct table *t, const char *key, void *value) {
+  if (t == NULL || t->columns == NULL) {
+    return -1;
+  }
+  if (key == NULL || value == NULL) {
+    return -1;
+  }
+
   const uint64_t index = get_index(t->columns_len, key);
-  (void)debug_printf("key: %s, index: %" PRIu64 "\n", key, index);
+  (void)debug_printf("%s: key: %s, index: %" PRIu64 "\n", __func__, key, index);
   struct entry *curr = t->columns + index;
   struct entry *prev = NULL;
 
@@ -77,44 +77,41 @@ static int table_put(struct table *t, const char *key, void *value) {
     prev = curr;
     curr = curr->next;
   }
-
   // existing node
   if (curr != NULL && curr->key != NULL) {
     curr->value = value;
     return 0;
   }
-
   // uninitialized key (first or deleted node)
   if (curr != NULL) {
     curr->key = key;
     curr->value = value;
     return 0;
   }
-
   // new node
   curr = ecalloc(1, sizeof(*curr));
   curr->next = NULL;
   curr->key = key;
   curr->value = value;
-
   assert(prev != NULL);
   prev->next = curr;
-
   return 0;
 }
 
 static void *table_get(struct table *t, const char *key) {
+  if (t == NULL || t->columns == NULL) {
+    return NULL;
+  }
+
   const uint64_t index = get_index(t->columns_len, key);
   struct entry *curr = t->columns + index;
 
   while (curr != NULL && strcmp(key, curr->key) != 0) {
     curr = curr->next;
   }
-
   if (curr == NULL) {
     return NULL;
   }
-
   return curr->value;
 }
 
@@ -132,6 +129,7 @@ int main(void) {
   extern const struct test_vector TEST_VECTORS[];
 
   int ret = EXIT_FAILURE;
+  const char *key = NULL;
 
   if (fnv_hash_test() == false) {
     return EXIT_FAILURE;
@@ -139,16 +137,15 @@ int main(void) {
 
   struct table *t = table_create(8);
 
-  const char *key;
-  char *value;
   for (size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
-    value = TEST_VECTORS[i].value;
-    (void)table_put(t, key, value);
-    char *ret_value = table_get(t, key);
-    if (strcmp(value, ret_value) != 0) {
+    (void)table_put(t, key, TEST_VECTORS[i].value);
+  }
+
+  for (size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
+    char *value = table_get(t, key);
+    if (strcmp(TEST_VECTORS[i].value, value) != 0) {
       goto out_table_destroy;
     }
-    (void)printf("%s: %s\n", key, ret_value);
   }
 
   ret = EXIT_SUCCESS;
