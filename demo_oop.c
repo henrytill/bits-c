@@ -46,7 +46,7 @@ static const struct person_operations STUDENT_OPS = {
   .hello = student_hello,
 };
 
-int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[]) {
+int main(void) {
   struct student carol = {
     .person = {
       .ops = &STUDENT_OPS,
