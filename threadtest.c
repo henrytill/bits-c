@@ -32,6 +32,11 @@ static void *start(void *data) {
 }
 
 static void run_threads(size_t stack_size, int num_threads, char *args[]) {
+  printf("num_threads: %d\n", num_threads);
+  if (num_threads < 1) {
+    return;
+  }
+
   int rc = -1;
   pthread_attr_t attr;
   rc = pthread_attr_init(&attr);
