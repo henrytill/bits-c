@@ -1,13 +1,11 @@
-#include <assert.h>
 #include <ctype.h>
 #include <errno.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
 
-#include "alloc.h"
+#define MAX_THREADS 128
 
 struct thread_info {
   pthread_t thread_id;
@@ -15,50 +13,25 @@ struct thread_info {
   char *arg;
 };
 
+static struct thread_info info[MAX_THREADS];
+
 static void handle_errno(int err, const char *msg) {
   errno = err;
   perror(msg);
   exit(EXIT_FAILURE);
 }
 
-///
-/// Thread start function
-///
-/// Display address near top of our stack and return upper-cased copy of argv_string.
-///
 static void *start(void *data) {
   struct thread_info *info = data;
   printf("Thread %d: top of stack near %p; argv_string=%s\n",
          info->thread_num, (void *)&info, info->arg);
-  char *ret = strdup(info->arg);
-  if (ret == NULL) {
-    perror("strdup");
-    return NULL;
-  }
-  for (char *p = ret; *p != '\0'; ++p) {
+  for (char *p = info->arg; *p != '\0'; ++p) {
     *p = (char)toupper(*p);
   }
-  return ret;
+  return info->arg;
 }
 
-int main(int argc, char *argv[]) {
-  // The "-s" option specifies a stack size for our threads.
-  int opt = -1;
-  size_t stack_size = 0;
-  while ((opt = getopt(argc, argv, "s:")) != -1) {
-    switch (opt) {
-    case 's':
-      stack_size = strtoul(optarg, NULL, 0);
-      break;
-    default:
-      (void)fprintf(stderr, "Usage: %s [-s stack-size] arg...\n", argv[0]);
-      exit(EXIT_FAILURE);
-    }
-  }
-
-  const int num_threads = argc - optind;
-
-  // Initialize thread creation attributes.
+static void run_threads(size_t stack_size, int num_threads, char *args[]) {
   int rc = -1;
   pthread_attr_t attr;
   rc = pthread_attr_init(&attr);
@@ -73,28 +46,20 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  // Allocate memory for pthread_create() arguments.
-  struct thread_info *info = ecalloc((size_t)num_threads, sizeof(*info));
-
-  // Create one thread for each command-line argument.
   for (int i = 0; i < num_threads; ++i) {
     info[i].thread_num = i + 1;
-    info[i].arg = argv[optind + i];
-
-    // The pthread_create() call stores the thread ID into corresponding element of info[].
+    info[i].arg = args[i];
     rc = pthread_create(&info[i].thread_id, &attr, &start, &info[i]);
     if (rc != 0) {
       handle_errno(rc, "pthread_create");
     }
   }
 
-  // Destroy the thread attributes object, since it is no longer needed.
   rc = pthread_attr_destroy(&attr);
   if (rc != 0) {
     handle_errno(rc, "pthread_attr_destroy");
   }
 
-  // Now join with each thread, and display its returned value.
   void *res = NULL;
   for (int i = 0; i < num_threads; ++i) {
     rc = pthread_join(info[i].thread_id, &res);
@@ -103,9 +68,32 @@ int main(int argc, char *argv[]) {
     }
     printf("Joined with thread %d; returned value was %s\n",
            info[i].thread_num, (char *)res);
-    NFREE(res); // Free memory allocated by thread
+  }
+}
+
+int main(int argc, char *argv[]) {
+  int opt = -1;
+  size_t stack_size = 0;
+
+  while ((opt = getopt(argc, argv, "s:")) != -1) {
+    switch (opt) {
+    case 's':
+      stack_size = strtoul(optarg, NULL, 0);
+      break;
+    default:
+      (void)fprintf(stderr, "Usage: %s [-s stack-size] arg...\n", argv[0]);
+      return EXIT_FAILURE;
+    }
   }
 
-  NFREE(info);
+  const int num_threads = argc - optind;
+
+  if (num_threads > MAX_THREADS) {
+    (void)fprintf(stderr, "Too many threads; max is %d\n", MAX_THREADS);
+    return EXIT_FAILURE;
+  }
+
+  run_threads(stack_size, num_threads, &argv[optind]);
+
   return EXIT_SUCCESS;
 }
