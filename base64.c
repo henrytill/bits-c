@@ -9,10 +9,10 @@
 
 #define BASE64_STRLEN(s) (((strlen((s)) + 2) / 3) * 4)
 
-#define TEST(e)                                                 \
-  if (!(e)) {                                                   \
-    (void)fprintf(stderr, "%s:%d: %s", __FILE__, __LINE__, #e); \
-    exit(EXIT_FAILURE);                                         \
+#define TEST(e)                                                   \
+  if (!(e)) {                                                     \
+    (void)fprintf(stderr, "%s:%d: %s\n", __FILE__, __LINE__, #e); \
+    exit(EXIT_FAILURE);                                           \
   }
 
 // https://boringssl.googlesource.com/boringssl/+/master/crypto/base64/base64_test.cc#49
@@ -47,16 +47,20 @@ static const struct test_vector {
 #define BASE64_LEN_MAX   (TEST_VECTORS[LAST_ENTRY].base64_len)
 #define ARRAY_CLEAR(arr) memset((arr), 0, sizeof((arr)))
 
-static size_t base64_encode(const size_t in_len, const char in[in_len], char *out) {
+static size_t base64_encode(const size_t in_strlen,
+                            const char in[in_strlen + 1],
+                            char *out) {
   return (size_t)EVP_EncodeBlock((unsigned char *)out,
                                  (const unsigned char *)in,
-                                 (int)in_len);
+                                 (int)in_strlen);
 }
 
-static size_t base64_decode(const size_t in_len, const char in[in_len], char *out) {
+static size_t base64_decode(const size_t in_strlen,
+                            const char in[in_strlen + 1],
+                            char *out) {
   return (size_t)EVP_DecodeBlock((unsigned char *)out,
                                  (const unsigned char *)in,
-                                 (int)in_len);
+                                 (int)in_strlen);
 }
 
 int main(void) {
