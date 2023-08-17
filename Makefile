@@ -40,7 +40,7 @@ fnv.o: fnv.c fnv.h
 
 alloc.o: alloc.c alloc.h
 
-base64: base64.c alloc.o
+base64: base64.c
 	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -lcrypto -o $@
 
 hashtable: hashtable.c alloc.o fnv.o
@@ -48,7 +48,7 @@ hashtable: hashtable.c alloc.o fnv.o
 overflow: overflow.c
 	$(CC) $(CFLAGS) -ftrapv $(.ALLSRC) $(LDFLAGS) -o $@
 
-threadtest: threadtest.c alloc.o
+threadtest: threadtest.c
 	$(CC) $(CFLAGS) -D_POSIX_C_SOURCE=200809L -pthread $(.ALLSRC) $(LDFLAGS) -o $@
 
 window: window.c
