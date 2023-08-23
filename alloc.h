@@ -20,12 +20,4 @@ void *emalloc(size_t size);
 ///
 void *ecalloc(size_t nmemb, size_t size);
 
-///
-/// Free a given pointer and set it to NULL.
-///
-#define NFREE(p) ({                                  \
-  free(p);                                           \
-  p = NULL; /* NOLINT(bugprone-macro-parentheses) */ \
-})
-
 #endif

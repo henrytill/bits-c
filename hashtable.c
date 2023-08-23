@@ -38,11 +38,7 @@ static struct table *table_create(const size_t columns_len) {
 }
 
 static void table_destroy(struct table *t) {
-  if (t == NULL) {
-    return;
-  }
-  if (t->columns == NULL) {
-    NFREE(t);
+  if (t == NULL || t->columns == NULL) {
     return;
   }
   struct entry *curr = NULL;
@@ -54,8 +50,8 @@ static void table_destroy(struct table *t) {
       curr = next;
     }
   }
-  NFREE(t->columns);
-  NFREE(t);
+  free(t->columns);
+  free(t);
 }
 
 static uint64_t get_index(size_t columns_len, const char *key) {
