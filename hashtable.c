@@ -108,7 +108,7 @@ void *table_get(struct table *t, const char *key) {
   const uint64_t index = get_index(t->columns_len, key);
   struct entry *curr = t->columns + index;
 
-  while (curr != NULL && strcmp(key, curr->key) != 0) {
+  while (curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0) {
     curr = curr->next;
   }
   if (curr == NULL) {
