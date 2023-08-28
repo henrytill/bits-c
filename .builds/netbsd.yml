@@ -3,6 +3,7 @@ packages:
   - glew
   - python310
   - py310-setuptools
+  - py310-hypothesis
 secrets:
   - fff26745-7b06-40da-b5b9-5f4bd6f29596
 sources:
