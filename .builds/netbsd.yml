@@ -21,3 +21,6 @@ tasks:
   - build_py: |
       cd c-bits
       make clean py
+  - test_py: |
+      cd c-bits
+      python3.10 hashtable_test.py

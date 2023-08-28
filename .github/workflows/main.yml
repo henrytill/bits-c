@@ -21,3 +21,5 @@ jobs:
       run: make check
     - name: make py
       run: make clean py
+    - name: test py
+      run: python3 hashtable_test.py
