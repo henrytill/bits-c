@@ -15,6 +15,7 @@ SOURCES =\
 	base64.c \
 	demo_oop.c \
 	hashtable.c \
+	hashtable_test.c \
 	overflow.c \
 	poll.c \
 	threadtest.c \
@@ -23,7 +24,7 @@ SOURCES =\
 BIN =\
 	base64 \
 	demo_oop \
-	hashtable \
+	hashtable_test \
 	overflow \
 	poll \
 	threadtest \
@@ -36,14 +37,16 @@ OBJ =\
 .PHONY: all
 all: $(BIN)
 
+alloc.o: alloc.c alloc.h
+
 fnv.o: fnv.c fnv.h
 
-alloc.o: alloc.c alloc.h
+hashtable.o: hashtable.c hashtable.h
+
+hashtable_test: hashtable_test.c hashtable.o alloc.o fnv.o
 
 base64: base64.c
 	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -lcrypto -o $@
-
-hashtable: hashtable.c alloc.o fnv.o
 
 overflow: overflow.c
 	$(CC) $(CFLAGS) -ftrapv $(.ALLSRC) $(LDFLAGS) -o $@
@@ -65,7 +68,7 @@ window: window.c
 .PHONY: check test
 check test: $(BIN)
 	./base64 >/dev/null
-	./hashtable >/dev/null
+	./hashtable_test >/dev/null
 	./threadtest foo bar baz >/dev/null
 
 .PHONY: lint

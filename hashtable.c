@@ -12,6 +12,8 @@
 #include "fnv.h"
 #include "macro.h"
 
+#include "hashtable.h"
+
 /// Returns 1 if x is a power of 2
 #define ISPOW2(x) (((x) & ((x)-1)) == 0)
 
@@ -26,7 +28,7 @@ struct table {
   struct entry *columns;
 };
 
-static struct table *table_create(const size_t columns_len) {
+struct table *table_create(const size_t columns_len) {
   if (!ISPOW2(columns_len)) {
     (void)fprintf(stderr, "%s: columns_len must be a power of 2\n", __func__);
     return NULL;
@@ -37,7 +39,7 @@ static struct table *table_create(const size_t columns_len) {
   return ret;
 }
 
-static void table_destroy(struct table *t) {
+void table_destroy(struct table *t) {
   if (t == NULL || t->columns == NULL) {
     return;
   }
@@ -60,7 +62,7 @@ static uint64_t get_index(size_t columns_len, const char *key) {
   return hash & (uint64_t)(columns_len - 1);
 }
 
-static int table_put(struct table *t, const char *key, void *value) {
+int table_put(struct table *t, const char *key, void *value) {
   if (t == NULL || t->columns == NULL) {
     return -1;
   }
@@ -98,7 +100,7 @@ static int table_put(struct table *t, const char *key, void *value) {
   return 0;
 }
 
-static void *table_get(struct table *t, const char *key) {
+void *table_get(struct table *t, const char *key) {
   if (t == NULL || t->columns == NULL) {
     return NULL;
   }
@@ -113,42 +115,4 @@ static void *table_get(struct table *t, const char *key) {
     return NULL;
   }
   return curr->value;
-}
-
-static const struct test_vector {
-  const char *key;
-  char *value;
-} TEST_VECTORS[] = {
-#define X(prefix) {#prefix "_key", #prefix "_value"},
-#include "hashtable_vectors.def"
-#undef X
-  {NULL, NULL},
-};
-
-int main(void) {
-  extern const struct test_vector TEST_VECTORS[];
-
-  if (fnv_hash_test() == false) {
-    return EXIT_FAILURE;
-  }
-
-  int ret = EXIT_FAILURE;
-  const char *key = NULL;
-  struct table *t = table_create(8);
-
-  for (size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
-    table_put(t, key, TEST_VECTORS[i].value);
-  }
-
-  for (size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
-    char *value = table_get(t, key);
-    if (strcmp(TEST_VECTORS[i].value, value) != 0) {
-      goto out_table_destroy;
-    }
-  }
-
-  ret = EXIT_SUCCESS;
-out_table_destroy:
-  table_destroy(t);
-  return ret;
 }

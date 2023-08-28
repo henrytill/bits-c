@@ -2,7 +2,7 @@
 *.o
 base64
 demo_oop
-hashtable
+hashtable_test
 overflow
 poll
 threadtest
