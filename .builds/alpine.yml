@@ -4,6 +4,8 @@ packages:
   - mesa-dev
   - openssl-dev
   - openssl-libs-static
+  - py3-setuptools
+  - python3-dev
 secrets:
   - fff26745-7b06-40da-b5b9-5f4bd6f29596
 sources:
@@ -21,3 +23,6 @@ tasks:
   - test: |
       cd c-bits
       make check
+  - build_py: |
+      cd c-bits
+      make clean py

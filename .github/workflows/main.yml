@@ -14,8 +14,10 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt install -yqq --no-install-recommends \
-          libopengl-dev libglew-dev
+          libopengl-dev libglew-dev python3-setuptools
     - name: make
       run: make
     - name: make check
       run: make check
+    - name: make py
+      run: make clean py

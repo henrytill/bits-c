@@ -1,5 +1,7 @@
 /.vscode
+/build
 *.o
+*.so
 base64
 demo_oop
 hashtable_test

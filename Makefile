@@ -8,6 +8,8 @@ LDFLAGS =
 WINDOW_CFLAGS = $(CFLAGS)
 WINDOW_LDFLAGS = $(LDFLAGS)
 
+PYTHON3 = python3
+
 -include config.mk
 
 SOURCES =\
@@ -65,6 +67,10 @@ window: window.c
 .c:
 	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
 
+.PHONY: py
+py: hashtable.c hashtable_wrapper.c setup.py
+	$(PYTHON3) setup.py build_ext --inplace
+
 .PHONY: check test
 check test: $(BIN)
 	./base64 >/dev/null
@@ -78,6 +84,7 @@ lint:
 .PHONY: clean
 clean:
 	rm -f $(BIN) $(OBJ)
+	rm -rf build
 
 # Local Variables:
 # mode: makefile-bsdmake
