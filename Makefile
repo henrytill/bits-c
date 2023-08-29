@@ -37,7 +37,7 @@ OBJ =\
 	fnv.o
 
 .PHONY: all
-all: $(BIN)
+all: $(BIN) py
 
 alloc.o: alloc.c alloc.h
 
@@ -68,14 +68,15 @@ window: window.c
 	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
 
 .PHONY: py
-py: hashtable.c hashtable_wrapper.c setup.py
+py:
 	$(PYTHON3) setup.py build_ext --inplace
 
 .PHONY: check test
-check test: $(BIN)
-	./base64 >/dev/null
-	./hashtable_test >/dev/null
-	./threadtest foo bar baz >/dev/null
+check test: $(BIN) py
+	./base64
+	./hashtable_test
+	./threadtest foo bar baz
+	$(PYTHON3) hashtable_test.py
 
 .PHONY: lint
 lint:

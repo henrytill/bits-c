@@ -24,9 +24,3 @@ tasks:
   - test: |
       cd c-bits
       make check
-  - build_py: |
-      cd c-bits
-      make clean py
-  - test_py: |
-      cd c-bits
-      python3 hashtable_test.py
