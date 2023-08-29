@@ -49,10 +49,11 @@ static PyObject *py_table_put(PyObject *self, PyObject *args) {
     return NULL;
   }
 
-  // Increment reference count for the Python object to keep it alive
-  Py_INCREF(value);
-
   int result = table_put(t, key, (void *)value);
+  if (result == 0) {
+    // Increment reference count for the Python object to keep it alive
+    Py_INCREF(value);
+  }
   return PyLong_FromLong(result);
 }
 
@@ -69,6 +70,7 @@ static PyObject *py_table_get(PyObject *self, PyObject *args) {
     PyErr_SetString(PyExc_RuntimeError, "Invalid table capsule");
     return NULL;
   }
+
   void *result = table_get(t, key);
   if (result == NULL) {
     Py_RETURN_NONE;
