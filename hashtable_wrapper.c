@@ -7,7 +7,8 @@
 static PyObject *py_table_create(PyObject *self, PyObject *args) {
   size_t columns_len;
 
-  if (!PyArg_ParseTuple(args, "n", &columns_len)) {
+  int rc = PyArg_ParseTuple(args, "n", &columns_len);
+  if (rc == 0) {
     return NULL;
   }
   struct table *t = table_create(columns_len);
@@ -21,10 +22,11 @@ static PyObject *py_table_create(PyObject *self, PyObject *args) {
 static PyObject *py_table_destroy(PyObject *self, PyObject *args) {
   PyObject *py_table;
 
-  if (!PyArg_ParseTuple(args, "O", &py_table)) {
+  int rc = PyArg_ParseTuple(args, "O", &py_table);
+  if (rc == 0) {
     return NULL;
   }
-  struct table *t = (struct table *)PyCapsule_GetPointer(py_table, "hashtable.table");
+  struct table *t = PyCapsule_GetPointer(py_table, "hashtable.table");
   if (t == NULL) {
     PyErr_SetString(PyExc_RuntimeError, "Invalid table capsule");
     return NULL;
@@ -37,10 +39,11 @@ static PyObject *py_table_put(PyObject *self, PyObject *args) {
   PyObject *py_table, *value;
   const char *key;
 
-  if (!PyArg_ParseTuple(args, "OsO", &py_table, &key, &value)) {
+  int rc = PyArg_ParseTuple(args, "OsO", &py_table, &key, &value);
+  if (rc == 0) {
     return NULL;
   }
-  struct table *t = (struct table *)PyCapsule_GetPointer(py_table, "hashtable.table");
+  struct table *t = PyCapsule_GetPointer(py_table, "hashtable.table");
   if (t == NULL) {
     PyErr_SetString(PyExc_RuntimeError, "Invalid table capsule");
     return NULL;
@@ -57,10 +60,11 @@ static PyObject *py_table_get(PyObject *self, PyObject *args) {
   PyObject *py_table;
   const char *key;
 
-  if (!PyArg_ParseTuple(args, "Os", &py_table, &key)) {
+  int rc = PyArg_ParseTuple(args, "Os", &py_table, &key);
+  if (rc == 0) {
     return NULL;
   }
-  struct table *t = (struct table *)PyCapsule_GetPointer(py_table, "hashtable.table");
+  struct table *t = PyCapsule_GetPointer(py_table, "hashtable.table");
   if (t == NULL) {
     PyErr_SetString(PyExc_RuntimeError, "Invalid table capsule");
     return NULL;
