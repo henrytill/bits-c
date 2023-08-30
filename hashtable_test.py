@@ -35,7 +35,9 @@ class TestHashtable(unittest.TestCase):
 
 
 class TestHashtableWithHypothesis(unittest.TestCase):
-    @given(st.dictionaries(st.text().filter(lambda x: "\x00" not in x), st.text()))
+    st_filter = lambda x: "\x00" not in x
+
+    @given(st.dictionaries(st.text().filter(st_filter), st.text()))
     def test_put_get_with_random_data(self, input_dict):
         table = hashtable.create(16)
 
@@ -50,7 +52,7 @@ class TestHashtableWithHypothesis(unittest.TestCase):
 
         hashtable.destroy(table)
 
-    @given(st.text().filter(lambda x: "\x00" not in x))
+    @given(st.text().filter(st_filter))
     def test_non_existent_key_returns_none(self, key):
         table = hashtable.create(16)
         self.assertIsNone(hashtable.get(table, key))
