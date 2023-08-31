@@ -5,9 +5,12 @@ from hypothesis import given, strategies as st
 import hashtable
 
 
+HASHTABLE_SIZE = 16
+
+
 class TestHashtable(unittest.TestCase):
     def setUp(self):
-        self.table = hashtable.create(16)
+        self.table = hashtable.create(HASHTABLE_SIZE)
 
     def tearDown(self):
         hashtable.destroy(self.table)
@@ -37,26 +40,26 @@ class TestHashtable(unittest.TestCase):
 class TestHashtableWithHypothesis(unittest.TestCase):
     st_filter = lambda x: "\x00" not in x
 
+    def setUp(self):
+        self.table = hashtable.create(HASHTABLE_SIZE)
+
+    def tearDown(self):
+        hashtable.destroy(self.table)
+
     @given(st.dictionaries(st.text().filter(st_filter), st.text()))
     def test_put_get_with_random_data(self, input_dict):
-        table = hashtable.create(16)
-
         # Insert all key-value pairs from the input_dict into the hashtable
         for key, value in input_dict.items():
-            hashtable.put(table, key, value)
+            hashtable.put(self.table, key, value)
 
         # Check that all inserted key-value pairs can be retrieved
         for key, value in input_dict.items():
-            retrieved_value = hashtable.get(table, key)
+            retrieved_value = hashtable.get(self.table, key)
             self.assertEqual(retrieved_value, value)
-
-        hashtable.destroy(table)
 
     @given(st.text().filter(st_filter))
     def test_non_existent_key_returns_none(self, key):
-        table = hashtable.create(16)
-        self.assertIsNone(hashtable.get(table, key))
-        hashtable.destroy(table)
+        self.assertIsNone(hashtable.get(self.table, key))
 
 
 if __name__ == "__main__":
