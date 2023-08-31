@@ -104,8 +104,12 @@ void *table_get(struct table *t, const char *key) {
   if (t == NULL || t->columns == NULL) {
     return NULL;
   }
+  if (key == NULL) {
+    return NULL;
+  }
 
   const uint64_t index = get_index(t->columns_len, key);
+  debug_printf("%s: key: %s, index: %" PRIu64 "\n", __func__, key, index);
   struct entry *curr = t->columns + index;
 
   while (curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0) {
