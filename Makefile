@@ -74,8 +74,8 @@ py:
 .PHONY: check test
 check test: $(BIN) py
 	./base64
-	./hashtable_test
 	./threadtest foo bar baz
+	./hashtable_test
 	$(PYTHON3) hashtable_test.py
 
 .PHONY: lint
