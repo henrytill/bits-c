@@ -1,12 +1,13 @@
 #!/bin/sh
 
+PYTHON3=
 X11_PREFIX=
 PKG_PREFIX=
 WINDOW_LDFLAGS_EXTRA=
 
 UNAME=$(uname -s)
 
-case "${UNAME}" in
+case "$UNAME" in
     NetBSD)
 	PYTHON3="python3.10"
         X11_PREFIX="/usr/X11R7"
