@@ -30,7 +30,7 @@ struct table {
 
 struct table *table_create(const size_t columns_len) {
   if (!ISPOW2(columns_len)) {
-    (void)fprintf(stderr, "%s: columns_len must be a power of 2\n", __func__);
+    debug_fprintf(stderr, "%s: columns_len must be a power of 2\n", __func__);
     return NULL;
   }
   struct table *ret = ecalloc(1, sizeof(*ret));

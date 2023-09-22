@@ -17,9 +17,11 @@
 // General
 
 #ifdef DEBUG
-#define debug_printf(fmt, ...) printf(fmt, ##__VA_ARGS__)
+#define debug_printf(fmt, ...)          printf(fmt, ##__VA_ARGS__)
+#define debug_fprintf(stream, fmt, ...) (void)fprintf(stream, fmt, ##__VA_ARGS__)
 #else
-#define debug_printf(fmt, ...) ({})
+#define debug_printf(fmt, ...)          ({})
+#define debug_fprintf(stream, fmt, ...) ({})
 #endif
 
 // OOP
