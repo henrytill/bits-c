@@ -5,6 +5,7 @@
 *.so
 base64
 demo_oop
+curling
 hashtable_test
 overflow
 poll

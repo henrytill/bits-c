@@ -1,5 +1,6 @@
 image: netbsd/latest
 packages:
+  - curl
   - glew
   - python310
   - py310-setuptools

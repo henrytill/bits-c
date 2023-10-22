@@ -1,5 +1,6 @@
 image: openbsd/latest
 packages:
+  - curl
   - glew
   - python3
   - py3-setuptools

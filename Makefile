@@ -5,6 +5,9 @@ CC = cc
 CFLAGS = -std=gnu11 -Wall -Wextra -Wconversion -Wsign-conversion -g
 LDFLAGS =
 
+CURLING_CFLAGS = $(CFLAGS)
+CURLING_LDFLAGS = $(LDFLAGS)
+
 WINDOW_CFLAGS = $(CFLAGS)
 WINDOW_LDFLAGS = $(LDFLAGS)
 
@@ -15,6 +18,7 @@ PYTHON3 = python3
 SOURCES =\
 	alloc.c \
 	base64.c \
+	curling.c \
 	demo_oop.c \
 	hashtable.c \
 	hashtable_test.c \
@@ -25,6 +29,7 @@ SOURCES =\
 
 BIN =\
 	base64 \
+	curling \
 	demo_oop \
 	hashtable_test \
 	overflow \
@@ -50,6 +55,9 @@ hashtable_test: hashtable_test.c hashtable.o alloc.o fnv.o
 base64: base64.c
 	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -lcrypto -o $@
 
+curling: curling.c
+	$(CC) $(CURLING_CFLAGS) $(.ALLSRC) $(CURLING_LDFLAGS) -lcurl -o $@
+
 overflow: overflow.c
 	$(CC) $(CFLAGS) -ftrapv $(.ALLSRC) $(LDFLAGS) -o $@
 
@@ -74,6 +82,7 @@ py:
 .PHONY: check test
 check test: $(BIN) py
 	./base64
+	./curling
 	./threadtest foo bar baz
 	./hashtable_test
 	$(PYTHON3) hashtable_test.py

@@ -1,5 +1,6 @@
 image: alpine/latest
 packages:
+  - curl-dev
   - glew-dev
   - mesa-dev
   - openssl-dev
@@ -16,6 +17,7 @@ tasks:
       cd c-bits
       cat <<EOF >config.mk
       LDFLAGS += -static
+      CURLING_LDFLAGS =
       WINDOW_LDFLAGS =
       EOF
   - build: |

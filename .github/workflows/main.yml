@@ -14,7 +14,8 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt install -yqq --no-install-recommends \
-          libopengl-dev libglew-dev python3-setuptools python3-hypothesis
+          libcurl4-openssl-dev libopengl-dev libglew-dev \
+          python3-setuptools python3-hypothesis
     - name: make
       run: make
     - name: make check
