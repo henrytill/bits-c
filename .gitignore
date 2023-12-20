@@ -1,5 +1,7 @@
 /.vscode
-/build
+/build*/
+/zig-cache/
+/zig-out/
 /.hypothesis
 *.o
 *.so

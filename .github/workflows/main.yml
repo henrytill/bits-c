@@ -20,3 +20,11 @@ jobs:
       run: make
     - name: make check
       run: make check
+  zig:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: goto-bus-stop/setup-zig@v2
+      with:
+        version: 0.11.0
+    - run: zig build test --summary all
