@@ -58,6 +58,7 @@ pub fn build(b: *std.Build) void {
     hashtable_tests.linkLibrary(liballoc);
     hashtable_tests.linkLibrary(libfnv);
     hashtable_tests.linkLibrary(libhashtable);
+    b.installArtifact(hashtable_tests);
 
     const run_hashtable_tests = b.addRunArtifact(hashtable_tests);
 
