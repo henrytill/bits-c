@@ -14,10 +14,10 @@ test "roundtrip i32" {
     try testing.expectEqual(rc, 0);
 
     const val_ptr: *anyopaque = c.table_get(t, key) orelse return error.Failure;
-    const actual_ptr: *i32 = @ptrCast(@alignCast(val_ptr));
-    const actual: i32 = actual_ptr.*;
+    const actual: @TypeOf(&expected) = @ptrCast(@alignCast(val_ptr));
 
-    try testing.expectEqual(expected, actual);
+    try testing.expectEqual(&expected, actual);
+    try testing.expectEqual(expected, actual.*);
 }
 
 test "roundtrip string" {
@@ -34,5 +34,8 @@ test "roundtrip string" {
     const val_ptr: *anyopaque = c.table_get(t, key) orelse return error.Failure;
     const actual: @TypeOf(expected) = @ptrCast(@alignCast(val_ptr));
 
-    try testing.expectEqual(expected, actual);
+    try testing.expectEqual(expected.ptr, actual);
+    try testing.expectEqualStrings(expected, actual);
+    try testing.expectEqual(expected[5], 0);
+    try testing.expectEqual(actual[5], 0);
 }
