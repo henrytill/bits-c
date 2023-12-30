@@ -1,3 +1,5 @@
+#include "fnv.h"
+
 #include <assert.h>
 #include <inttypes.h>
 #include <limits.h>
@@ -7,8 +9,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "fnv.h"
 
 // https://datatracker.ietf.org/doc/html/draft-eastlake-fnv-03#page-15
 static const struct test_vector {

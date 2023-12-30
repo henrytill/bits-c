@@ -1,3 +1,5 @@
+#include "hashtable.h"
+
 #include <assert.h>
 #include <inttypes.h>
 #include <limits.h>
@@ -11,8 +13,6 @@
 #include "alloc.h"
 #include "fnv.h"
 #include "macro.h"
-
-#include "hashtable.h"
 
 struct entry {
     struct entry *next;
