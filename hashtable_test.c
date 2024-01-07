@@ -24,9 +24,10 @@ int main(void) {
 
     int ret = EXIT_FAILURE;
     const char *key = NULL;
+    char *value = NULL;
     struct table *t = table_create(8);
 
-    char *value = table_get(t, "not_in_table");
+    value = table_get(t, "not_in_table");
     if (value != NULL) {
         goto out_table_destroy;
     }
