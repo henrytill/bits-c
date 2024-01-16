@@ -19,6 +19,10 @@ static PyObject *py_table_create(PyObject *self, PyObject *args) {
     return PyCapsule_New(t, "hashtable.table", NULL);
 }
 
+static void decref(void *value) {
+    Py_DECREF((PyObject *)value);
+}
+
 static PyObject *py_table_destroy(PyObject *self, PyObject *args) {
     PyObject *py_table = NULL;
 
@@ -31,7 +35,7 @@ static PyObject *py_table_destroy(PyObject *self, PyObject *args) {
         PyErr_SetString(PyExc_RuntimeError, "Invalid table capsule");
         return NULL;
     }
-    table_destroy(t);
+    table_destroy(t, NULL); // FIXME
     Py_RETURN_NONE;
 }
 

@@ -41,7 +41,7 @@ struct table;
 
 struct table *table_create(size_t columns_len);
 
-void table_destroy(struct table *t);
+void table_destroy(struct table *t, void finalize(void *));
 
 int table_put(struct table *t, const char *key, void *value);
 

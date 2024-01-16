@@ -4,7 +4,7 @@ const testing = std.testing;
 
 test "roundtrip i32" {
     const t = c.table_create(8) orelse return error.Failure;
-    defer c.table_destroy(t);
+    defer c.table_destroy(t, null);
 
     const key = "key";
     const expected: i32 = 42;
@@ -22,7 +22,7 @@ test "roundtrip i32" {
 
 test "roundtrip string" {
     const t = c.table_create(8) orelse return error.Failure;
-    defer c.table_destroy(t);
+    defer c.table_destroy(t, null);
 
     const key = "key";
     const expected = "value";

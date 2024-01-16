@@ -36,7 +36,7 @@ struct table *table_create(const size_t columns_len) {
     return ret;
 }
 
-void table_destroy(struct table *t) {
+void table_destroy(struct table *t, void finalize(void *)) {
     if (t == NULL || t->columns == NULL) {
         return;
     }
@@ -45,8 +45,14 @@ void table_destroy(struct table *t) {
     for (size_t i = 0; i < t->columns_len; ++i) {
         for (curr = t->columns[i].next; curr != NULL;) {
             next = curr->next;
+            if (finalize != NULL && curr->value != NULL) {
+                finalize(curr->value);
+            }
             free(curr);
             curr = next;
+        }
+        if (finalize != NULL && t->columns[i].value != NULL) {
+            finalize(t->columns[i].value);
         }
     }
     free(t->columns);

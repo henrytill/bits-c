@@ -50,6 +50,6 @@ int main(void) {
 
     ret = EXIT_SUCCESS;
 out_table_destroy:
-    table_destroy(t);
+    table_destroy(t, NULL);
     return ret;
 }
