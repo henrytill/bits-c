@@ -4,6 +4,11 @@ cc "$0"
 exec ./a.out "$@"
 #endif
 
+/*
+ * To run:
+ *
+ *     sh script.c
+ */
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
