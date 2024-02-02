@@ -25,6 +25,14 @@ struct table {
     struct entry *columns;
 };
 
+///
+/// Create a new table
+///
+/// @param columns_len The number of columns in the table
+/// @return A new table
+///
+/// @note The number of columns must be a power of 2
+///
 struct table *table_create(const size_t columns_len) {
     if (!ISPOW2(columns_len)) {
         debug_fprintf(stderr, "%s: columns_len must be a power of 2\n", __func__);
@@ -36,6 +44,12 @@ struct table *table_create(const size_t columns_len) {
     return ret;
 }
 
+///
+/// Destroy a table
+///
+/// @param t The table to destroy
+/// @param finalize A function to finalize the value of each entry
+///
 void table_destroy(struct table *t, void finalize(void *)) {
     if (t == NULL || t->columns == NULL) {
         return;
@@ -59,12 +73,29 @@ void table_destroy(struct table *t, void finalize(void *)) {
     free(t);
 }
 
+///
+/// Get the index of a key
+///
+/// @param columns_len The number of columns in the table
+/// @param key The key to hash
+/// @return The index of the key
+///
+/// @note The number of columns must be a power of 2
+///
 static uint64_t get_index(size_t columns_len, const char *key) {
     assert(ISPOW2(columns_len));
     const uint64_t hash = fnv_hash(strlen(key) + 1, (const unsigned char *)key);
     return hash & (uint64_t)(columns_len - 1);
 }
 
+///
+/// Put a key-value pair into a table
+///
+/// @param t The table to put the key-value pair into
+/// @param key The key to put
+/// @param value The value to put
+/// @return 0 on success, -1 on failure
+///
 int table_put(struct table *t, const char *key, void *value) {
     if (t == NULL || t->columns == NULL) {
         return -1;
@@ -103,6 +134,13 @@ int table_put(struct table *t, const char *key, void *value) {
     return 0;
 }
 
+///
+/// Get a value from a table
+///
+/// @param t The table to get the value from
+/// @param key The key to get
+/// @return The value of the key, or NULL if the key is not found
+///
 void *table_get(struct table *t, const char *key) {
     if (t == NULL || t->columns == NULL) {
         return NULL;
