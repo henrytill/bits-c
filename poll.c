@@ -4,12 +4,14 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-static inline void handle_error(const char *msg) {
+static inline void handle_error(const char *msg)
+{
     perror(msg);
     exit(EXIT_FAILURE);
 }
 
-static nfds_t handle_events(nfds_t nfds_open, nfds_t nfds, struct pollfd *pfds) {
+static nfds_t handle_events(nfds_t nfds_open, nfds_t nfds, struct pollfd *pfds)
+{
     char buf[10];
     ssize_t num_bytes = 0;
 
@@ -42,7 +44,8 @@ static nfds_t handle_events(nfds_t nfds_open, nfds_t nfds, struct pollfd *pfds) 
     return nfds_open;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     int ready = -1;
     nfds_t nfds_open = 0;
     nfds_t nfds = 0;

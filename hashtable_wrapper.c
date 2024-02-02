@@ -4,7 +4,8 @@
 
 #include "hashtable.h"
 
-static PyObject *py_table_create(PyObject *self, PyObject *args) {
+static PyObject *py_table_create(PyObject *self, PyObject *args)
+{
     size_t columns_len = 0;
 
     int rc = PyArg_ParseTuple(args, "n", &columns_len);
@@ -19,11 +20,13 @@ static PyObject *py_table_create(PyObject *self, PyObject *args) {
     return PyCapsule_New(t, "hashtable.table", NULL);
 }
 
-static void decref(void *value) {
+static void decref(void *value)
+{
     Py_DECREF((PyObject *)value);
 }
 
-static PyObject *py_table_destroy(PyObject *self, PyObject *args) {
+static PyObject *py_table_destroy(PyObject *self, PyObject *args)
+{
     PyObject *py_table = NULL;
 
     int rc = PyArg_ParseTuple(args, "O", &py_table);
@@ -39,7 +42,8 @@ static PyObject *py_table_destroy(PyObject *self, PyObject *args) {
     Py_RETURN_NONE;
 }
 
-static PyObject *py_table_put(PyObject *self, PyObject *args) {
+static PyObject *py_table_put(PyObject *self, PyObject *args)
+{
     PyObject *py_table = NULL;
     PyObject *value = NULL;
     const char *key = NULL;
@@ -62,7 +66,8 @@ static PyObject *py_table_put(PyObject *self, PyObject *args) {
     return PyLong_FromLong(result);
 }
 
-static PyObject *py_table_get(PyObject *self, PyObject *args) {
+static PyObject *py_table_get(PyObject *self, PyObject *args)
+{
     PyObject *py_table = NULL;
     const char *key = NULL;
 
@@ -99,6 +104,7 @@ static struct PyModuleDef hashtable_module = {
     hashtable_methods,
 };
 
-PyMODINIT_FUNC PyInit_hashtable(void) {
+PyMODINIT_FUNC PyInit_hashtable(void)
+{
     return PyModule_Create(&hashtable_module);
 }

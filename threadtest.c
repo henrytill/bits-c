@@ -15,13 +15,15 @@ struct thread_info {
 
 static struct thread_info info[MAX_THREADS];
 
-static void handle_errno(int err, const char *msg) {
+static void handle_errno(int err, const char *msg)
+{
     errno = err;
     perror(msg);
     exit(EXIT_FAILURE);
 }
 
-static void *start(void *data) {
+static void *start(void *data)
+{
     struct thread_info *info = data;
     printf("Thread %d: top of stack near %p; argv_string=%s\n",
            info->thread_num, (void *)&info, info->arg);
@@ -31,7 +33,8 @@ static void *start(void *data) {
     return info->arg;
 }
 
-static void run_threads(size_t stack_size, int num_threads, char *args[]) {
+static void run_threads(size_t stack_size, int num_threads, char *args[])
+{
     printf("num_threads: %d\n", num_threads);
     if (num_threads < 1) {
         return;
@@ -76,7 +79,8 @@ static void run_threads(size_t stack_size, int num_threads, char *args[]) {
     }
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     int opt = -1;
     size_t stack_size = 0;
 

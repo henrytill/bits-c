@@ -18,7 +18,8 @@
 
 static GLint att[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None};
 
-static void print_gl_version(void) {
+static void print_gl_version(void)
+{
     int major = 0;
     int minor = 0;
     glGetIntegerv(GL_MAJOR_VERSION, &major);
@@ -26,7 +27,8 @@ static void print_gl_version(void) {
     printf("OpenGL Version: %d.%d\n", major, minor);
 }
 
-static void print_glew_version(void) {
+static void print_glew_version(void)
+{
     const GLubyte *version = glewGetString(GLEW_VERSION);
     printf("GLEW Version: %s\n", version);
 }
@@ -34,7 +36,8 @@ static void print_glew_version(void) {
 void GLAPIENTRY message_callback(GLenum source, GLenum type,
                                  GLuint id, GLenum severity,
                                  GLsizei length, const GLchar *message,
-                                 const void *user) {
+                                 const void *user)
+{
     (void)source;
     (void)id;
     (void)length;
@@ -46,7 +49,8 @@ void GLAPIENTRY message_callback(GLenum source, GLenum type,
                   type, severity, message);
 }
 
-static void draw_quad(void) {
+static void draw_quad(void)
+{
     glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -70,7 +74,8 @@ static void draw_quad(void) {
     glEnd();
 }
 
-int main(void) {
+int main(void)
+{
     int ret = EXIT_FAILURE;
 
     Display *dpy = XOpenDisplay(NULL);

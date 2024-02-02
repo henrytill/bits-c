@@ -15,7 +15,8 @@ static const struct test_vector {
     {NULL, NULL},
 };
 
-int main(void) {
+int main(void)
+{
     extern const struct test_vector TEST_VECTORS[];
 
     if (fnv_hash_test() == false) {

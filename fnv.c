@@ -28,7 +28,8 @@ static const uint64_t FNV_PRIME = 0x100000001b3;
 _Static_assert(CHAR_BIT == 8, "CHAR_BIT != 8");
 
 /// Return FNV-1a hash of input
-uint64_t fnv_hash(const size_t data_len, const unsigned char data[data_len]) {
+uint64_t fnv_hash(const size_t data_len, const unsigned char data[data_len])
+{
     extern const uint64_t FNV_OFFSET_BASIS;
     extern const uint64_t FNV_PRIME;
 
@@ -42,7 +43,8 @@ uint64_t fnv_hash(const size_t data_len, const unsigned char data[data_len]) {
     return hash;
 }
 
-static bool check(const char *input, const uint64_t expected, const uint64_t actual) {
+static bool check(const char *input, const uint64_t expected, const uint64_t actual)
+{
     if (expected == actual) {
         return true;
     }
@@ -51,7 +53,8 @@ static bool check(const char *input, const uint64_t expected, const uint64_t act
     return false;
 }
 
-bool fnv_hash_test(void) {
+bool fnv_hash_test(void)
+{
     extern const struct test_vector TEST_VECTORS[];
 
     printf("testing fnv_hash\n");

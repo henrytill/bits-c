@@ -61,12 +61,13 @@
     }                                                        \
 })
 
-#define DEFINE_TRIVIAL_CLEANUP_FUNC(type, func)                                    \
-    static inline void func##p(type *p) { /* NOLINT(bugprone-macro-parentheses) */ \
-        if (*p) {                                                                  \
-            func(*p);                                                              \
-            debug_printf("%s(*%p)\n", #func, (void *)p);                           \
-        }                                                                          \
+#define DEFINE_TRIVIAL_CLEANUP_FUNC(type, func)          \
+    static inline void func##p(type *p)                  \
+    { /* NOLINT(bugprone-macro-parentheses) */           \
+        if (*p) {                                        \
+            func(*p);                                    \
+            debug_printf("%s(*%p)\n", #func, (void *)p); \
+        }                                                \
     }
 
 #endif // #define C_BITS_MACRO
