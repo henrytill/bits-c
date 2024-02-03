@@ -9,7 +9,7 @@ UNAME=$(uname -s)
 
 case "$UNAME" in
     NetBSD)
-	PYTHON3="python3.10"
+	PYTHON3="python3.11"
         X11_PREFIX="/usr/X11R7"
         PKG_PREFIX="/usr/pkg"
         CURLING_LDFLAGS_EXTRA="-Wl,-R,${PKG_PREFIX}/lib/"
