@@ -7,8 +7,6 @@
 
 #define STATIC_ASSERT(e) _Static_assert((e), #e)
 
-#define BASE64_STRLEN(s) (((strlen((s)) + 2) / 3) * 4)
-
 #define TEST(e)                                                       \
     if (!(e)) {                                                       \
         (void)fprintf(stderr, "%s:%d: %s\n", __FILE__, __LINE__, #e); \
@@ -24,6 +22,8 @@
     X("foob", "Zm9vYg==")    \
     X("fooba", "Zm9vYmE=")   \
     X("foobar", "Zm9vYmFy")
+
+#define BASE64_STRLEN(s) (((strlen((s)) + 2) / 3) * 4)
 
 #define X(s, b) STATIC_ASSERT(BASE64_STRLEN(s) == strlen(b));
 TEST_VECTORS_ENTRIES
