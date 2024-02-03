@@ -30,11 +30,10 @@
 
 #define SAME_TYPE(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
 
-#define CONTAINER_OF_(ptr, type, member) ({                                          \
-    void *__mptr = (void *)(ptr);                                                    \
-    static_assert(SAME_TYPE(*(ptr), ((type *)0)->member) || SAME_TYPE(*(ptr), void), \
-                  "pointer type mismatch");                                          \
-    ((type *)(__mptr - offsetof(type, member)));                                     \
+#define CONTAINER_OF_(ptr, type, member) ({                                                                    \
+    void *__mptr = (void *)(ptr);                                                                              \
+    static_assert(SAME_TYPE(*(ptr), ((type *)0)->member) || SAME_TYPE(*(ptr), void), "pointer type mismatch"); \
+    ((type *)(__mptr - offsetof(type, member)));                                                               \
 })
 
 #ifdef HAS_GENERIC
