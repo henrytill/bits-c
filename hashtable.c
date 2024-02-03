@@ -25,14 +25,6 @@ struct table {
     struct entry *columns;
 };
 
-///
-/// Create a new table
-///
-/// @param columns_len The number of columns in the table
-/// @return A new table
-///
-/// @note The number of columns must be a power of 2
-///
 struct table *table_create(const size_t columns_len)
 {
     if (!ISPOW2(columns_len)) {
@@ -45,12 +37,6 @@ struct table *table_create(const size_t columns_len)
     return ret;
 }
 
-///
-/// Destroy a table
-///
-/// @param t The table to destroy
-/// @param finalize A function to finalize the value of each entry
-///
 void table_destroy(struct table *t, void finalize(void *))
 {
     if (t == NULL || t->columns == NULL) {
@@ -91,14 +77,6 @@ static uint64_t get_index(size_t columns_len, const char *key)
     return hash & (uint64_t)(columns_len - 1);
 }
 
-///
-/// Put a key-value pair into a table
-///
-/// @param t The table to put the key-value pair into
-/// @param key The key to put
-/// @param value The value to put
-/// @return 0 on success, -1 on failure
-///
 int table_put(struct table *t, const char *key, void *value)
 {
     if (t == NULL || t->columns == NULL) {
@@ -138,13 +116,6 @@ int table_put(struct table *t, const char *key, void *value)
     return 0;
 }
 
-///
-/// Get a value from a table
-///
-/// @param t The table to get the value from
-/// @param key The key to get
-/// @return The value of the key, or NULL if the key is not found
-///
 void *table_get(struct table *t, const char *key)
 {
     if (t == NULL || t->columns == NULL) {
