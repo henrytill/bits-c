@@ -19,10 +19,6 @@ int main(void)
 {
     extern const struct test_vector TEST_VECTORS[];
 
-    if (fnv_hash_test() == false) {
-        return EXIT_FAILURE;
-    }
-
     int ret = EXIT_FAILURE;
     const char *key = NULL;
     char *value = NULL;

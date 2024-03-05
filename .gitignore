@@ -9,6 +9,7 @@ a.out
 base64
 demo_oop
 curling
+fnv_test
 hashtable_test
 overflow
 poll

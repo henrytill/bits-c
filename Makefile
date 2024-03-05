@@ -20,6 +20,8 @@ SOURCES =\
 	base64.c \
 	curling.c \
 	demo_oop.c \
+	fnv.c \
+	fnv_test.c \
 	hashtable.c \
 	hashtable_test.c \
 	overflow.c \
@@ -31,6 +33,7 @@ BIN =\
 	base64 \
 	curling \
 	demo_oop \
+	fnv_test \
 	hashtable_test \
 	overflow \
 	poll \
@@ -47,6 +50,8 @@ all: $(BIN) py
 alloc.o: alloc.c alloc.h
 
 fnv.o: fnv.c fnv.h
+
+fnv_test: fnv_test.c fnv.o
 
 hashtable.o: hashtable.c hashtable.h
 
@@ -83,6 +88,7 @@ py:
 check test: $(BIN) py
 	./base64
 	./curling
+	./fnv_test
 	./threadtest foo bar baz
 	./hashtable_test
 	$(PYTHON3) hashtable_test.py
