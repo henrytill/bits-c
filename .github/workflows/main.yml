@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install Dependencies
       run: |
         sudo apt install -yqq --no-install-recommends \
@@ -23,7 +23,7 @@ jobs:
   zig:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: goto-bus-stop/setup-zig@v2
       with:
         version: 0.11.0
