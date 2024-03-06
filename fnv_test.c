@@ -21,8 +21,10 @@ static bool check(const char *input, const uint64_t expected, const uint64_t act
     if (expected == actual) {
         return true;
     }
+
     (void)fprintf(stderr, "input: \"%s\", expected: %" PRIu64 ", actual: %" PRIu64 "\n",
                   input, expected, actual);
+
     return false;
 }
 
