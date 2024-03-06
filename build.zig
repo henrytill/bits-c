@@ -24,6 +24,18 @@ pub fn build(b: *std.Build) void {
     libfnv.linkLibC();
     b.installArtifact(libfnv);
 
+    const fnv_test_exe = b.addExecutable(.{
+        .name = "fnv_test",
+        .root_source_file = .{ .path = "fnv_test.c" },
+        .target = target,
+        .optimize = optimize,
+    });
+
+    fnv_test_exe.linkLibC();
+    fnv_test_exe.addIncludePath(.{ .path = "." });
+    fnv_test_exe.linkLibrary(libfnv);
+    b.installArtifact(fnv_test_exe);
+
     const libhashtable = b.addStaticLibrary(.{
         .name = "hashtable",
         .root_source_file = .{ .path = "hashtable.c" },
