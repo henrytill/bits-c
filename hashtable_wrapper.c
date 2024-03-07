@@ -20,10 +20,7 @@ static PyObject *py_table_create(PyObject *self, PyObject *args)
     return PyCapsule_New(t, "hashtable.table", NULL);
 }
 
-static void decref(void *value)
-{
-    Py_DECREF((PyObject *)value);
-}
+static void decref(void *value) { Py_XDECREF(value); }
 
 static PyObject *py_table_destroy(PyObject *self, PyObject *args)
 {
@@ -38,7 +35,7 @@ static PyObject *py_table_destroy(PyObject *self, PyObject *args)
         PyErr_SetString(PyExc_RuntimeError, "Invalid table capsule");
         return NULL;
     }
-    table_destroy(t, NULL); // FIXME
+    table_destroy(t, decref);
     Py_RETURN_NONE;
 }
 
@@ -57,11 +54,10 @@ static PyObject *py_table_put(PyObject *self, PyObject *args)
         PyErr_SetString(PyExc_RuntimeError, "Invalid table capsule");
         return NULL;
     }
-
+    Py_XINCREF(value); // optimistically increment reference count
     int result = table_put(t, key, (void *)value);
-    if (result == 0) {
-        // Increment reference count for the Python object to keep it alive
-        Py_INCREF(value);
+    if (result != 0) {
+        Py_XDECREF(value); // decrement reference count if put failed
     }
     return PyLong_FromLong(result);
 }
@@ -81,11 +77,12 @@ static PyObject *py_table_get(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    void *result = table_get(t, key);
+    PyObject *result = table_get(t, key);
     if (result == NULL) {
         Py_RETURN_NONE;
     }
-    return (PyObject *)result;
+    Py_INCREF(result);
+    return result;
 }
 
 static PyMethodDef hashtable_methods[] = {
