@@ -10,6 +10,8 @@ secrets:
 sources:
   - git@git.sr.ht:~henrytill/c-bits
 tasks:
+  - print-versions: |
+      python3.11 --version
   - configure: |
       cd c-bits
       ./configure
