@@ -58,8 +58,10 @@ static PyObject *py_table_put(PyObject *self, PyObject *args)
     int result = table_put(t, key, (void *)value);
     if (result != 0) {
         Py_XDECREF(value); // decrement reference count if put failed
+        PyErr_SetString(PyExc_RuntimeError, "put failed");
+        return NULL;
     }
-    return PyLong_FromLong(result);
+    Py_RETURN_NONE;
 }
 
 static PyObject *py_table_get(PyObject *self, PyObject *args)
