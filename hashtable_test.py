@@ -50,7 +50,9 @@ class TestHashtableWithHypothesis(unittest.TestCase):
     def test_put_get_with_random_data(self, input_dict):
         # Insert all key-value pairs from the input_dict into the hashtable
         for key, value in input_dict.items():
-            hashtable.put(self.table, key, value)
+            rc = hashtable.put(self.table, key, value)
+            if rc != 0:
+                raise RuntimeError("put failed")
 
         # Check that all inserted key-value pairs can be retrieved
         for key, value in input_dict.items():
