@@ -52,6 +52,14 @@ class TestHashtable(unittest.TestCase):
             actual = hashtable.get(self.table, key)
             self.assertEqual(value, actual)
 
+    def test_put_get_failure3(self):
+        for _ in range(100):
+            key = "©\x01\x84\x85"
+            value = "\x13("
+            hashtable.put(self.table, key, value)
+            actual = hashtable.get(self.table, key)
+            self.assertEqual(value, actual)
+
 
 class TestHashtableWithHypothesis(unittest.TestCase):
     st_filter = lambda x: "\x00" not in x
