@@ -2,6 +2,7 @@
 /build*/
 /zig-cache/
 /zig-out/
+/__pycache__/
 /.hypothesis
 a.out
 *.o
