@@ -42,8 +42,8 @@ static PyObject *py_table_destroy(PyObject *self, PyObject *args)
 static PyObject *py_table_put(PyObject *self, PyObject *args)
 {
     PyObject *py_table = NULL;
-    PyObject *value = NULL;
     const char *key = NULL;
+    PyObject *value = NULL;
 
     int rc = PyArg_ParseTuple(args, "OsO", &py_table, &key, &value);
     if (rc == 0) {
@@ -55,7 +55,7 @@ static PyObject *py_table_put(PyObject *self, PyObject *args)
         return NULL;
     }
     Py_XINCREF(value); // optimistically increment reference count
-    int result = table_put(t, key, (void *)value);
+    int result = table_put(t, key, value);
     if (result != 0) {
         Py_XDECREF(value); // decrement reference count if put failed
         PyErr_SetString(PyExc_RuntimeError, "put failed");
@@ -78,7 +78,6 @@ static PyObject *py_table_get(PyObject *self, PyObject *args)
         PyErr_SetString(PyExc_RuntimeError, "Invalid table capsule");
         return NULL;
     }
-
     PyObject *result = table_get(t, key);
     if (result == NULL) {
         Py_RETURN_NONE;
