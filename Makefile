@@ -104,6 +104,10 @@ clean:
 	rm -rf build
 	rm -rf zig-out
 
+.PHONY: distclean
+distclean: clean
+	rm -rf zig-cache
+
 # Local Variables:
 # mode: makefile-bsdmake
 # End:
