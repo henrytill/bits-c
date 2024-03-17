@@ -42,7 +42,8 @@ BIN =\
 
 OBJ =\
 	alloc.o \
-	fnv.o
+	fnv.o \
+	hashtable.o
 
 .PHONY: all
 all: $(BIN) py
