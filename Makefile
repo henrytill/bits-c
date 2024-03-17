@@ -102,6 +102,7 @@ lint:
 clean:
 	rm -f $(BIN) $(OBJ)
 	rm -rf build
+	rm -rf zig-out
 
 # Local Variables:
 # mode: makefile-bsdmake
