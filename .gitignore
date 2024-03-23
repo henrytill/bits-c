@@ -12,6 +12,7 @@ demo_oop
 curling
 fnv_test
 hashtable_test
+hello
 overflow
 poll
 threadtest

@@ -2,7 +2,9 @@
 .SUFFIXES:
 
 CC = cc
+CXX = c++
 CFLAGS = -std=gnu11 -Wall -Wextra -Wconversion -Wsign-conversion -g
+CXXFLAGS = -std=c++20 -Wall -Wextra -Wno-exceptions -fno-rtti -g
 LDFLAGS =
 
 CURLING_CFLAGS = $(CFLAGS)
@@ -72,6 +74,9 @@ threadtest: threadtest.c
 
 window: window.c
 	$(CC) $(WINDOW_CFLAGS) $(.ALLSRC) $(WINDOW_LDFLAGS) -lX11 -lGL -lGLU -lGLEW -o $@
+
+hello: hello.cpp
+	$(CXX) $(CXXFLAGS) -D SAY_GOODBYE $(.ALLSRC) -o $@
 
 .SUFFIXES: .c .o
 .c.o:
