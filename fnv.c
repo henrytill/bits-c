@@ -1,14 +1,6 @@
 #include "fnv.h"
 
-#include <assert.h>
-#include <inttypes.h>
 #include <limits.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 static const uint64_t FNV_OFFSET_BASIS = 0xcbf29ce484222325;
 static const uint64_t FNV_PRIME = 0x100000001b3;
