@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
     for (nfds_t i = 0; i < nfds; ++i) {
         pfds[i].fd = open(argv[i + 1], O_RDONLY);
         if (pfds[i].fd == -1) {
+            free(pfds);
             handle_error("open");
         }
         printf("Opened \"%s\" on fd %d\n", argv[i + 1], pfds[i].fd);
@@ -76,6 +77,7 @@ int main(int argc, char *argv[])
         printf("About to poll()\n");
         ready = poll(pfds, nfds, -1);
         if (ready == -1) {
+            free(pfds);
             handle_error("poll");
         }
         printf("Ready: %d\n", ready);
@@ -84,5 +86,6 @@ int main(int argc, char *argv[])
 
     printf("All file descriptors closed; bye\n");
 
+    free(pfds);
     return EXIT_SUCCESS;
 }

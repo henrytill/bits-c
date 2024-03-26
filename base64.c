@@ -41,11 +41,14 @@ static const struct test_vector {
     {NULL, 0, NULL, 0},
 };
 
-#define ARRAY_SIZE(arr)  (sizeof((arr)) / sizeof((arr)[0]))
-#define LAST_ENTRY       (ARRAY_SIZE(TEST_VECTORS) - 2)
-#define INPUT_LEN_MAX    (TEST_VECTORS[LAST_ENTRY].input_len)
-#define BASE64_LEN_MAX   (TEST_VECTORS[LAST_ENTRY].base64_len)
+#define ARRAY_SIZE(arr) (sizeof((arr)) / sizeof((arr)[0]))
+#define LAST_ENTRY      (ARRAY_SIZE(TEST_VECTORS) - 2)
+#define INPUT_LEN_MAX   (TEST_VECTORS[LAST_ENTRY].input_len)
+#define BASE64_LEN_MAX  (TEST_VECTORS[LAST_ENTRY].base64_len)
+
+// NOLINTBEGIN(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
 #define ARRAY_CLEAR(arr) memset((arr), 0, sizeof((arr)))
+// NOLINTEND(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
 
 static size_t base64_encode(const size_t in_strlen,
                             const char in[in_strlen + 1],
