@@ -18,7 +18,6 @@ PYTHON3 = python3
 -include config.mk
 
 SOURCES =\
-	alloc.c \
 	base64.c \
 	curling.c \
 	demo_oop.c \
@@ -43,14 +42,11 @@ BIN =\
 	window
 
 OBJ =\
-	alloc.o \
 	fnv.o \
 	hashtable.o
 
 .PHONY: all
 all: $(BIN) py
-
-alloc.o: alloc.c alloc.h
 
 fnv.o: fnv.c fnv.h
 
@@ -58,7 +54,7 @@ fnv_test: fnv_test.c fnv.o
 
 hashtable.o: hashtable.c hashtable.h
 
-hashtable_test: hashtable_test.c hashtable.o alloc.o fnv.o
+hashtable_test: hashtable_test.c hashtable.o fnv.o
 
 base64: base64.c
 	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -lcrypto -o $@

@@ -2,7 +2,7 @@ from setuptools import setup, Extension
 
 hashtable_module = Extension(
     "hashtable",
-    sources=["hashtable_wrapper.c", "hashtable.c", "fnv.c", "alloc.c"],
+    sources=["hashtable_wrapper.c", "hashtable.c", "fnv.c"],
     include_dirs=["."],
 )
 

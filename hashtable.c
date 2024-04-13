@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "alloc.h"
 #include "fnv.h"
 #include "macro.h"
 
@@ -26,8 +25,10 @@ struct table *table_create(const size_t columns_len)
         debug_fprintf(stderr, "%s: columns_len must be a power of 2\n", __func__);
         return NULL;
     }
-    struct table *ret = ecalloc(1, sizeof(*ret));
-    ret->columns = ecalloc(columns_len, sizeof(*ret->columns));
+    struct table *ret = calloc(1, sizeof(*ret));
+    assert(ret != NULL);
+    ret->columns = calloc(columns_len, sizeof(*ret->columns));
+    assert(ret->columns != NULL);
     ret->columns_len = columns_len;
     return ret;
 }
@@ -102,7 +103,8 @@ int table_put(struct table *t, const char *key, void *value)
         return 0;
     }
     // new node
-    curr = ecalloc(1, sizeof(*curr));
+    curr = calloc(1, sizeof(*curr));
+    assert(curr != NULL);
     curr->next = NULL;
     curr->key = key;
     curr->value = value;
