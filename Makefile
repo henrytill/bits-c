@@ -59,12 +59,12 @@ curling: curling.c
 	$(CC) $(CURLING_CFLAGS) $(.ALLSRC) $(CURLING_LDFLAGS) -lcurl -o $@
 
 fnv.o: fnv.c fnv.h
-	$(CC) $(CFLAGS) -fPIC -DNDEBUG -o $@ -c $<
+	$(CC) $(CFLAGS) -DNDEBUG -o $@ -c $<
 
 fnv_test: fnv_test.c fnv.o
 
 hashtable.o: hashtable.c hashtable.h
-	$(CC) $(CFLAGS) -fPIC -DNDEBUG -o $@ -c $<
+	$(CC) $(CFLAGS) -DNDEBUG -o $@ -c $<
 
 hashtable_wrapper.o: hashtable_wrapper.c
 	$(CC) $(PYTHON3_CFLAGS) -fPIC -DNDEBUG -o $@ -c $<
