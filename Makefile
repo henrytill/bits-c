@@ -19,38 +19,39 @@ PYTHON3_LDFLAGS =
 
 -include config.mk
 
-SOURCES =\
-	base64.c \
-	curling.c \
-	demo_oop.c \
-	fnv.c \
-	fnv_test.c \
-	hashtable.c \
-	hashtable_test.c \
-	hashtable_wrapper.c \
-	overflow.c \
-	poll.c \
-	threadtest.c \
-	window.c
+SOURCES =
+SOURCES += base64.c
+SOURCES += curling.c
+SOURCES += demo_oop.c
+SOURCES += fnv.c
+SOURCES += fnv_test.c
+SOURCES += hashtable.c
+SOURCES += hashtable_test.c
+SOURCES += hashtable_wrapper.c
+SOURCES += overflow.c
+SOURCES += poll.c
+SOURCES += threadtest.c
+SOURCES += window.c
 
-BIN =\
-	base64 \
-	curling \
-	demo_oop \
-	fnv_test \
-	hashtable_test \
-	overflow \
-	poll \
-	threadtest \
-	window
+BIN =
+BIN += base64
+BIN += curling
+BIN += demo_oop
+BIN += fnv_test
+BIN += hashtable_test
+BIN += overflow
+BIN += poll
+BIN += threadtest
+BIN += window
 
-OBJ =\
-	fnv.o \
-	hashtable.o \
-	hashtable_wrapper.o
+OBJ =
+OBJ += fnv.o
+OBJ += hashtable.o
+OBJ += hashtable_wrapper.o
+OBJ += hashtable.so
 
 .PHONY: all
-all: $(BIN) hashtable.so
+all: $(OBJ) $(BIN)
 
 base64: base64.c
 	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -lcrypto -o $@
@@ -95,7 +96,7 @@ hello: hello.cpp
 	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
 
 .PHONY: check test
-check test: $(BIN) hashtable.so
+check test: $(OBJ) $(BIN)
 	./base64
 	./curling
 	./fnv_test
@@ -109,8 +110,7 @@ lint:
 
 .PHONY: clean
 clean:
-	rm -f $(BIN) $(OBJ)
-	rm -f hashtable.so
+	rm -f $(OBJ) $(BIN)
 	rm -rf build
 	rm -rf zig-out
 
