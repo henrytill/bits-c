@@ -16,6 +16,8 @@ jobs:
         sudo apt install -yqq --no-install-recommends \
           libcurl4-openssl-dev libopengl-dev libglew-dev \
           python3-setuptools python3-hypothesis
+    - name: configure
+      run: ./configure
     - name: make
       run: make
     - name: make check
