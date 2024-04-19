@@ -32,7 +32,7 @@ CheckOptions:
   - key: readability-identifier-naming.TypedefCase
     value: lower_case
 
-HeaderFilterRegex: ".*"
+HeaderFilterRegex: "*.h"
 
 # Local Variables:
 # mode: yaml
