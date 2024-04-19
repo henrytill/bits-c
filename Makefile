@@ -14,6 +14,8 @@ WINDOW_CFLAGS = $(CFLAGS)
 WINDOW_LDFLAGS = $(LDFLAGS)
 
 PYTHON3 = python3
+PYTHON3_CFLAGS =
+PYTHON3_LDFLAGS =
 
 -include config.mk
 
@@ -25,6 +27,7 @@ SOURCES =\
 	fnv_test.c \
 	hashtable.c \
 	hashtable_test.c \
+	hashtable_wrapper.c \
 	overflow.c \
 	poll.c \
 	threadtest.c \
@@ -43,24 +46,33 @@ BIN =\
 
 OBJ =\
 	fnv.o \
-	hashtable.o
+	hashtable.o \
+	hashtable_wrapper.o
 
 .PHONY: all
-all: $(BIN) py
-
-fnv.o: fnv.c fnv.h
-
-fnv_test: fnv_test.c fnv.o
-
-hashtable.o: hashtable.c hashtable.h
-
-hashtable_test: hashtable_test.c hashtable.o fnv.o
+all: $(BIN) hashtable.so
 
 base64: base64.c
 	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -lcrypto -o $@
 
 curling: curling.c
 	$(CC) $(CURLING_CFLAGS) $(.ALLSRC) $(CURLING_LDFLAGS) -lcurl -o $@
+
+fnv.o: fnv.c fnv.h
+	$(CC) $(CFLAGS) -fPIC -DNDEBUG -o $@ -c $<
+
+fnv_test: fnv_test.c fnv.o
+
+hashtable.o: hashtable.c hashtable.h
+	$(CC) $(CFLAGS) -fPIC -DNDEBUG -o $@ -c $<
+
+hashtable_wrapper.o: hashtable_wrapper.c
+	$(CC) $(PYTHON3_CFLAGS) -fPIC -DNDEBUG -o $@ -c $<
+
+hashtable.so: fnv.o hashtable.o hashtable_wrapper.o
+	$(CC) -shared $(PYTHON3_LDFLAGS) -o $@ $(.ALLSRC)
+
+hashtable_test: hashtable_test.c hashtable.o fnv.o
 
 overflow: overflow.c
 	$(CC) $(CFLAGS) -ftrapv $(.ALLSRC) $(LDFLAGS) -o $@
@@ -82,12 +94,8 @@ hello: hello.cpp
 .c:
 	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
 
-.PHONY: py
-py:
-	$(PYTHON3) setup.py build_ext --inplace
-
 .PHONY: check test
-check test: $(BIN) py
+check test: $(BIN) hashtable.so
 	./base64
 	./curling
 	./fnv_test
@@ -102,6 +110,7 @@ lint:
 .PHONY: clean
 clean:
 	rm -f $(BIN) $(OBJ)
+	rm -f hashtable.so
 	rm -rf build
 	rm -rf zig-out
 

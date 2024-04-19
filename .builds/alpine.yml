@@ -17,7 +17,8 @@ tasks:
       python3 --version
   - configure: |
       cd c-bits
-      cat <<EOF >config.mk
+      ./configure
+      cat <<EOF >>config.mk
       LDFLAGS += -static
       CURLING_LDFLAGS =
       WINDOW_LDFLAGS =

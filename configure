@@ -4,6 +4,27 @@ PYTHON3=
 X11_PREFIX=
 PKG_PREFIX=
 WINDOW_LDFLAGS_EXTRA=
+PYTHON3_CFLAGS=
+PYTHON3_LDFLAGS=
+
+write_config_bsd () {
+    cat <<EOF >config.mk
+PYTHON3 = ${PYTHON3}
+CURLING_CFLAGS += -I${PKG_PREFIX}/include/
+CURLING_LDFLAGS += -L${PKG_PREFIX}/lib/ ${CURLING_LDFLAGS_EXTRA}
+WINDOW_CFLAGS += -I${X11_PREFIX}/include/ -I${PKG_PREFIX}/include/
+WINDOW_LDFLAGS += -L${X11_PREFIX}/lib/ -L${PKG_PREFIX}/lib ${WINDOW_LDFLAGS_EXTRA}
+PYTHON3_CFLAGS = ${PYTHON3_CFLAGS}
+PYTHON3_LDFLAGS = ${PYTHON3_LDFLAGS}
+EOF
+}
+
+write_config_linux () {
+    cat <<EOF >config.mk
+PYTHON3_CFLAGS = ${PYTHON3_CFLAGS}
+PYTHON3_LDFLAGS = ${PYTHON3_LDFLAGS}
+EOF
+}
 
 case "$(uname -s)" in
     NetBSD)
@@ -12,21 +33,25 @@ case "$(uname -s)" in
         PKG_PREFIX="/usr/pkg"
         CURLING_LDFLAGS_EXTRA="-Wl,-R,${PKG_PREFIX}/lib/"
         WINDOW_LDFLAGS_EXTRA="-Wl,-R,${X11_PREFIX}/lib/ -Wl,-R,${PKG_PREFIX}/lib/"
+        PYTHON3_CFLAGS="$(python3.11-config --cflags)"
+        PYTHON3_LDFLAGS="$(python3.11-config --ldflags)"
+        write_config_bsd
         ;;
     OpenBSD)
         PYTHON3="python3"
         X11_PREFIX="/usr/X11R6"
         PKG_PREFIX="/usr/local"
+        PYTHON3_CFLAGS="$(python3-config --cflags)"
+        PYTHON3_LDFLAGS="$(python3-config --ldflags)"
+        write_config_bsd
+        ;;
+    Linux)
+        PYTHON3_CFLAGS="$(python3-config --cflags)"
+        PYTHON3_LDFLAGS="$(python3-config --ldflags)"
+        write_config_linux
         ;;
     *)
         exit
         ;;
 esac
 
-cat <<EOF >config.mk
-PYTHON3 = ${PYTHON3}
-CURLING_CFLAGS += -I${PKG_PREFIX}/include/
-CURLING_LDFLAGS += -L${PKG_PREFIX}/lib/ ${CURLING_LDFLAGS_EXTRA}
-WINDOW_CFLAGS += -I${X11_PREFIX}/include/ -I${PKG_PREFIX}/include/
-WINDOW_LDFLAGS += -L${X11_PREFIX}/lib/ -L${PKG_PREFIX}/lib ${WINDOW_LDFLAGS_EXTRA}
-EOF
