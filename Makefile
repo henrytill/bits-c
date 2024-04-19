@@ -17,8 +17,6 @@ PYTHON3 = python3
 PYTHON3_CFLAGS =
 PYTHON3_LDFLAGS =
 
--include config.mk
-
 SOURCES =
 SOURCES += base64.c
 SOURCES += curling.c
@@ -28,6 +26,7 @@ SOURCES += fnv_test.c
 SOURCES += hashtable.c
 SOURCES += hashtable_test.c
 SOURCES += hashtable_wrapper.c
+SOURCES += hello.cpp
 SOURCES += overflow.c
 SOURCES += poll.c
 SOURCES += threadtest.c
@@ -49,6 +48,8 @@ OBJ += fnv.o
 OBJ += hashtable.o
 OBJ += hashtable_wrapper.o
 OBJ += hashtable.so
+
+-include config.mk
 
 .PHONY: all
 all: $(OBJ) $(BIN)
@@ -75,6 +76,9 @@ hashtable.so: fnv.o hashtable.o hashtable_wrapper.o
 
 hashtable_test: hashtable_test.c hashtable.o fnv.o
 
+hello: hello.cpp
+	$(CXX) $(CXXFLAGS) -DSAY_GOODBYE $(.ALLSRC) -o $@
+
 overflow: overflow.c
 	$(CC) $(CFLAGS) -ftrapv $(.ALLSRC) $(LDFLAGS) -o $@
 
@@ -83,9 +87,6 @@ threadtest: threadtest.c
 
 window: window.c
 	$(CC) $(WINDOW_CFLAGS) $(.ALLSRC) $(WINDOW_LDFLAGS) -lX11 -lGL -lGLU -lGLEW -o $@
-
-hello: hello.cpp
-	$(CXX) $(CXXFLAGS) -D SAY_GOODBYE $(.ALLSRC) -o $@
 
 .SUFFIXES: .c .o
 .c.o:

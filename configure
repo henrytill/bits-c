@@ -6,6 +6,7 @@ PKG_PREFIX=
 WINDOW_LDFLAGS_EXTRA=
 PYTHON3_CFLAGS=
 PYTHON3_LDFLAGS=
+EXTRA_BIN=
 
 write_config_bsd () {
     cat <<EOF >config.mk
@@ -16,6 +17,7 @@ WINDOW_CFLAGS += -I${X11_PREFIX}/include/ -I${PKG_PREFIX}/include/
 WINDOW_LDFLAGS += -L${X11_PREFIX}/lib/ -L${PKG_PREFIX}/lib ${WINDOW_LDFLAGS_EXTRA}
 PYTHON3_CFLAGS = ${PYTHON3_CFLAGS}
 PYTHON3_LDFLAGS = ${PYTHON3_LDFLAGS}
+BIN += ${EXTRA_BIN}
 EOF
 }
 
@@ -23,6 +25,7 @@ write_config_linux () {
     cat <<EOF >config.mk
 PYTHON3_CFLAGS = ${PYTHON3_CFLAGS}
 PYTHON3_LDFLAGS = ${PYTHON3_LDFLAGS}
+BIN += ${EXTRA_BIN}
 EOF
 }
 
@@ -43,11 +46,13 @@ case "$(uname -s)" in
         PKG_PREFIX="/usr/local"
         PYTHON3_CFLAGS="$(python3-config --cflags)"
         PYTHON3_LDFLAGS="$(python3-config --ldflags)"
+        EXTRA_BIN="hello"
         write_config_bsd
         ;;
     Linux)
         PYTHON3_CFLAGS="$(python3-config --cflags)"
         PYTHON3_LDFLAGS="$(python3-config --ldflags)"
+        EXTRA_BIN="hello"
         write_config_linux
         ;;
     *)
