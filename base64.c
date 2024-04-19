@@ -46,9 +46,7 @@ static const struct test_vector {
 #define INPUT_LEN_MAX   (TEST_VECTORS[LAST_ENTRY].input_len)
 #define BASE64_LEN_MAX  (TEST_VECTORS[LAST_ENTRY].base64_len)
 
-// NOLINTBEGIN(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
-#define ARRAY_CLEAR(arr) memset((arr), 0, sizeof((arr)))
-// NOLINTEND(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
+#define ARRAY_CLEAR(arr) memset((arr), 0, sizeof((arr))) // NOLINT(clang-analyzer-security.*)
 
 static size_t base64_encode(const size_t in_strlen,
                             const char in[in_strlen + 1],
