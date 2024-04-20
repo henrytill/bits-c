@@ -35,7 +35,7 @@
     X(0, 65)         \
     X(1, 128)
 
-#define X(expected, x) STATIC_ASSERT((expected) == ISPOW2((x)));
+#define X(expected, input) STATIC_ASSERT((expected) == ISPOW2((input)));
 TEST_ENTRIES
 #undef X
 
