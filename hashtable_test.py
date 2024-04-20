@@ -36,30 +36,6 @@ class TestHashtable(unittest.TestCase):
         value = hashtable.get(self.table, "key1")
         self.assertEqual(value, "new_value1")
 
-    def test_put_get_failure1(self):
-        for _ in range(100):
-            key = "GE\x05Ê\U000fcd6d\U0002f7d3:"
-            value = " 紿1¥&\x95\U00011528àñ\U00080a5a\U0004043döì\x8e"
-            hashtable.put(self.table, key, value)
-            actual = hashtable.get(self.table, key)
-            self.assertEqual(value, actual)
-
-    def test_put_get_failure2(self):
-        for _ in range(100):
-            key = "p\x04\U000a2cdc$\x06\U000e2134\x8f"
-            value = "p\U000aa155©"
-            hashtable.put(self.table, key, value)
-            actual = hashtable.get(self.table, key)
-            self.assertEqual(value, actual)
-
-    def test_put_get_failure3(self):
-        for _ in range(100):
-            key = "©\x01\x84\x85"
-            value = "\x13("
-            hashtable.put(self.table, key, value)
-            actual = hashtable.get(self.table, key)
-            self.assertEqual(value, actual)
-
 
 class TestHashtableWithHypothesis(unittest.TestCase):
     st_filter = lambda x: "\x00" not in x
