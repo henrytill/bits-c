@@ -23,6 +23,7 @@ tasks:
       CURLING_LDFLAGS =
       WINDOW_LDFLAGS =
       EOF
+      cat config.mk
   - build: |
       cd c-bits
       make
