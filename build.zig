@@ -4,65 +4,65 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const libfnv = b.addStaticLibrary(.{
+    const fnvLib = b.addStaticLibrary(.{
         .name = "fnv",
         .target = target,
         .optimize = optimize,
     });
 
-    libfnv.addCSourceFile(.{ .file = .{ .path = "fnv.c" }, .flags = &.{} });
-    libfnv.linkLibC();
-    libfnv.addIncludePath(.{ .path = "." });
-    b.installArtifact(libfnv);
+    fnvLib.addCSourceFile(.{ .file = .{ .path = "fnv.c" }, .flags = &.{} });
+    fnvLib.linkLibC();
+    fnvLib.addIncludePath(.{ .path = "." });
+    b.installArtifact(fnvLib);
 
-    const fnv_test_exe = b.addExecutable(.{
+    const fnvTestExe = b.addExecutable(.{
         .name = "fnv_test",
         .target = target,
         .optimize = optimize,
     });
 
-    fnv_test_exe.addCSourceFile(.{ .file = .{ .path = "fnv_test.c" }, .flags = &.{} });
-    fnv_test_exe.linkLibC();
-    fnv_test_exe.addIncludePath(.{ .path = "." });
-    fnv_test_exe.linkLibrary(libfnv);
-    b.installArtifact(fnv_test_exe);
+    fnvTestExe.addCSourceFile(.{ .file = .{ .path = "fnv_test.c" }, .flags = &.{} });
+    fnvTestExe.linkLibC();
+    fnvTestExe.addIncludePath(.{ .path = "." });
+    fnvTestExe.linkLibrary(fnvLib);
+    b.installArtifact(fnvTestExe);
 
-    const libhashtable = b.addStaticLibrary(.{
+    const hashtableLib = b.addStaticLibrary(.{
         .name = "hashtable",
         .target = target,
         .optimize = optimize,
     });
 
-    libhashtable.addCSourceFile(.{ .file = .{ .path = "hashtable.c" }, .flags = &.{} });
-    libhashtable.linkLibC();
-    b.installArtifact(libhashtable);
+    hashtableLib.addCSourceFile(.{ .file = .{ .path = "hashtable.c" }, .flags = &.{} });
+    hashtableLib.linkLibC();
+    b.installArtifact(hashtableLib);
 
-    const hashtable_test_exe = b.addExecutable(.{
+    const hashtableTestExe = b.addExecutable(.{
         .name = "hashtable_test",
         .target = target,
         .optimize = optimize,
     });
 
-    hashtable_test_exe.addCSourceFile(.{ .file = .{ .path = "hashtable_test.c" }, .flags = &.{} });
-    hashtable_test_exe.linkLibC();
-    hashtable_test_exe.addIncludePath(.{ .path = "." });
-    hashtable_test_exe.linkLibrary(libfnv);
-    hashtable_test_exe.linkLibrary(libhashtable);
-    b.installArtifact(hashtable_test_exe);
+    hashtableTestExe.addCSourceFile(.{ .file = .{ .path = "hashtable_test.c" }, .flags = &.{} });
+    hashtableTestExe.linkLibC();
+    hashtableTestExe.addIncludePath(.{ .path = "." });
+    hashtableTestExe.linkLibrary(fnvLib);
+    hashtableTestExe.linkLibrary(hashtableLib);
+    b.installArtifact(hashtableTestExe);
 
-    const hashtable_tests = b.addTest(.{
+    const hashtableTests = b.addTest(.{
         .root_source_file = .{ .path = "test.zig" },
         .target = target,
         .optimize = optimize,
     });
 
-    hashtable_tests.addIncludePath(.{ .path = "." });
-    hashtable_tests.linkLibrary(libfnv);
-    hashtable_tests.linkLibrary(libhashtable);
-    b.installArtifact(hashtable_tests);
+    hashtableTests.addIncludePath(.{ .path = "." });
+    hashtableTests.linkLibrary(fnvLib);
+    hashtableTests.linkLibrary(hashtableLib);
+    b.installArtifact(hashtableTests);
 
-    const run_hashtable_tests = b.addRunArtifact(hashtable_tests);
+    const run_hashtableTests = b.addRunArtifact(hashtableTests);
 
     const test_step = b.step("test", "Run library tests");
-    test_step.dependOn(&run_hashtable_tests.step);
+    test_step.dependOn(&run_hashtableTests.step);
 }
