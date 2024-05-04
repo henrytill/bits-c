@@ -4,13 +4,15 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    const flags = &.{ "-std=gnu11", "-Wall", "-Wextra", "-Wconversion", "-Wsign-conversion" };
+
     const fnvLib = b.addStaticLibrary(.{
         .name = "fnv",
         .target = target,
         .optimize = optimize,
     });
 
-    fnvLib.addCSourceFile(.{ .file = .{ .path = "fnv.c" }, .flags = &.{} });
+    fnvLib.addCSourceFile(.{ .file = .{ .path = "fnv.c" }, .flags = flags });
     fnvLib.linkLibC();
     fnvLib.addIncludePath(.{ .path = "." });
     b.installArtifact(fnvLib);
@@ -21,7 +23,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
-    fnvTestExe.addCSourceFile(.{ .file = .{ .path = "fnv_test.c" }, .flags = &.{} });
+    fnvTestExe.addCSourceFile(.{ .file = .{ .path = "fnv_test.c" }, .flags = flags });
     fnvTestExe.linkLibC();
     fnvTestExe.addIncludePath(.{ .path = "." });
     fnvTestExe.linkLibrary(fnvLib);
@@ -33,7 +35,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
-    hashtableLib.addCSourceFile(.{ .file = .{ .path = "hashtable.c" }, .flags = &.{} });
+    hashtableLib.addCSourceFile(.{ .file = .{ .path = "hashtable.c" }, .flags = flags });
     hashtableLib.linkLibC();
     b.installArtifact(hashtableLib);
 
@@ -43,7 +45,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
-    hashtableTestExe.addCSourceFile(.{ .file = .{ .path = "hashtable_test.c" }, .flags = &.{} });
+    hashtableTestExe.addCSourceFile(.{ .file = .{ .path = "hashtable_test.c" }, .flags = flags });
     hashtableTestExe.linkLibC();
     hashtableTestExe.addIncludePath(.{ .path = "." });
     hashtableTestExe.linkLibrary(fnvLib);
