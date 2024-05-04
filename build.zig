@@ -6,21 +6,22 @@ pub fn build(b: *std.Build) void {
 
     const libfnv = b.addStaticLibrary(.{
         .name = "fnv",
-        .root_source_file = .{ .path = "fnv.c" },
         .target = target,
         .optimize = optimize,
     });
 
+    libfnv.addCSourceFile(.{ .file = .{ .path = "fnv.c" }, .flags = &.{} });
     libfnv.linkLibC();
+    libfnv.addIncludePath(.{ .path = "." });
     b.installArtifact(libfnv);
 
     const fnv_test_exe = b.addExecutable(.{
         .name = "fnv_test",
-        .root_source_file = .{ .path = "fnv_test.c" },
         .target = target,
         .optimize = optimize,
     });
 
+    fnv_test_exe.addCSourceFile(.{ .file = .{ .path = "fnv_test.c" }, .flags = &.{} });
     fnv_test_exe.linkLibC();
     fnv_test_exe.addIncludePath(.{ .path = "." });
     fnv_test_exe.linkLibrary(libfnv);
@@ -28,21 +29,21 @@ pub fn build(b: *std.Build) void {
 
     const libhashtable = b.addStaticLibrary(.{
         .name = "hashtable",
-        .root_source_file = .{ .path = "hashtable.c" },
         .target = target,
         .optimize = optimize,
     });
 
+    libhashtable.addCSourceFile(.{ .file = .{ .path = "hashtable.c" }, .flags = &.{} });
     libhashtable.linkLibC();
     b.installArtifact(libhashtable);
 
     const hashtable_test_exe = b.addExecutable(.{
         .name = "hashtable_test",
-        .root_source_file = .{ .path = "hashtable_test.c" },
         .target = target,
         .optimize = optimize,
     });
 
+    hashtable_test_exe.addCSourceFile(.{ .file = .{ .path = "hashtable_test.c" }, .flags = &.{} });
     hashtable_test_exe.linkLibC();
     hashtable_test_exe.addIncludePath(.{ .path = "." });
     hashtable_test_exe.linkLibrary(libfnv);
