@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "fnv.h"
 #include "hashtable.h"
 
 static const struct test_vector {
