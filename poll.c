@@ -58,9 +58,9 @@ int main(int argc, char *argv[])
 
     nfds_open = nfds = (nfds_t)argc - 1;
 
-    pfds = calloc(nfds, sizeof(struct pollfd));
+    pfds = calloc(nfds, sizeof(*pfds));
     if (pfds == NULL) {
-        handle_error("malloc");
+        handle_error("calloc");
     }
 
     for (nfds_t i = 0; i < nfds; ++i) {
