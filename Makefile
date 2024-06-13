@@ -25,7 +25,7 @@ SOURCES += fnv.c
 SOURCES += fnv_test.c
 SOURCES += hashtable.c
 SOURCES += hashtable_test.c
-SOURCES += hashtable_wrapper.c
+SOURCES += hashtable_py.c
 SOURCES += hello.cpp
 SOURCES += overflow.c
 SOURCES += poll.c
@@ -46,7 +46,7 @@ BIN += window
 OBJ =
 OBJ += fnv.o
 OBJ += hashtable.o
-OBJ += hashtable_wrapper.o
+OBJ += hashtable_py.o
 OBJ += hashtable.so
 
 -include config.mk
@@ -68,10 +68,10 @@ fnv_test: fnv_test.c fnv.o
 hashtable.o: hashtable.c hashtable.h
 	$(CC) $(CFLAGS) -DNDEBUG -o $@ -c $<
 
-hashtable_wrapper.o: hashtable_wrapper.c
+hashtable_py.o: hashtable_py.c
 	$(CC) $(PYTHON3_CFLAGS) -fPIC -DNDEBUG -o $@ -c $<
 
-hashtable.so: fnv.o hashtable.o hashtable_wrapper.o
+hashtable.so: fnv.o hashtable.o hashtable_py.o
 	$(CC) -shared $(PYTHON3_LDFLAGS) -o $@ $(.ALLSRC)
 
 hashtable_test: hashtable_test.c hashtable.o fnv.o
