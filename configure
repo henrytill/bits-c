@@ -10,7 +10,7 @@ PYTHON3_CFLAGS=
 PYTHON3_LDFLAGS=
 EXTRA_BIN=
 
-write_config_bsd () {
+write_config_bsd() {
     cat <<EOF >config.mk
 PYTHON3 = ${PYTHON3}
 CURLING_CFLAGS += -I${PKG_PREFIX}/include/
@@ -23,7 +23,7 @@ BIN += ${EXTRA_BIN}
 EOF
 }
 
-write_config_linux () {
+write_config_linux() {
     cat <<EOF >config.mk
 PYTHON3_CFLAGS = ${PYTHON3_CFLAGS}
 PYTHON3_LDFLAGS = ${PYTHON3_LDFLAGS}
@@ -61,4 +61,3 @@ case "$(uname -s)" in
         exit
         ;;
 esac
-
