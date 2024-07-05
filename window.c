@@ -151,18 +151,18 @@ int main(void) {
   while (loop_stat == 1) {
     XNextEvent(dpy, &xev);
     switch (xev.type) {
-    case Expose:
-      XGetWindowAttributes(dpy, win, &gwa);
-      glViewport(0, 0, gwa.width, gwa.height);
-      draw_quad();
-      glXSwapBuffers(dpy, win);
-      break;
-    case ClientMessage:
-      if (xev.xclient.data.l[0] == (long)wm_delete_window) {
-        printf("Received WM_DELETE_WINDOW\n");
-        loop_stat = 0;
-      }
-      break;
+      case Expose:
+        XGetWindowAttributes(dpy, win, &gwa);
+        glViewport(0, 0, gwa.width, gwa.height);
+        draw_quad();
+        glXSwapBuffers(dpy, win);
+        break;
+      case ClientMessage:
+        if (xev.xclient.data.l[0] == (long)wm_delete_window) {
+          printf("Received WM_DELETE_WINDOW\n");
+          loop_stat = 0;
+        }
+        break;
     }
   }
 

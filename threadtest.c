@@ -82,12 +82,12 @@ int main(int argc, char *argv[]) {
 
   while ((opt = getopt(argc, argv, "s:")) != -1) {
     switch (opt) {
-    case 's':
-      stack_size = strtoul(optarg, NULL, 0);
-      break;
-    default:
-      (void)fprintf(stderr, "Usage: %s [-s stack-size] arg...\n", argv[0]);
-      return EXIT_FAILURE;
+      case 's':
+        stack_size = strtoul(optarg, NULL, 0);
+        break;
+      default:
+        (void)fprintf(stderr, "Usage: %s [-s stack-size] arg...\n", argv[0]);
+        return EXIT_FAILURE;
     }
   }
 
