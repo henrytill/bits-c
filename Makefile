@@ -118,6 +118,7 @@ clean:
 .PHONY: distclean
 distclean: clean
 	rm -rf zig-cache
+	rm -f config.mk
 
 # Local Variables:
 # mode: makefile-bsdmake
