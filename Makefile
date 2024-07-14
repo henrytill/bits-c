@@ -48,6 +48,7 @@ OBJ += fnv.o
 OBJ += hashtable.o
 OBJ += hashtable_py.o
 OBJ += hashtable.so
+OBJ += message_queue.o
 
 -include config.mk
 
