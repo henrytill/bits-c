@@ -64,4 +64,4 @@
     }                                                                            \
   }
 
-#endif // #define C_BITS_MACRO
+#endif // C_BITS_MACRO

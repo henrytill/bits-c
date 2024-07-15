@@ -1,4 +1,5 @@
-#pragma once
+#ifndef C_BITS_MESSAGE_QUEUE_H
+#define C_BITS_MESSAGE_QUEUE_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -117,3 +118,5 @@ int message_queue_get(struct message_queue *queue, struct message *out);
 /// @param queue Message queue.
 /// @return The number of messages in the queue.
 uint32_t message_queue_size(struct message_queue *queue);
+
+#endif // C_BITS_MESSAGE_QUEUE_H
