@@ -38,6 +38,8 @@ BIN += curling
 BIN += demo_oop
 BIN += fnv_test
 BIN += hashtable_test
+BIN += message_queue_basic
+BIN += message_queue_copies
 BIN += overflow
 BIN += poll
 BIN += threadtest
@@ -80,6 +82,12 @@ hashtable_test: hashtable_test.c hashtable.o fnv.o
 hello: hello.cpp
 	$(CXX) $(CXXFLAGS) -DSAY_GOODBYE $(.ALLSRC) -o $@
 
+message_queue_basic: message_queue_basic.c message_queue.o
+	$(CC) $(CFLAGS) -pthread $(.ALLSRC) $(LDFLAGS) -o $@
+
+message_queue_copies: message_queue_copies.c message_queue.o
+	$(CC) $(CFLAGS) -pthread $(.ALLSRC) $(LDFLAGS) -o $@
+
 overflow: overflow.c
 	$(CC) $(CFLAGS) -ftrapv $(.ALLSRC) $(LDFLAGS) -o $@
 
@@ -105,6 +113,8 @@ check test: $(OBJ) $(BIN)
 	./threadtest foo bar baz
 	./hashtable_test
 	$(PYTHON3) hashtable_test.py
+	./message_queue_basic
+	./message_queue_copies
 
 .PHONY: lint
 lint:

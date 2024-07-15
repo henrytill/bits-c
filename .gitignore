@@ -13,6 +13,8 @@ curling
 fnv_test
 hashtable_test
 hello
+message_queue_basic
+message_queue_copies
 overflow
 poll
 threadtest
