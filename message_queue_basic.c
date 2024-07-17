@@ -46,9 +46,7 @@ static void message_queue_fail(int rc, const char *msg) {
 static void *produce(void *data) {
   extern const int COUNT;
 
-  if (data == NULL) {
-    fail("produce failed: data is NULL");
-  }
+  assert(data != NULL);
 
   struct message_queue *queue = data;
   struct message msg = {0};
@@ -64,9 +62,9 @@ static void *produce(void *data) {
     if (rc < 0) {
       message_queue_fail(rc, "message_queue_put failed");
     } else if (rc == 1) {
-      printf("produce {%s, %" PRIdPTR "} blocked: retrying\n", tag_str, value);
+      printf("blocked: {%s, %" PRIdPTR "}\n", tag_str, value);
     } else {
-      printf("Produced {%s, %" PRIdPTR "}\n", tag_str, value);
+      printf("produced: {%s, %" PRIdPTR "}\n", tag_str, value);
       value += 1;
     }
   }
@@ -87,7 +85,7 @@ static int consume(struct message_queue *queue, struct message *out) {
   if (rc < 0) {
     message_queue_fail(rc, "message_queue_get failed");
   }
-  printf("Consumed {%s, %" PRIdPTR "}\n", message_tag_str(out->tag), out->value);
+  printf("consumed: {%s, %" PRIdPTR "}\n", message_tag_str(out->tag), out->value);
   return out->tag != MSG_TAG_QUIT;
 }
 
@@ -112,10 +110,10 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
     goto out_destroy_queue;
   }
 
-  rc = pthread_create(&thread_id, &attr, &produce, queue);
+  rc = pthread_create(&thread_id, &attr, produce, queue);
   if (rc != 0) {
     errno = rc;
-    perror("pthread_attr_init");
+    perror("pthread_create");
     goto out_destroy_attr;
   }
 
@@ -131,10 +129,10 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
   }
 
   void *thread_ret = NULL;
-  rc = pthread_join(thread_id, &thread_ret);
+  rc = pthread_join(thread_id, thread_ret);
   if (rc != 0) {
     errno = rc;
-    perror("pthread_attr_init");
+    perror("pthread_join");
     goto out_destroy_attr;
   }
 
