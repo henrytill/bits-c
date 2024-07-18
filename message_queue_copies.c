@@ -65,6 +65,8 @@ static void message_queue_fail(int rc, const char *msg) {
 /// @return 0 on success, 1 on failure.
 /// @see consume()
 static void *produce(void *data) {
+  assert(data != NULL);
+
   struct message_queue *queue = data;
   struct message msg = {.tag = MSG_TAG_SOME, .value = 42};
 
@@ -158,7 +160,7 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
   rc = pthread_create(&thread_id, &attr, &produce, queue);
   if (rc != 0) {
     errno = rc;
-    perror("pthread_attr_init");
+    perror("pthread_create");
     goto out_destroy_attr;
   }
 
@@ -168,10 +170,10 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
   }
 
   void *thread_ret = NULL;
-  rc = pthread_join(thread_id, &thread_ret);
+  rc = pthread_join(thread_id, thread_ret);
   if (rc != 0) {
     errno = rc;
-    perror("pthread_attr_init");
+    perror("pthread_join");
     goto out_destroy_attr;
   }
 
