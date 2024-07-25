@@ -82,6 +82,8 @@ hashtable_test: hashtable_test.c hashtable.o fnv.o
 hello: hello.cpp
 	$(CXX) $(CXXFLAGS) -DSAY_GOODBYE $(.ALLSRC) -o $@
 
+message_queue.o: message_queue.c message_queue.h
+
 message_queue_basic: message_queue_basic.c message_queue.o
 	$(CC) $(CFLAGS) -pthread $(.ALLSRC) $(LDFLAGS) -o $@
 
