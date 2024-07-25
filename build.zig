@@ -52,6 +52,38 @@ pub fn build(b: *std.Build) void {
     hashtableTestExe.linkLibrary(hashtableLib);
     b.installArtifact(hashtableTestExe);
 
+    const messageQueueLib = b.addStaticLibrary(.{
+        .name = "message_queue",
+        .target = target,
+        .optimize = optimize,
+    });
+
+    messageQueueLib.addCSourceFile(.{ .file = .{ .path = "message_queue.c" }, .flags = flags });
+    messageQueueLib.linkLibC();
+    b.installArtifact(messageQueueLib);
+
+    const messageQueueBasicExe = b.addExecutable(.{
+        .name = "message_queue_basic",
+        .target = target,
+        .optimize = optimize,
+    });
+
+    messageQueueBasicExe.addCSourceFile(.{ .file = .{ .path = "message_queue_basic.c" }, .flags = flags });
+    messageQueueBasicExe.linkLibC();
+    messageQueueBasicExe.linkLibrary(messageQueueLib);
+    b.installArtifact(messageQueueBasicExe);
+
+    const messageQueueCopiesExe = b.addExecutable(.{
+        .name = "message_queue_copies",
+        .target = target,
+        .optimize = optimize,
+    });
+
+    messageQueueCopiesExe.addCSourceFile(.{ .file = .{ .path = "message_queue_copies.c" }, .flags = flags });
+    messageQueueCopiesExe.linkLibC();
+    messageQueueCopiesExe.linkLibrary(messageQueueLib);
+    b.installArtifact(messageQueueCopiesExe);
+
     const hashtableTests = b.addTest(.{
         .root_source_file = .{ .path = "test.zig" },
         .target = target,
