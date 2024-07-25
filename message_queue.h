@@ -14,7 +14,7 @@ enum message_queue_failure {
   MSGQ_FAILURE_MUTEX_CREATE = 7,
   MSGQ_FAILURE_MUTEX_LOCK = 8,
   MSGQ_FAILURE_MUTEX_UNLOCK = 9,
-  MSGQ_FAILURE_MIN = 10,
+  MSGQ_FAILURE_MAX = 10,
 };
 
 static inline const char *message_queue_failure_str(enum message_queue_failure failure) {
@@ -37,7 +37,7 @@ static inline const char *message_queue_failure_str(enum message_queue_failure f
       return "lock mutex failed";
     case MSGQ_FAILURE_MUTEX_UNLOCK:
       return "unlock mutex failed";
-    case MSGQ_FAILURE_MIN:
+    case MSGQ_FAILURE_MAX:
     default:
       return NULL;
   }
