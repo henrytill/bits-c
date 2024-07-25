@@ -47,6 +47,7 @@ enum message_tag {
   MSG_TAG_NONE = 0,
   MSG_TAG_SOME = 1,
   MSG_TAG_QUIT = 2,
+  MSG_TAG_MAX = 3,
 };
 
 static inline const char *message_tag_str(enum message_tag tag) {
@@ -57,6 +58,7 @@ static inline const char *message_tag_str(enum message_tag tag) {
       return "SOME";
     case MSG_TAG_QUIT:
       return "QUIT";
+    case MSG_TAG_MAX:
     default:
       return NULL;
   }
