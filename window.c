@@ -16,6 +16,8 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
 
+#define eprintf(...) (void)fprintf(stderr, __VA_ARGS__)
+
 static GLint att[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None};
 
 static void print_gl_version(void) {
@@ -40,10 +42,9 @@ void GLAPIENTRY message_callback(GLenum source, GLenum type,
   (void)length;
   (void)user;
 
-  (void)fprintf(stderr,
-                "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-                (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
-                type, severity, message);
+  eprintf("GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+          (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
+          type, severity, message);
 }
 
 static void draw_quad(void) {
@@ -75,7 +76,7 @@ int main(void) {
 
   Display *dpy = XOpenDisplay(NULL);
   if (dpy == NULL) {
-    (void)fprintf(stderr, "Failed to connect to X server\n");
+    eprintf("Failed to connect to X server\n");
     return EXIT_FAILURE;
   }
 
@@ -83,7 +84,7 @@ int main(void) {
 
   XVisualInfo *vi = glXChooseVisual(dpy, 0, att);
   if (vi == NULL) {
-    (void)fprintf(stderr, "No visual found\n");
+    eprintf("No visual found\n");
     goto out_close_display;
   }
 
@@ -101,7 +102,7 @@ int main(void) {
 
   XClassHint *class_hint = XAllocClassHint();
   if (class_hint == NULL) {
-    (void)fprintf(stderr, "Failed to allocate class hint\n");
+    eprintf("Failed to allocate class hint\n");
     goto out_destroy_window;
   }
 
@@ -111,7 +112,7 @@ int main(void) {
   Atom wm_delete_window = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
   int rc = XSetWMProtocols(dpy, win, &wm_delete_window, 1);
   if (rc != 1) {
-    (void)fprintf(stderr, "Failed to XSetWMProtocols\n");
+    eprintf("Failed to XSetWMProtocols\n");
     goto out_free_class_hint;
   }
 
@@ -120,7 +121,7 @@ int main(void) {
 
   GLXContext glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
   if (glc == NULL) {
-    (void)fprintf(stderr, "Failed to create OpenGL context\n");
+    eprintf("Failed to create OpenGL context\n");
     goto out_free_class_hint;
   }
 
@@ -128,8 +129,7 @@ int main(void) {
 
   GLenum err = glewInit();
   if (err != GLEW_OK) {
-    (void)fprintf(stderr, "Failed to initialize GLEW: %s\n",
-                  glewGetErrorString(err));
+    eprintf("Failed to initialize GLEW: %s\n", glewGetErrorString(err));
     goto out_destroy_context;
   }
 
