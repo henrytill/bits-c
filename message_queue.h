@@ -38,6 +38,7 @@ static inline const char *message_queue_failure_str(enum message_queue_failure f
     case MSGQ_FAILURE_MUTEX_UNLOCK:
       return "unlock mutex failed";
     case MSGQ_FAILURE_MAX:
+      __attribute__((fallthrough));
     default:
       return NULL;
   }
@@ -59,6 +60,7 @@ static inline const char *message_tag_str(enum message_tag tag) {
     case MSG_TAG_QUIT:
       return "QUIT";
     case MSG_TAG_MAX:
+      __attribute__((fallthrough));
     default:
       return NULL;
   }
