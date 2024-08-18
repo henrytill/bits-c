@@ -1,3 +1,5 @@
+// -*- mode: c++; -*-
+
 #pragma once
 
 template <typename F>
