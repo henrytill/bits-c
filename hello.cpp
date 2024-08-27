@@ -45,9 +45,9 @@ char *message(const char *name) {
 } // namespace foo
 
 int main() {
-  const char *msg = foo::message("world!");
+  char *msg = foo::message("world!");
   defer({
-    free((void *)msg);
+    free(msg);
     printf("msg freed\n");
   });
 
