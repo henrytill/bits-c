@@ -48,13 +48,13 @@ case "$(uname -s)" in
     PKG_PREFIX="/usr/local"
     PYTHON3_CFLAGS="$(python3-config --cflags)"
     PYTHON3_LDFLAGS="$(python3-config --ldflags)"
-    EXTRA_BIN="hello"
+    EXTRA_BIN="bin/hello"
     write_config_bsd
     ;;
   Linux)
     PYTHON3_CFLAGS="$(python3-config --cflags)"
     PYTHON3_LDFLAGS="$(python3-config --ldflags)"
-    EXTRA_BIN="hello"
+    EXTRA_BIN="bin/hello"
     write_config_linux
     ;;
   *)

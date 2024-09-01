@@ -3,134 +3,124 @@
 
 CC = cc
 CXX = c++
-CFLAGS = -std=gnu11 -Wall -Wextra -Wconversion -Wsign-conversion -g
-CXXFLAGS = -std=c++20 -Wall -Wextra -Wno-exceptions -fno-rtti -g
+CFLAGS =  -Wall -Wextra -Wconversion -Wsign-conversion -g
+CXXFLAGS = -Wall -Wextra -Wno-exceptions -fno-rtti -g
 LDFLAGS =
 
-CURLING_CFLAGS = $(CFLAGS)
+INCLUDES = -Iinclude
+ALL_CFLAGS = $(INCLUDES) -std=gnu11 $(CFLAGS)
+ALL_CXXFLAGS = $(INCLUDES) -std=c++20 $(CXXFLAGS)
+
+CURLING_CFLAGS = $(ALL_CFLAGS)
 CURLING_LDFLAGS = $(LDFLAGS)
 
-WINDOW_CFLAGS = $(CFLAGS)
+WINDOW_CFLAGS = $(ALL_CFLAGS)
 WINDOW_LDFLAGS = $(LDFLAGS)
 
 PYTHON3 = python3
 PYTHON3_CFLAGS =
 PYTHON3_LDFLAGS =
 
-SOURCES =
-SOURCES += base64.c
-SOURCES += curling.c
-SOURCES += demo_oop.c
-SOURCES += fnv.c
-SOURCES += fnv_test.c
-SOURCES += hashtable.c
-SOURCES += hashtable_test.c
-SOURCES += hashtable_py.c
-SOURCES += hello.cpp
-SOURCES += overflow.c
-SOURCES += poll.c
-SOURCES += threadtest.c
-SOURCES += window.c
+OBJS =
+OBJS += lib/fnv.o
+OBJS += lib/hashtable.o
+OBJS += lib/hashtable_py.o
+OBJS += lib/hashtable.so
+OBJS += lib/message_queue.o
 
-BIN =
-BIN += base64
-BIN += curling
-BIN += demo_oop
-BIN += fnv_test
-BIN += hashtable_test
-BIN += message_queue_basic
-BIN += message_queue_copies
-BIN += overflow
-BIN += poll
-BIN += threadtest
-BIN += window
+BINS =
+BINS += bin/base64
+BINS += bin/curling
+BINS += bin/demo_oop
+BINS += bin/hello
+BINS += bin/overflow
+BINS += bin/poll
+BINS += bin/threadtest
+BINS += bin/window
 
-OBJ =
-OBJ += fnv.o
-OBJ += hashtable.o
-OBJ += hashtable_py.o
-OBJ += hashtable.so
-OBJ += message_queue.o
+TESTS =
+TESTS += test/fnv_test
+TESTS += test/hashtable_test
+TESTS += test/message_queue_basic
+TESTS += test/message_queue_copies
 
 -include config.mk
 
 .PHONY: all
-all: $(OBJ) $(BIN)
+all: $(OBJS) $(BINS) $(TESTS)
 
-base64: base64.c
-	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -lcrypto -o $@
+lib/fnv.o: lib/fnv.c include/fnv.h
+	$(CC) $(ALL_CFLAGS) -DNDEBUG -o $@ -c $<
 
-curling: curling.c
-	$(CC) $(CURLING_CFLAGS) $(.ALLSRC) $(CURLING_LDFLAGS) -lcurl -o $@
+lib/hashtable.o: lib/hashtable.c include/hashtable.h
+	$(CC) $(ALL_CFLAGS) -DNDEBUG -o $@ -c $<
 
-fnv.o: fnv.c fnv.h
-	$(CC) $(CFLAGS) -DNDEBUG -o $@ -c $<
+lib/hashtable_py.o: lib/hashtable_py.c lib/hashtable.o include/hashtable.h
+	$(CC) $(INCLUDES) $(PYTHON3_CFLAGS) -fPIC -DNDEBUG -o $@ -c $<
 
-fnv_test: fnv_test.c fnv.o
-
-hashtable.o: hashtable.c hashtable.h
-	$(CC) $(CFLAGS) -DNDEBUG -o $@ -c $<
-
-hashtable_py.o: hashtable_py.c
-	$(CC) $(PYTHON3_CFLAGS) -fPIC -DNDEBUG -o $@ -c $<
-
-hashtable.so: fnv.o hashtable.o hashtable_py.o
+lib/hashtable.so: lib/fnv.o lib/hashtable.o lib/hashtable_py.o
 	$(CC) -shared $(PYTHON3_LDFLAGS) -o $@ $(.ALLSRC)
 
-hashtable_test: hashtable_test.c hashtable.o fnv.o
+lib/message_queue.o: lib/message_queue.c include/message_queue.h
 
-hello: hello.cpp
-	$(CXX) $(CXXFLAGS) -DSAY_GOODBYE $(.ALLSRC) -o $@
+bin/base64: bin/base64.c
+	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -lcrypto -o $@
 
-message_queue.o: message_queue.c message_queue.h
+bin/curling: bin/curling.c
+	$(CC) $(CURLING_CFLAGS) $(.ALLSRC) $(CURLING_LDFLAGS) -lcurl -o $@
 
-message_queue_basic: message_queue_basic.c message_queue.o
-	$(CC) $(CFLAGS) -pthread $(.ALLSRC) $(LDFLAGS) -o $@
+bin/demo_oop: bin/demo_oop.c
+	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
 
-message_queue_copies: message_queue_copies.c message_queue.o
-	$(CC) $(CFLAGS) -pthread $(.ALLSRC) $(LDFLAGS) -o $@
+bin/hello: bin/hello.cpp
+	$(CXX) $(ALL_CXXFLAGS) -DSAY_GOODBYE $(.ALLSRC) -o $@
 
-overflow: overflow.c
-	$(CC) $(CFLAGS) -ftrapv $(.ALLSRC) $(LDFLAGS) -o $@
+bin/overflow: bin/overflow.c
+	$(CC) $(ALL_CFLAGS) -ftrapv $(.ALLSRC) $(LDFLAGS) -o $@
 
-threadtest: threadtest.c
-	$(CC) $(CFLAGS) -D_POSIX_C_SOURCE=200809L -pthread $(.ALLSRC) $(LDFLAGS) -o $@
+bin/poll: bin/poll.c
+	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
 
-window: window.c
+bin/threadtest: bin/threadtest.c
+	$(CC) $(ALL_CFLAGS) -D_POSIX_C_SOURCE=200809L -pthread $(.ALLSRC) $(LDFLAGS) -o $@
+
+bin/window: bin/window.c
 	$(CC) $(WINDOW_CFLAGS) $(.ALLSRC) $(WINDOW_LDFLAGS) -lX11 -lGL -lGLU -lGLEW -o $@
+
+test/fnv_test: test/fnv_test.c lib/fnv.o
+	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
+
+test/hashtable_test: test/hashtable_test.c lib/hashtable.o lib/fnv.o
+	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
+
+test/message_queue_basic: test/message_queue_basic.c lib/message_queue.o
+	$(CC) $(ALL_CFLAGS) -pthread $(.ALLSRC) $(LDFLAGS) -o $@
+
+test/message_queue_copies: test/message_queue_copies.c lib/message_queue.o
+	$(CC) $(ALL_CFLAGS) -pthread $(.ALLSRC) $(LDFLAGS) -o $@
 
 .SUFFIXES: .c .o
 .c.o:
-	$(CC) $(CFLAGS) -o $@ -c $<
-
-.SUFFIXES: .c
-.c:
-	$(CC) $(CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
+	$(CC) $(ALL_CFLAGS) -o $@ -c $<
 
 .PHONY: check test
-check test: $(OBJ) $(BIN)
-	./base64
-	./curling
-	./fnv_test
-	./threadtest foo bar baz
-	./hashtable_test
-	$(PYTHON3) hashtable_test.py
-	./message_queue_basic
-	./message_queue_copies
-
-.PHONY: lint
-lint:
-	clang-tidy --quiet -p compile_commands.json $(SOURCES)
+check test: $(OBJS) $(BINS) $(TESTS)
+	./bin/base64
+	./bin/curling
+	./bin/demo_oop
+	./bin/threadtest foo bar baz
+	./test/fnv_test
+	./test/hashtable_test
+	./test/message_queue_basic
+	./test/message_queue_copies
+	env -i PYTHONPATH=lib $(PYTHON3) test/hashtable_test.py
 
 .PHONY: clean
 clean:
-	rm -f $(OBJ) $(BIN)
-	rm -rf build
-	rm -rf zig-out
+	rm -f $(OBJS) $(BINS) $(TESTS)
 
 .PHONY: distclean
 distclean: clean
-	rm -rf zig-cache
 	rm -f config.mk
 
 # Local Variables:
