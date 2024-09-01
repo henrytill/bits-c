@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "fnv.h"
+#include "macro.h"
 
 // https://datatracker.ietf.org/doc/html/draft-eastlake-fnv-03#page-15
 static const struct test_vector {
@@ -21,8 +22,7 @@ static bool check(const char *input, const uint64_t expected, const uint64_t act
   if (expected == actual) {
     return true;
   }
-  (void)fprintf(stderr, "input: \"%s\", expected: %" PRIu64 ", actual: %" PRIu64 "\n",
-                input, expected, actual);
+  eprintf("input: \"%s\", expected: %" PRIu64 ", actual: %" PRIu64 "\n", input, expected, actual);
   return false;
 }
 

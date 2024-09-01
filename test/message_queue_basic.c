@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "macro.h"
 #include "message_queue.h"
 
 /// Maximum value to Produce.
@@ -26,13 +27,13 @@ static const uint32_t QUEUE_CAP = 4U;
 
 /// Logs an error message and exit.
 static void fail(const char *msg) {
-  (void)fprintf(stderr, "%s\n", msg);
+  eprintf("%s\n", msg);
   exit(EXIT_FAILURE);
 }
 
 /// Logs a message_queue error message and exit.
 static void message_queue_fail(int rc, const char *msg) {
-  (void)fprintf(stderr, "%s: %s\n", msg, message_queue_failure_str((enum message_queue_failure)(-rc)));
+  eprintf("%s: %s\n", msg, message_queue_failure_str((enum message_queue_failure)(-rc)));
   exit(EXIT_FAILURE);
 }
 

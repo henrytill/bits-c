@@ -16,9 +16,12 @@
 
 // General
 
+#define eprintf(...) (void)fprintf(stderr, __VA_ARGS__)
+
 #ifdef DEBUG
 #define debug_printf(fmt, ...)          printf(fmt, ##__VA_ARGS__)
 #define debug_fprintf(stream, fmt, ...) (void)fprintf(stream, fmt, ##__VA_ARGS__)
+#define debug_eprintf(...)              (void)fprintf(stderr, __VA_ARGS__)
 #else
 #define debug_printf(fmt, ...)          ({})
 #define debug_fprintf(stream, fmt, ...) ({})
@@ -49,11 +52,11 @@
 
 // Cleanup
 
-#define AT_EXIT(func) ({                                 \
-  if (atexit(func) != 0) {                               \
-    (void)fprintf(stderr, "atexit(%s) failed\n", #func); \
-    exit(EXIT_FAILURE);                                  \
-  }                                                      \
+#define AT_EXIT(func) ({                   \
+  if (atexit(func) != 0) {                 \
+    eprintf("atexit(%s) failed\n", #func); \
+    exit(EXIT_FAILURE);                    \
+  }                                        \
 })
 
 #define DEFINE_TRIVIAL_CLEANUP_FUNC(type, func)                                  \

@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "macro.h"
+
 static inline void handle_error(const char *msg) {
   perror(msg);
   exit(EXIT_FAILURE);
@@ -49,7 +51,7 @@ int main(int argc, char *argv[]) {
   struct pollfd *pfds = NULL;
 
   if (argc < 2) {
-    (void)fprintf(stderr, "Usage: %s file...\n", argv[0]);
+    eprintf("Usage: %s file...\n", argv[0]);
     return EXIT_FAILURE;
   }
 

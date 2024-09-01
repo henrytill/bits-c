@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "macro.h"
 #include "message_queue.h"
 
 #define LOG(_msg) ({                               \
@@ -26,17 +27,17 @@
          message_tag_str(__msg.tag), __msg.value); \
 })
 
-#define CHECK(_msg, _tag, _value) ({                                 \
-  struct message __msg = (_msg);                                     \
-  enum message_tag __tag = (_tag);                                   \
-  typeof(_value) __value = (_value);                                 \
-  if (__msg.tag != __tag || __msg.value != __value) {                \
-    (void)fprintf(stderr, "%s: %s{%s, %" PRIdPTR "} != {%s, %ld}\n", \
-                  __func__, #_msg,                                   \
-                  message_tag_str(__msg.tag), __msg.value,           \
-                  message_tag_str(__tag), __value);                  \
-    exit(EXIT_FAILURE);                                              \
-  }                                                                  \
+#define CHECK(_msg, _tag, _value) ({                   \
+  struct message __msg = (_msg);                       \
+  enum message_tag __tag = (_tag);                     \
+  typeof(_value) __value = (_value);                   \
+  if (__msg.tag != __tag || __msg.value != __value) {  \
+    eprintf("%s: %s{%s, %" PRIdPTR "} != {%s, %ld}\n", \
+            __func__, #_msg,                           \
+            message_tag_str(__msg.tag), __msg.value,   \
+            message_tag_str(__tag), __value);          \
+    exit(EXIT_FAILURE);                                \
+  }                                                    \
 });
 
 /// Delay before consuming messages.
@@ -47,13 +48,13 @@ static const uint32_t QUEUE_CAP = 1U;
 
 /// Logs an error message and exit.
 static void fail(const char *msg) {
-  (void)fprintf(stderr, "%s\n", msg);
+  eprintf("%s\n", msg);
   exit(EXIT_FAILURE);
 }
 
 /// Logs a message_queue error message and exit.
 static void message_queue_fail(int rc, const char *msg) {
-  (void)fprintf(stderr, "%s: %s", msg, message_queue_failure_str((enum message_queue_failure)(-rc)));
+  eprintf("%s: %s", msg, message_queue_failure_str((enum message_queue_failure)(-rc)));
   exit(EXIT_FAILURE);
 }
 
@@ -165,7 +166,7 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
   }
 
   if (consume(queue) != 0) {
-    (void)fprintf(stderr, "consume failed");
+    eprintf("consume failed");
     goto out_destroy_queue;
   }
 

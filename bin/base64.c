@@ -5,12 +5,14 @@
 
 #include <openssl/evp.h>
 
+#include "macro.h"
+
 #define STATIC_ASSERT(e) _Static_assert((e), #e)
 
-#define TEST(e)                                                   \
-  if (!(e)) {                                                     \
-    (void)fprintf(stderr, "%s:%d: %s\n", __FILE__, __LINE__, #e); \
-    exit(EXIT_FAILURE);                                           \
+#define TEST(e)                                     \
+  if (!(e)) {                                       \
+    eprintf("%s:%d: %s\n", __FILE__, __LINE__, #e); \
+    exit(EXIT_FAILURE);                             \
   }
 
 // https://boringssl.googlesource.com/boringssl/+/master/crypto/base64/base64_test.cc#49

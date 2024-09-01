@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "macro.h"
+
 #define MAX_THREADS 128
 
 struct thread_info {
@@ -86,7 +88,7 @@ int main(int argc, char *argv[]) {
         stack_size = strtoul(optarg, NULL, 0);
         break;
       default:
-        (void)fprintf(stderr, "Usage: %s [-s stack-size] arg...\n", argv[0]);
+        eprintf("Usage: %s [-s stack-size] arg...\n", argv[0]);
         return EXIT_FAILURE;
     }
   }
@@ -94,7 +96,7 @@ int main(int argc, char *argv[]) {
   const int num_threads = argc - optind;
 
   if (num_threads > MAX_THREADS) {
-    (void)fprintf(stderr, "Too many threads; max is %d\n", MAX_THREADS);
+    eprintf("Too many threads; max is %d\n", MAX_THREADS);
     return EXIT_FAILURE;
   }
 
