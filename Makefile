@@ -32,7 +32,6 @@ BINS =
 BINS += bin/base64
 BINS += bin/curling
 BINS += bin/demo_oop
-BINS += bin/hello
 BINS += bin/overflow
 BINS += bin/poll
 BINS += bin/threadtest
@@ -71,6 +70,9 @@ bin/curling: bin/curling.c
 
 bin/demo_oop: bin/demo_oop.c
 	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
+
+bin/greet: bin/greet.m
+	$(CC) $(GREET_CFLAGS) $(.ALLSRC) $(GREET_LDFLAGS) -o $@
 
 bin/hello: bin/hello.cpp
 	$(CXX) $(ALL_CXXFLAGS) -DSAY_GOODBYE $(.ALLSRC) -o $@

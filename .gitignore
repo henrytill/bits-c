@@ -21,3 +21,5 @@ threadtest
 window
 config.mk
 compile_commands.json
+bin/greet
+bin/greet.d

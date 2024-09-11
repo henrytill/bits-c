@@ -19,15 +19,17 @@ WINDOW_CFLAGS += -I${X11_PREFIX}/include/ -I${PKG_PREFIX}/include/
 WINDOW_LDFLAGS += -L${X11_PREFIX}/lib/ -L${PKG_PREFIX}/lib ${WINDOW_LDFLAGS_EXTRA}
 PYTHON3_CFLAGS = ${PYTHON3_CFLAGS}
 PYTHON3_LDFLAGS = ${PYTHON3_LDFLAGS}
-BIN += ${EXTRA_BIN}
+BINS += ${EXTRA_BIN}
 EOF
 }
 
 write_config_linux() {
   cat <<EOF >config.mk
+GREET_CFLAGS = ${GREET_CFLAGS}
+GREET_LDFLAGS = ${GREET_LDFLAGS}
 PYTHON3_CFLAGS = ${PYTHON3_CFLAGS}
 PYTHON3_LDFLAGS = ${PYTHON3_LDFLAGS}
-BIN += ${EXTRA_BIN}
+BINS += ${EXTRA_BIN}
 EOF
 }
 
@@ -54,7 +56,13 @@ case "$(uname -s)" in
   Linux)
     PYTHON3_CFLAGS="$(python3-config --cflags)"
     PYTHON3_LDFLAGS="$(python3-config --ldflags)"
-    EXTRA_BIN="bin/hello"
+    if [ -n "$(command -v gnustep-config)" ]; then
+      GREET_CFLAGS="$(gnustep-config --debug-flags --objc-flags)"
+      GREET_LDFLAGS="$(gnustep-config --base-libs)"
+      EXTRA_BIN="bin/hello bin/greet"
+    else
+      EXTRA_BIN="bin/hello"
+    fi
     write_config_linux
     ;;
   *)
