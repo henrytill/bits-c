@@ -1,17 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef __clang__
-#  if __has_extension(blocks)
-#    define HAS_BLOCKS 1
-#    include <Block.h>
-#  endif
-#endif
+#include "feature.h"
 
-#if defined(__GNUC__) && !defined(__clang__)
-#  if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 1)
-#    define HAS_NESTED_FUNCTIONS 1
-#  endif
+#ifdef HAS_BLOCKS
+#  include <Block.h>
 #endif
 
 typedef struct node node;
