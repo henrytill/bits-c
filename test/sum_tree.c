@@ -118,9 +118,36 @@ struct kont {
   } u;
 };
 
-kont *defunc_kont_k1(node *n, kont *k) {
-  kont *k1 = calloc(1, sizeof(*k1));
-  assert(k1 != NULL);
+#define KONT_ARENA_SIZE 128
+
+typedef struct kont_allocator kont_allocator;
+
+/* simple arena allocator for konts */
+struct kont_allocator {
+  size_t count;
+  size_t capacity;
+  kont konts[];
+};
+
+kont_allocator *kont_allocator_create(size_t capacity) {
+  kont_allocator *ret = calloc(1, sizeof(*ret) + (capacity * sizeof(kont)));
+  assert(ret != NULL);
+  ret->count = 0;
+  ret->capacity = capacity;
+  return ret;
+}
+
+void kont_allocator_destroy(kont_allocator *alloc) {
+  free(alloc);
+}
+
+kont *kont_allocate(kont_allocator *alloc) {
+  assert(alloc->count < alloc->capacity);
+  return &alloc->konts[alloc->count++];
+}
+
+kont *defunc_kont_k1(kont_allocator *alloc, node *n, kont *k) {
+  kont *k1 = kont_allocate(alloc);
   {
     k1->tag = K1;
     k1->u.k1.n = n;
@@ -129,9 +156,8 @@ kont *defunc_kont_k1(node *n, kont *k) {
   return k1;
 }
 
-kont *defunc_kont_k2(int s0, node *n, kont *k) {
-  kont *k2 = calloc(1, sizeof(*k2));
-  assert(k2 != NULL);
+kont *defunc_kont_k2(kont_allocator *alloc, int s0, node *n, kont *k) {
+  kont *k2 = kont_allocate(alloc);
   {
     k2->tag = K2;
     k2->u.k2.s0 = s0;
@@ -141,8 +167,8 @@ kont *defunc_kont_k2(int s0, node *n, kont *k) {
   return k2;
 }
 
-kont *defunc_kont_k3(void) {
-  kont *k3 = calloc(1, sizeof(*k3));
+kont *defunc_kont_k3(kont_allocator *alloc) {
+  kont *k3 = kont_allocate(alloc);
   assert(k3 != NULL);
   {
     k3->tag = K3;
@@ -150,34 +176,33 @@ kont *defunc_kont_k3(void) {
   return k3;
 }
 
-void defunc_apply(kont *k, int s);
+void defunc_apply(kont_allocator *alloc, kont *k, int s);
 
-void defunc_sum_impl(node *n, kont *k) {
+void defunc_sum_impl(kont_allocator *alloc, node *n, kont *k) {
   if (n == NULL) {
-    defunc_apply(k, 0);
+    defunc_apply(alloc, k, 0);
   } else {
-    kont *k1 = defunc_kont_k1(n, k);
-    defunc_sum_impl(n->left, k1);
-    free(k1);
+    kont *k1 = defunc_kont_k1(alloc, n, k);
+    defunc_sum_impl(alloc, n->left, k1);
   }
 }
 
-void defunc_apply(kont *k, int s) {
+void defunc_apply(kont_allocator *alloc, kont *k, int s) {
   if (k->tag == K1) {
-    kont *k2 = defunc_kont_k2(s, k->u.k1.n, k->u.k1.k);
-    defunc_sum_impl(k->u.k1.n->right, k2);
-    free(k2);
+    kont *k2 = defunc_kont_k2(alloc, s, k->u.k1.n, k->u.k1.k);
+    defunc_sum_impl(alloc, k->u.k1.n->right, k2);
   } else if (k->tag == K2) {
-    defunc_apply(k->u.k2.k, k->u.k2.s0 + s + k->u.k2.n->value);
+    defunc_apply(alloc, k->u.k2.k, k->u.k2.s0 + s + k->u.k2.n->value);
   } else if (k->tag == K3) {
     answer = s;
   }
 }
 
 void defunc_sum(node *n) {
-  kont *k3 = defunc_kont_k3();
-  defunc_sum_impl(n, k3);
-  free(k3);
+  kont_allocator *alloc = kont_allocator_create(KONT_ARENA_SIZE);
+  kont *k3 = defunc_kont_k3(alloc);
+  defunc_sum_impl(alloc, n, k3);
+  kont_allocator_destroy(alloc);
 }
 
 /* traditional stack iteration */
