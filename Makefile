@@ -42,6 +42,7 @@ TESTS += test/fnv_test
 TESTS += test/hashtable_test
 TESTS += test/message_queue_basic
 TESTS += test/message_queue_copies
+TESTS += test/notramp
 TESTS += test/sum_tree
 
 -include config.mk
@@ -101,6 +102,9 @@ test/message_queue_basic: test/message_queue_basic.c lib/message_queue.o
 
 test/message_queue_copies: test/message_queue_copies.c lib/message_queue.o
 	$(CC) $(ALL_CFLAGS) -pthread $(.ALLSRC) $(LDFLAGS) -o $@
+
+test/notramp: test/notramp.c
+	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
 
 test/sum_tree: test/sum_tree.c
 	$(CC) $(ALL_CFLAGS) $(SUM_TREE_CFLAGS) $(.ALLSRC) $(LDFLAGS) $(SUM_TREE_LDFLAGS) -o $@
