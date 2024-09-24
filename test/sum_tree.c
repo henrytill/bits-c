@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -6,6 +7,8 @@
 #ifdef HAS_BLOCKS
 #  include <Block.h>
 #endif
+
+static int answer = -1;
 
 typedef struct node node;
 
@@ -17,9 +20,7 @@ struct node {
 
 node *node_create(int value, node *left, node *right) {
   node *ret = calloc(1, sizeof(*ret));
-  if (ret == NULL) {
-    return NULL;
-  }
+  assert(ret != NULL);
   ret->value = value;
   ret->left = left;
   ret->right = right;
@@ -35,61 +36,64 @@ void node_destroy(node *n) {
   free(n);
 }
 
-int node_sum(node *n) {
+/* recursive */
+
+int recursive_sum(node *n) {
   if (n == NULL) {
     return 0;
   }
-  const int suml = node_sum(n->left);
-  const int sumr = node_sum(n->right);
+  const int suml = recursive_sum(n->left);
+  const int sumr = recursive_sum(n->right);
   return suml + sumr + n->value;
 }
 
 #ifdef HAS_NESTED_FUNCTIONS
-void node_sum_cps_impl(node *n, void k(int)) {
+/* cps with gcc nested functions */
+
+void nested_sum_impl(node *n, void k(int)) {
   if (n == NULL) {
     k(0);
   } else {
     void k1(int s0) {
       void k2(int s1) { k(s0 + s1 + n->value); }
-      node_sum_cps_impl(n->right, k2);
+      nested_sum_impl(n->right, k2);
     }
-    node_sum_cps_impl(n->left, k1);
+    nested_sum_impl(n->left, k1);
   }
 }
 
-int node_sum_cps(node *n) {
-  int answer = -1;
-  void k(int s) {
-    answer = s;
-  }
-  node_sum_cps_impl(n, k);
-  return answer;
+void nested_sum(node *n) {
+  void k3(int s) { answer = s; }
+  nested_sum_impl(n, k3);
 }
 #endif
 
 #ifdef HAS_BLOCKS
-typedef void (^kont)(int);
+/* cps with clang blocks */
 
-void node_sum_cps_blocks_impl(node *n, kont k) {
+typedef void (^kontb)(int);
+
+void blocks_sum_impl(node *n, kontb k) {
   if (n == NULL) {
     k(0);
   } else {
-    kont k1 = Block_copy(^(int s0) {
-      kont k2 = Block_copy(^(int s1) { k(s0 + s1 + n->value); });
-      node_sum_cps_blocks_impl(n->right, k2);
+    kontb k1 = Block_copy(^(int s0) {
+      kontb k2 = Block_copy(^(int s1) { k(s0 + s1 + n->value); });
+      blocks_sum_impl(n->right, k2);
       Block_release(k2);
     });
-    node_sum_cps_blocks_impl(n->left, k1);
+    blocks_sum_impl(n->left, k1);
     Block_release(k1);
   }
 }
 
-int node_sum_cps_blocks(node *n) {
-  __block int answer = -1;
-  node_sum_cps_blocks_impl(n, ^(int s) { answer = s; });
-  return answer;
+void blocks_sum(node *n) {
+  kontb k3 = ^(int s) { answer = s; };
+  blocks_sum_impl(n, k3);
 }
 #endif
+
+/* traditional stack iteration */
 
 typedef struct stack_node stack_node;
 
@@ -100,9 +104,7 @@ struct stack_node {
 
 void push(stack_node **top, node *n) {
   stack_node *new = calloc(1, sizeof(*new));
-  if (new == NULL) {
-    exit(EXIT_FAILURE);
-  }
+  assert(new != NULL);
   new->node = n;
   new->next = *top;
   *top = new;
@@ -119,9 +121,9 @@ node *pop(stack_node **top) {
   return ret;
 }
 
-int node_sum_iterative(node *root) {
+void iterative_sum(node *root) {
   if (root == NULL) {
-    return 0;
+    answer = 0;
   }
 
   int sum = 0;
@@ -140,7 +142,7 @@ int node_sum_iterative(node *root) {
     }
   }
 
-  return sum;
+  answer = sum;
 }
 
 #define BRANCH(value, left, right) node_create(value, left, right)
@@ -150,19 +152,18 @@ typedef struct algo algo;
 
 struct algo {
   char *name;
-  int (*f)(node *n);
+  void (*f)(node *n);
 };
 
 int main(void) {
   algo algos[] = {
-    {"recursive", &node_sum},
 #ifdef HAS_NESTED_FUNCTIONS
-    {"cps (w/nested functions)", &node_sum_cps},
+    {"cps (w/nested functions)", &nested_sum},
 #endif
 #ifdef HAS_BLOCKS
-    {"cps (w/blocks)", &node_sum_cps_blocks},
+    {"cps (w/blocks)", &blocks_sum},
 #endif
-    {"iterative", &node_sum_iterative},
+    {"iterative", &iterative_sum},
     {NULL, NULL},
   };
 
@@ -178,13 +179,16 @@ int main(void) {
 
   algo a = {0};
   node *n = NULL;
-  int sum = 0;
+  int ref = 0;
 
   for (size_t i = 0; (a = algos[i]).name != NULL; ++i) {
     printf("=== %s ===\n", a.name);
     for (size_t j = 0; (n = ns[j]) != NULL; ++j) {
-      sum = a.f(n);
-      printf("sum: %d\n", sum);
+      ref = recursive_sum(n);
+      answer = -1;
+      a.f(n);
+      assert(ref == answer);
+      printf("sum: %d\n", answer);
     }
   }
 
