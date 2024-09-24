@@ -125,16 +125,16 @@ typedef struct kont_allocator kont_allocator;
 
 /* simple arena allocator for konts */
 struct kont_allocator {
-  size_t count;
   size_t capacity;
+  size_t count;
   kont konts[];
 };
 
 kont_allocator *kont_allocator_create(size_t capacity) {
   kont_allocator *ret = calloc(1, sizeof(*ret) + (capacity * sizeof(kont)));
   assert(ret != NULL);
-  ret->count = 0;
   ret->capacity = capacity;
+  ret->count = 0;
   return ret;
 }
 
@@ -149,31 +149,25 @@ kont *kont_allocate(kont_allocator *alloc) {
 
 kont *defunc_kont_k1(kont_allocator *alloc, node *n, kont *k) {
   kont *k1 = kont_allocate(alloc);
-  {
-    k1->tag = K1;
-    k1->u.k1.n = n;
-    k1->u.k1.k = k;
-  }
+  k1->tag = K1;
+  k1->u.k1.n = n;
+  k1->u.k1.k = k;
   return k1;
 }
 
 kont *defunc_kont_k2(kont_allocator *alloc, int s0, node *n, kont *k) {
   kont *k2 = kont_allocate(alloc);
-  {
-    k2->tag = K2;
-    k2->u.k2.s0 = s0;
-    k2->u.k2.n = n;
-    k2->u.k2.k = k;
-  }
+  k2->tag = K2;
+  k2->u.k2.s0 = s0;
+  k2->u.k2.n = n;
+  k2->u.k2.k = k;
   return k2;
 }
 
 kont *defunc_kont_k3(kont_allocator *alloc) {
   kont *k3 = kont_allocate(alloc);
   assert(k3 != NULL);
-  {
-    k3->tag = K3;
-  }
+  k3->tag = K3;
   return k3;
 }
 
