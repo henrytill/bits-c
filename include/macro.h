@@ -5,13 +5,13 @@
 #include <stdio.h>
 
 #ifndef NDEBUG
-#define DEBUG
+#  define DEBUG
 #endif
 
 // C2X compatibility
 
 #ifndef static_assert
-#define static_assert _Static_assert
+#  define static_assert _Static_assert
 #endif
 
 // General
@@ -19,12 +19,12 @@
 #define eprintf(...) (void)fprintf(stderr, __VA_ARGS__)
 
 #ifdef DEBUG
-#define debug_printf(fmt, ...)          printf(fmt, ##__VA_ARGS__)
-#define debug_fprintf(stream, fmt, ...) (void)fprintf(stream, fmt, ##__VA_ARGS__)
-#define debug_eprintf(...)              (void)fprintf(stderr, __VA_ARGS__)
+#  define debug_printf(fmt, ...)          printf(fmt, ##__VA_ARGS__)
+#  define debug_fprintf(stream, fmt, ...) (void)fprintf(stream, fmt, ##__VA_ARGS__)
+#  define debug_eprintf(...)              (void)fprintf(stderr, __VA_ARGS__)
 #else
-#define debug_printf(fmt, ...)          ({})
-#define debug_fprintf(stream, fmt, ...) ({})
+#  define debug_printf(fmt, ...)          ({})
+#  define debug_fprintf(stream, fmt, ...) ({})
 #endif
 
 // OOP
