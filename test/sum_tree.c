@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 #include "allocator.h"
-#include "feature.h"
+#include "feature.h" // IWYU pragma: keep
 
 #ifdef HAS_BLOCKS
 #  include <Block.h>
