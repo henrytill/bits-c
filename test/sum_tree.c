@@ -19,9 +19,33 @@ struct node {
   node *right;
 };
 
-node *node_create(int value, node *left, node *right) {
-  node *ret = calloc(1, sizeof(*ret));
+typedef struct node_allocator node_allocator;
+
+struct node_allocator {
+  size_t capacity;
+  size_t count;
+  node nodes[];
+};
+
+node_allocator *node_allocator_create(size_t capacity) {
+  node_allocator *ret = calloc(1, sizeof(*ret) + (capacity * sizeof(node)));
   assert(ret != NULL);
+  ret->capacity = capacity;
+  ret->count = 0;
+  return ret;
+}
+
+void node_allocator_destroy(node_allocator *alloc) {
+  free(alloc);
+}
+
+node *node_allocate(node_allocator *alloc) {
+  assert(alloc->count < alloc->capacity);
+  return &alloc->nodes[alloc->count++];
+}
+
+node *node_create(node_allocator *alloc, int value, node *left, node *right) {
+  node *ret = node_allocate(alloc);
   ret->value = value;
   ret->left = left;
   ret->right = right;
@@ -403,9 +427,6 @@ void iterative_sum(node *root) {
   answer = sum;
 }
 
-#define BRANCH(value, left, right) node_create(value, left, right)
-#define LEAF(value)                node_create(value, NULL, NULL)
-
 typedef struct algo algo;
 
 struct algo {
@@ -427,6 +448,11 @@ int main(void) {
     {"iterative", &iterative_sum},
     {NULL, NULL},
   };
+
+  node_allocator *alloc = node_allocator_create(128);
+
+#define BRANCH(value, left, right) node_create(alloc, value, left, right)
+#define LEAF(value)                node_create(alloc, value, NULL, NULL)
 
   node *ns[] = {
     LEAF(123),
@@ -453,9 +479,7 @@ int main(void) {
     }
   }
 
-  for (size_t i = 0; (n = ns[i]) != NULL; ++i) {
-    node_destroy(n);
-  }
+  node_allocator_destroy(alloc);
 
   return EXIT_SUCCESS;
 }
