@@ -244,6 +244,119 @@ void opt_sum(node *n) {
   kont_allocator_destroy(alloc);
 }
 
+/* use stack */
+
+typedef struct vkont {
+  kont_tag tag;
+  union {
+    struct {
+      node *n;
+    } k1;
+    struct {
+      int s0;
+      node *n;
+    } k2;
+  } u;
+} vkont;
+
+#define MAKE_K1(_n)                      \
+  (struct vkont) {                       \
+    .tag = K1, .u = {.k1 = {.n = (_n)} } \
+  }
+
+#define MAKE_K2(_s0, _n)                              \
+  (struct vkont) {                                    \
+    .tag = K2, .u = {.k2 = {.s0 = (_s0), .n = (_n)} } \
+  }
+
+#define MAKE_K3() \
+  (struct vkont) { .tag = K3 }
+
+typedef struct vkont_stack {
+  size_t capacity;
+  size_t top;
+  struct vkont konts[];
+} vkont_stack;
+
+vkont_stack *vkont_stack_create(size_t initial_capacity) {
+  vkont_stack *stack = malloc(sizeof(vkont_stack) + initial_capacity * sizeof(struct vkont));
+  assert(stack != NULL);
+  stack->capacity = initial_capacity;
+  stack->top = 0;
+  return stack;
+}
+
+void vkont_stack_destroy(vkont_stack *stack) {
+  free(stack);
+}
+
+bool vkont_stack_is_empty(vkont_stack *stack) {
+  return stack->top == 0;
+}
+
+void vkont_stack_resize(vkont_stack **stack_ptr) {
+  vkont_stack *stack = *stack_ptr;
+  size_t new_capacity = stack->capacity * 2;
+  vkont_stack *new_stack = realloc(stack, sizeof(vkont_stack) + new_capacity * sizeof(struct vkont));
+  assert(new_stack != NULL);
+  new_stack->capacity = new_capacity;
+  *stack_ptr = new_stack;
+}
+
+void vkont_stack_push(vkont_stack **stack_ptr, struct vkont vk) {
+  vkont_stack *stack = *stack_ptr;
+  if (stack->top == stack->capacity) {
+    vkont_stack_resize(stack_ptr);
+    stack = *stack_ptr;
+  }
+  stack->konts[stack->top++] = vk;
+}
+
+struct vkont vkont_stack_pop(vkont_stack *stack) {
+  assert(!vkont_stack_is_empty(stack));
+  return stack->konts[--stack->top];
+}
+
+struct vkont *vkont_stack_peek(vkont_stack *stack) {
+  if (vkont_stack_is_empty(stack)) {
+    return NULL; // Or handle error as appropriate
+  }
+  return &stack->konts[stack->top - 1];
+}
+
+void stack_sum_impl(node *n, vkont_stack *k) {
+  while (true) {
+    if (n == NULL) {
+      int s = 0;
+      while (true) {
+        vkont *f = vkont_stack_peek(k);
+        if (f->tag == K1) {
+          n = f->u.k1.n->right;
+          *f = MAKE_K2(s, f->u.k1.n);
+          break;
+        }
+        if (f->tag == K2) {
+          s = f->u.k2.s0 + s + f->u.k2.n->value;
+          vkont_stack_pop(k);
+        } else if (f->tag == K3) {
+          answer = s;
+          return;
+        }
+      }
+    } else {
+      vkont_stack_push(&k, MAKE_K1(n));
+      n = n->left;
+    }
+  }
+}
+
+void stack_sum(node *n) {
+  vkont_stack *k = vkont_stack_create(128);
+  vkont_stack_push(&k, MAKE_K3());
+  stack_sum_impl(n, k);
+  vkont_stack_destroy(k);
+}
+
 /* traditional stack iteration */
 
 typedef struct stack_node stack_node;
@@ -316,6 +429,7 @@ int main(void) {
 #endif
     {"defunc", &defunc_sum},
     {"opt", &opt_sum},
+    {"stack", &stack_sum},
     {"iterative", &iterative_sum},
     {NULL, NULL},
   };
