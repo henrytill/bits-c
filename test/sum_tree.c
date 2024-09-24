@@ -93,6 +93,93 @@ void blocks_sum(node *n) {
 }
 #endif
 
+/* defunctionalization */
+
+typedef enum kont_tag {
+  K1,
+  K2,
+  K3,
+} kont_tag;
+
+typedef struct kont kont;
+
+struct kont {
+  kont_tag tag;
+  union {
+    struct {
+      node *n;
+      kont *k;
+    } k1;
+    struct {
+      int s0;
+      node *n;
+      kont *k;
+    } k2;
+  } u;
+};
+
+kont *defunc_kont_k1(node *n, kont *k) {
+  kont *k1 = calloc(1, sizeof(*k1));
+  assert(k1 != NULL);
+  {
+    k1->tag = K1;
+    k1->u.k1.n = n;
+    k1->u.k1.k = k;
+  }
+  return k1;
+}
+
+kont *defunc_kont_k2(int s0, node *n, kont *k) {
+  kont *k2 = calloc(1, sizeof(*k2));
+  assert(k2 != NULL);
+  {
+    k2->tag = K2;
+    k2->u.k2.s0 = s0;
+    k2->u.k2.n = n;
+    k2->u.k2.k = k;
+  }
+  return k2;
+}
+
+kont *defunc_kont_k3(void) {
+  kont *k3 = calloc(1, sizeof(*k3));
+  assert(k3 != NULL);
+  {
+    k3->tag = K3;
+  }
+  return k3;
+}
+
+void defunc_apply(kont *k, int s);
+
+void defunc_sum_impl(node *n, kont *k) {
+  if (n == NULL) {
+    defunc_apply(k, 0);
+  } else {
+    kont *k1 = defunc_kont_k1(n, k);
+    defunc_sum_impl(n->left, k1);
+    free(k1);
+  }
+}
+
+void defunc_apply(kont *k, int s) {
+  if (k->tag == K1) {
+    kont *k2 = defunc_kont_k2(s, k->u.k1.n, k->u.k1.k);
+    defunc_sum_impl(k->u.k1.n->right, k2);
+    free(k2);
+  } else if (k->tag == K2) {
+    defunc_apply(k->u.k2.k, k->u.k2.s0 + s + k->u.k2.n->value);
+  } else if (k->tag == K3) {
+    answer = s;
+  }
+}
+
+void defunc_sum(node *n) {
+  kont *k3 = defunc_kont_k3();
+  defunc_sum_impl(n, k3);
+  free(k3);
+}
+
 /* traditional stack iteration */
 
 typedef struct stack_node stack_node;
@@ -163,6 +250,7 @@ int main(void) {
 #ifdef HAS_BLOCKS
     {"cps (w/blocks)", &blocks_sum},
 #endif
+    {"defunc", &defunc_sum},
     {"iterative", &iterative_sum},
     {NULL, NULL},
   };
