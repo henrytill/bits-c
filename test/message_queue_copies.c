@@ -137,7 +137,7 @@ static int consume(struct message_queue *queue) {
   return 0;
 }
 
-int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[]) {
+int main(void) {
   extern const uint32_t QUEUE_CAP;
 
   int ret = EXIT_FAILURE;
@@ -148,17 +148,17 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
   }
 
   int rc = -1;
-  pthread_attr_t attr;
+  pthread_attr_t thread_attr;
   pthread_t thread_id;
 
-  rc = pthread_attr_init(&attr);
+  rc = pthread_attr_init(&thread_attr);
   if (rc != 0) {
     errno = rc;
     perror("pthread_attr_init");
     goto out_destroy_queue;
   }
 
-  rc = pthread_create(&thread_id, &attr, &produce, queue);
+  rc = pthread_create(&thread_id, &thread_attr, &produce, queue);
   if (rc != 0) {
     errno = rc;
     perror("pthread_create");
@@ -167,7 +167,7 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
 
   if (consume(queue) != 0) {
     eprintf("consume failed");
-    goto out_destroy_queue;
+    goto out_destroy_attr;
   }
 
   void *thread_ret = NULL;
@@ -182,7 +182,7 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char *argv[])
 
   ret = EXIT_SUCCESS;
 out_destroy_attr:
-  (void)pthread_attr_destroy(&attr);
+  (void)pthread_attr_destroy(&thread_attr);
 out_destroy_queue:
   message_queue_destroy(queue);
   return ret;
