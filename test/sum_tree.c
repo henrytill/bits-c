@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -205,6 +206,44 @@ void defunc_sum(node *n) {
   kont_allocator_destroy(alloc);
 }
 
+/*
+ * optimized version
+ * + tail-call elimination of apply
+ * + inlined apply
+ * + tail-call elimination of sum
+ */
+void opt_sum_impl(kont_allocator *alloc, node *n, kont *k) {
+  while (true) {
+    if (n == NULL) {
+      int s = 0;
+      while (true) {
+        if (k->tag == K1) {
+          n = k->u.k1.n->right;
+          k = defunc_kont_k2(alloc, s, k->u.k1.n, k->u.k1.k);
+          break;
+        }
+        if (k->tag == K2) {
+          s = k->u.k2.s0 + s + k->u.k2.n->value;
+          k = k->u.k2.k;
+        } else if (k->tag == K3) {
+          answer = s;
+          return;
+        }
+      }
+    } else {
+      k = defunc_kont_k1(alloc, n, k);
+      n = n->left;
+    }
+  }
+}
+
+void opt_sum(node *n) {
+  kont_allocator *alloc = kont_allocator_create(KONT_ARENA_SIZE);
+  kont *k3 = defunc_kont_k3(alloc);
+  opt_sum_impl(alloc, n, k3);
+  kont_allocator_destroy(alloc);
+}
+
 /* traditional stack iteration */
 
 typedef struct stack_node stack_node;
@@ -276,6 +315,7 @@ int main(void) {
     {"cps (w/blocks)", &blocks_sum},
 #endif
     {"defunc", &defunc_sum},
+    {"opt", &opt_sum},
     {"iterative", &iterative_sum},
     {NULL, NULL},
   };
