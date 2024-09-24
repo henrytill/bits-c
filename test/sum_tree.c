@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "allocator.h"
 #include "feature.h"
 
 #ifdef HAS_BLOCKS
@@ -19,33 +20,10 @@ struct node {
   node *right;
 };
 
-typedef struct node_allocator node_allocator;
-
-struct node_allocator {
-  size_t capacity;
-  size_t count;
-  node nodes[];
-};
-
-node_allocator *node_allocator_create(size_t capacity) {
-  node_allocator *ret = calloc(1, sizeof(*ret) + (capacity * sizeof(node)));
-  assert(ret != NULL);
-  ret->capacity = capacity;
-  ret->count = 0;
-  return ret;
-}
-
-void node_allocator_destroy(node_allocator *alloc) {
-  free(alloc);
-}
-
-node *node_allocate(node_allocator *alloc) {
-  assert(alloc->count < alloc->capacity);
-  return &alloc->nodes[alloc->count++];
-}
+ALLOCATOR_DEFINE(node);
 
 node *node_create(node_allocator *alloc, int value, node *left, node *right) {
-  node *ret = node_allocate(alloc);
+  node *ret = node_alloc(alloc);
   ret->value = value;
   ret->left = left;
   ret->right = right;
@@ -143,36 +121,10 @@ struct kont {
   } u;
 };
 
-#define KONT_ARENA_SIZE 128
-
-typedef struct kont_allocator kont_allocator;
-
-/* simple arena allocator for konts */
-struct kont_allocator {
-  size_t capacity;
-  size_t count;
-  kont konts[];
-};
-
-kont_allocator *kont_allocator_create(size_t capacity) {
-  kont_allocator *ret = calloc(1, sizeof(*ret) + (capacity * sizeof(kont)));
-  assert(ret != NULL);
-  ret->capacity = capacity;
-  ret->count = 0;
-  return ret;
-}
-
-void kont_allocator_destroy(kont_allocator *alloc) {
-  free(alloc);
-}
-
-kont *kont_allocate(kont_allocator *alloc) {
-  assert(alloc->count < alloc->capacity);
-  return &alloc->konts[alloc->count++];
-}
+ALLOCATOR_DEFINE(kont);
 
 kont *defunc_kont_k1(kont_allocator *alloc, node *n, kont *k) {
-  kont *k1 = kont_allocate(alloc);
+  kont *k1 = kont_alloc(alloc);
   k1->tag = K1;
   k1->u.k1.n = n;
   k1->u.k1.k = k;
@@ -180,7 +132,7 @@ kont *defunc_kont_k1(kont_allocator *alloc, node *n, kont *k) {
 }
 
 kont *defunc_kont_k2(kont_allocator *alloc, int s0, node *n, kont *k) {
-  kont *k2 = kont_allocate(alloc);
+  kont *k2 = kont_alloc(alloc);
   k2->tag = K2;
   k2->u.k2.s0 = s0;
   k2->u.k2.n = n;
@@ -189,7 +141,7 @@ kont *defunc_kont_k2(kont_allocator *alloc, int s0, node *n, kont *k) {
 }
 
 kont *defunc_kont_k3(kont_allocator *alloc) {
-  kont *k3 = kont_allocate(alloc);
+  kont *k3 = kont_alloc(alloc);
   assert(k3 != NULL);
   k3->tag = K3;
   return k3;
@@ -216,6 +168,8 @@ void defunc_apply(kont_allocator *alloc, kont *k, int s) {
     answer = s;
   }
 }
+
+#define KONT_ARENA_SIZE 128
 
 void defunc_sum(node *n) {
   kont_allocator *alloc = kont_allocator_create(KONT_ARENA_SIZE);
@@ -449,7 +403,9 @@ int main(void) {
     {NULL, NULL},
   };
 
-  node_allocator *alloc = node_allocator_create(128);
+#define NODE_ARENA_SIZE 128
+
+  node_allocator *alloc = node_allocator_create(NODE_ARENA_SIZE);
 
 #define BRANCH(value, left, right) node_create(alloc, value, left, right)
 #define LEAF(value)                node_create(alloc, value, NULL, NULL)
