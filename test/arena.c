@@ -31,7 +31,7 @@ static size_t get_pagesize(void) {
   return (size_t)result;
 }
 
-static size_t nextpage(size_t size) {
+static inline size_t nextpage(size_t size) {
   extern size_t pagesize;
 
   assert(pagesize > 0);
@@ -40,9 +40,14 @@ static size_t nextpage(size_t size) {
   return (size + pagesize - 1) & ~(pagesize - 1);
 }
 
+static inline size_t calc_size(size_t n) {
+  extern const size_t MEMINCR;
+
+  return nextpage(((n + 3) & ~3UL) + MEMINCR * 1024 + sizeof(struct arena));
+}
+
 void *allocate(size_t n, size_t t) {
   extern struct arena *arena[];
-  extern const size_t MEMINCR;
 
   struct arena *ap = NULL;
   for (ap = arena[t]; ap->avail + n > ap->limit; arena[t] = ap) {
@@ -52,7 +57,7 @@ void *allocate(size_t n, size_t t) {
       ap->avail = (char *)ap + sizeof(*ap);
     } else {
       // allocate a new arena
-      size_t m = nextpage(((n + 3) & ~3UL) + MEMINCR * 1024 + sizeof(*ap));
+      size_t m = calc_size(n);
       ap->next = calloc(1, m);
       ap = ap->next;
       ap->limit = (char *)ap + m;
