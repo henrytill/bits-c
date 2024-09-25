@@ -8,9 +8,6 @@
 #include "fnv.h"
 #include "macro.h"
 
-/// Returns 1 if x is a power of 2
-#define ISPOW2(x) (((x) & ((x)-1)) == 0)
-
 #define STATIC_ASSERT(e) _Static_assert((e), #e)
 
 #define TEST_ENTRIES \

@@ -67,4 +67,9 @@
     }                                                                            \
   }
 
+// Misc
+
+/// Returns 1 if x is a power of 2
+#define ISPOW2(x) (((x) & ((x)-1)) == 0)
+
 #endif // C_BITS_MACRO
