@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/mman.h>
 #include <unistd.h>
 
 #include "macro.h"
@@ -41,16 +40,6 @@ static size_t nextpage(size_t size) {
   return (size + pagesize - 1) & ~(pagesize - 1);
 }
 
-static void *morecore(size_t size) {
-  void *ptr = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-  if (ptr == MAP_FAILED) {
-    perror("mmap failed");
-    exit(EXIT_FAILURE);
-  }
-  debug_printf("mapped %zu bytes at address range %p-%p\n", size, ptr, (char *)ptr + size);
-  return ptr;
-}
-
 void *allocate(size_t n, size_t t) {
   extern struct arena *arena[];
   extern const size_t MEMINCR;
@@ -64,7 +53,7 @@ void *allocate(size_t n, size_t t) {
     } else {
       // allocate a new arena
       size_t m = nextpage(((n + 3) & ~3UL) + MEMINCR * 1024 + sizeof(*ap));
-      ap->next = morecore(m);
+      ap->next = calloc(1, m);
       ap = ap->next;
       ap->limit = (char *)ap + m;
       ap->avail = (char *)ap + sizeof(*ap);
@@ -96,32 +85,12 @@ void unmap(size_t t) {
 
   while (ap != NULL) {
     struct arena *next = ap->next;
-    size_t size = (size_t)(ap->limit - (char *)ap);
-    debug_printf("unmapped %zu bytes at address %p\n", size, ap);
-    if (munmap(ap, size) == 0) {
-      prev->next = next;
-    } else {
-      prev = ap;
-    }
+    free(ap);
+    prev->next = next;
     ap = next;
   }
   arena[t] = &first[t];
 }
-
-#ifdef DEBUG
-static void print_maps(void) {
-  FILE *fp = fopen("/proc/self/maps", "r");
-  if (fp != NULL) {
-    char line[256];
-    while (fgets(line, sizeof(line), fp)) {
-      printf("%s", line);
-    }
-    (void)fclose(fp);
-  }
-}
-#else
-static void print_maps(void) {}
-#endif
 
 int main(void) {
   extern size_t pagesize;
@@ -143,15 +112,9 @@ int main(void) {
   q->y = 3;
   printf("q = {x = %d, y = %d}\n", q->x, q->y);
 
-  print_maps();
-
-  debug_printf("=== deallocating ===\n");
   deallocate(0);
-  print_maps();
 
-  debug_printf("=== unmapping ===\n");
   unmap(0);
-  print_maps();
 
   return EXIT_SUCCESS;
 }
