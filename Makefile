@@ -38,6 +38,7 @@ BINS += bin/threadtest
 BINS += bin/window
 
 TESTS =
+TESTS += test/arena
 TESTS += test/fnv_test
 TESTS += test/hashtable_test
 TESTS += test/message_queue_basic
@@ -90,6 +91,9 @@ bin/threadtest: bin/threadtest.c
 
 bin/window: bin/window.c
 	$(CC) $(WINDOW_CFLAGS) $(.ALLSRC) $(WINDOW_LDFLAGS) -lX11 -lGL -lGLU -lGLEW -o $@
+
+test/arena: test/arena.c
+	$(CC) $(ALL_CFLAGS) $(ARENA_CFLAGS) $(.ALLSRC) $(LDFLAGS) $(ARENA_LDFLAGS) -o $@
 
 test/fnv_test: test/fnv_test.c lib/fnv.o
 	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@

@@ -23,5 +23,6 @@ config.mk
 compile_commands.json
 bin/greet
 bin/greet.d
+test/arena
 test/notramp
 test/sum_tree
