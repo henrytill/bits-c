@@ -59,6 +59,10 @@ void *allocate(size_t n, size_t t) {
       // allocate a new arena
       size_t m = calc_size(n);
       ap->next = calloc(1, m);
+      if (ap->next == NULL) {
+        eprintf("%s: calloc failed", __func__);
+        exit(EXIT_FAILURE);
+      }
       ap = ap->next;
       ap->limit = (char *)ap + m;
       ap->avail = (char *)ap + sizeof(*ap);
