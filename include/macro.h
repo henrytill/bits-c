@@ -20,6 +20,7 @@
 #else
 #  define debug_printf(fmt, ...)          ({})
 #  define debug_fprintf(stream, fmt, ...) ({})
+#  define debug_eprintf(...)              ({})
 #endif
 
 // OOP
