@@ -3,7 +3,7 @@
 
 CC = cc
 CXX = c++
-CFLAGS =  -Wall -Wextra -Wconversion -Wsign-conversion -g
+CFLAGS =  -Wall -Wextra -Wconversion -Wsign-conversion -Wpointer-arith -g
 CXXFLAGS = -Wall -Wextra -Wno-exceptions -fno-rtti -g
 LDFLAGS =
 
