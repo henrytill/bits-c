@@ -1,17 +1,12 @@
 #ifndef C_BITS_MACRO
 #define C_BITS_MACRO
 
+#include <assert.h>
 #include <stddef.h>
 #include <stdio.h>
 
 #ifndef NDEBUG
 #  define DEBUG
-#endif
-
-// C2X compatibility
-
-#ifndef static_assert
-#  define static_assert _Static_assert
 #endif
 
 // General
