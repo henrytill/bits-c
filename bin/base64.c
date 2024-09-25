@@ -7,8 +7,6 @@
 
 #include "macro.h"
 
-#define STATIC_ASSERT(e) _Static_assert((e), #e)
-
 #define TEST(e)                                     \
   if (!(e)) {                                       \
     eprintf("%s:%d: %s\n", __FILE__, __LINE__, #e); \

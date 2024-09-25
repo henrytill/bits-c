@@ -8,8 +8,6 @@
 #include "fnv.h"
 #include "macro.h"
 
-#define STATIC_ASSERT(e) _Static_assert((e), #e)
-
 #define TEST_ENTRIES \
   X(1, 0)            \
   X(1, 1)            \
