@@ -14,7 +14,7 @@ fnv_test
 hashtable_test
 hello
 message_queue_basic
-message_queue_copies
+message_queue_block
 overflow
 poll
 threadtest

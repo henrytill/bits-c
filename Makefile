@@ -42,7 +42,7 @@ TESTS += test/arena
 TESTS += test/fnv_test
 TESTS += test/hashtable_test
 TESTS += test/message_queue_basic
-TESTS += test/message_queue_copies
+TESTS += test/message_queue_block
 TESTS += test/notramp
 TESTS += test/sum_tree
 
@@ -64,6 +64,8 @@ lib/hashtable.so: lib/fnv.o lib/hashtable.o lib/hashtable_py.o
 	$(CC) -shared $(PYTHON3_LDFLAGS) -o $@ $(.ALLSRC)
 
 lib/message_queue.o: lib/message_queue.c include/message_queue.h
+
+test/message_queue_expected.o: test/message_queue_expected.c
 
 bin/base64: bin/base64.c
 	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -lcrypto -o $@
@@ -104,7 +106,7 @@ test/hashtable_test: test/hashtable_test.c lib/hashtable.o lib/fnv.o
 test/message_queue_basic: test/message_queue_basic.c lib/message_queue.o
 	$(CC) $(ALL_CFLAGS) -pthread $(.ALLSRC) $(LDFLAGS) -o $@
 
-test/message_queue_copies: test/message_queue_copies.c lib/message_queue.o
+test/message_queue_block: test/message_queue_block.c lib/message_queue.o test/message_queue_expected.o
 	$(CC) $(ALL_CFLAGS) -pthread $(.ALLSRC) $(LDFLAGS) -o $@
 
 test/notramp: test/notramp.c
@@ -126,7 +128,7 @@ check test: $(OBJS) $(BINS) $(TESTS)
 	./test/fnv_test
 	./test/hashtable_test
 	./test/message_queue_basic
-	./test/message_queue_copies
+	./test/message_queue_block
 	env -i PYTHONPATH=lib $(PYTHON3) test/hashtable_test.py
 
 .PHONY: clean
