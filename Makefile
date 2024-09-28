@@ -131,6 +131,10 @@ check test: $(OBJS) $(BINS) $(TESTS)
 	./test/message_queue_block
 	env -i PYTHONPATH=lib $(PYTHON3) test/hashtable_test.py
 
+.PHONY: lint
+lint:
+	clang-tidy --quiet -p compile_commands.json lib/*.c test/*.c
+
 .PHONY: clean
 clean:
 	rm -f $(OBJS) $(BINS) $(TESTS)
