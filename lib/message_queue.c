@@ -49,7 +49,7 @@ static void destroy_semaphore(sem_t *sem) {
 ///
 /// @return The mutex, or NULL on failure.
 static pthread_mutex_t *create_mutex(void) {
-  pthread_mutex_t *mutex = calloc(1, sizeof(*mutex));
+  pthread_mutex_t *mutex = calloc(1, sizeof(pthread_mutex_t));
   if (mutex == NULL) {
     return NULL;
   }

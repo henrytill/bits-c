@@ -18,9 +18,9 @@
 #  define debug_fprintf(stream, fmt, ...) (void)fprintf(stream, fmt, ##__VA_ARGS__)
 #  define debug_eprintf(...)              (void)fprintf(stderr, __VA_ARGS__)
 #else
-#  define debug_printf(fmt, ...)          ({})
-#  define debug_fprintf(stream, fmt, ...) ({})
-#  define debug_eprintf(...)              ({})
+#  define debug_printf(fmt, ...)
+#  define debug_fprintf(stream, fmt, ...)
+#  define debug_eprintf(...)
 #endif
 
 // OOP
@@ -48,12 +48,11 @@
 
 // Cleanup
 
-#define AT_EXIT(func) ({                   \
+#define AT_EXIT(func)                      \
   if (atexit(func) != 0) {                 \
     eprintf("atexit(%s) failed\n", #func); \
     exit(EXIT_FAILURE);                    \
-  }                                        \
-})
+  }
 
 #define DEFINE_TRIVIAL_CLEANUP_FUNC(type, func)                                  \
   static inline void func##p(type *p) { /* NOLINT(bugprone-macro-parentheses) */ \

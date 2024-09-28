@@ -20,7 +20,7 @@ struct node {
   node *right;
 };
 
-ALLOCATOR_DEFINE(node);
+ALLOCATOR_DEFINE(node)
 
 node *node_create(node_allocator *alloc, int value, node *left, node *right) {
   node *ret = node_alloc(alloc);
@@ -121,7 +121,7 @@ struct kont {
   } u;
 };
 
-ALLOCATOR_DEFINE(kont);
+ALLOCATOR_DEFINE(kont)
 
 kont *defunc_kont_k1(kont_allocator *alloc, node *n, kont *k) {
   kont *k1 = kont_alloc(alloc);

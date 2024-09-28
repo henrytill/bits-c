@@ -1,13 +1,3 @@
-/// Test basic message queue functionality.
-///
-/// The producer thread produces messages with values from 0 to COUNT.
-/// The consumer consumes messages on the main thread until it receives a
-/// message with tag MSG_TAG_QUIT.
-///
-/// @see message_queue_create()
-/// @see message_queue_put()
-/// @see message_queue_get()
-/// @see message_queue_destroy()
 #include <assert.h>
 #include <errno.h>
 #include <inttypes.h>
@@ -19,31 +9,20 @@
 #include "macro.h"
 #include "message_queue.h"
 
-/// Maximum value to Produce.
 static const int COUNT = 100;
 
-/// Capacity of the message_queue.
 static const uint32_t QUEUE_CAP = 4U;
 
-/// Logs an error message and exit.
 static void fail(const char *msg) {
   eprintf("%s\n", msg);
   exit(EXIT_FAILURE);
 }
 
-/// Logs a message_queue error message and exit.
 static void message_queue_fail(int rc, const char *msg) {
   eprintf("%s: %s\n", msg, message_queue_failure_str((enum message_queue_failure)(-rc)));
   exit(EXIT_FAILURE);
 }
 
-/// Produces messages with values from 0 to COUNT. The last message has tag MSG_TAG_QUIT.
-///
-/// This function is meant to be run in its own thread by passing it to SDL_CreateThread().
-///
-/// @param data Pointer to a message_queue.
-/// @return 0 on success
-/// @see consume()
 static void *produce(void *data) {
   extern const int COUNT;
 
@@ -73,14 +52,6 @@ static void *produce(void *data) {
   return NULL;
 }
 
-/// Consumes messages until a message with tag MSG_TAG_QUIT is received.
-///
-/// This function is meant to be run on the main thread.
-///
-/// @param queue Pointer to a message_queue.
-/// @param out Pointer to a message.
-/// @return 0 when a message with tag MSG_TAG_QUIT is received, 1 otherwise
-/// @see produce()
 static int consume(struct message_queue *queue, struct message *out) {
   const int rc = message_queue_get(queue, out);
   if (rc < 0) {
