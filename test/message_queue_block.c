@@ -11,7 +11,7 @@
 #include "macro.h"
 #include "message_queue.h"
 
-static const unsigned DELAY = 2U;
+static const unsigned DELAY = 1U;
 
 static const uint32_t QUEUE_CAP = 1U;
 
@@ -40,11 +40,10 @@ static int consume(struct message_queue *queue) {
   extern const size_t EXPECTED_LEN;       // NOLINT(readability-identifier-naming)
   extern const struct message EXPECTED[]; // NOLINT(readability-identifier-naming)
 
-  sleep(DELAY);
-
   struct message consumed[EXPECTED_LEN];
 
   for (size_t i = 0; i < EXPECTED_LEN; ++i) {
+    sleep(DELAY);
     message_queue_get(queue, &consumed[i]);
   }
 
