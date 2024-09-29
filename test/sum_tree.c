@@ -420,6 +420,9 @@ int main(void) {
     NULL,
   };
 
+#undef LEAF
+#undef BRANCH
+
   algo a = {0};
   node *n = NULL;
   int ref = 0;
