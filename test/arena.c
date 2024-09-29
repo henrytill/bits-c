@@ -111,17 +111,31 @@ int main(void) {
     int y;
   };
 
+#define PRINT_POINT(_pt) printf(#_pt " = {x = %d, y = %d}\n", (_pt)->x, (_pt)->y)
+
   struct point *p = allocate(sizeof(*p), 0);
   p->x = 4;
   p->y = 2;
-  printf("p = {x = %d, y = %d}\n", p->x, p->y);
+  PRINT_POINT(p);
 
   struct point *q = allocate(sizeof(*q), 0);
   q->x = 5;
   q->y = 3;
-  printf("q = {x = %d, y = %d}\n", q->x, q->y);
+  PRINT_POINT(q);
 
   deallocate(0);
+
+  struct point *r = allocate(sizeof(*r), 0);
+  r->x = 4;
+  r->y = 2;
+  PRINT_POINT(r);
+
+  struct point *s = allocate(sizeof(*s), 0);
+  s->x = 5;
+  s->y = 3;
+  PRINT_POINT(s);
+
+#undef PRINT_POINT
 
   unmap(0);
 
