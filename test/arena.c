@@ -90,12 +90,9 @@ void unmap(size_t t) {
   extern struct arena *arena[];
 
   struct arena *ap = first[t].next;
-  struct arena *prev = &first[t];
-
   while (ap != NULL) {
     struct arena *next = ap->next;
     free(ap);
-    prev->next = next;
     ap = next;
   }
   arena[t] = &first[t];
