@@ -77,8 +77,7 @@ void deallocate(size_t t) {
   extern struct arena first[];
   extern struct arena *arena[];
 
-  struct arena *ap = (arena[t] = first[t].next);
-  if (ap != NULL) {
+  if ((arena[t] = first[t].next) != NULL) {
     arena[t]->avail = (char *)arena[t] + sizeof(*arena[t]);
   } else {
     arena[t] = &first[t];

@@ -3,6 +3,7 @@ Checks: >
   cert-*-c,
   clang-analyzer-*,
   readability-*,
+  -bugprone-assignment-in-if-condition,
   -bugprone-easily-swappable-parameters,
   -readability-identifier-length,
   -readability-magic-numbers,
