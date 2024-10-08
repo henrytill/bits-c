@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "feature.h"
+#include "feature.h" // IWYU pragma: keep
 
 #if HAS_NESTED_FUNCTIONS
 long f1(void) {
@@ -14,7 +14,7 @@ long f1(void) {
 }
 
 int main(void) {
-  assert(f1() == 2);
+  assert(f1() == 2L);
   return EXIT_SUCCESS;
 }
 #else
