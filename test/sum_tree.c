@@ -98,11 +98,13 @@ void blocks_sum(node *n) {
 
 /* defunctionalization */
 
-typedef enum kont_tag {
+typedef enum kont_tag kont_tag;
+
+enum kont_tag {
   K1,
   K2,
   K3,
-} kont_tag;
+};
 
 typedef struct kont kont;
 
@@ -142,7 +144,6 @@ kont *defunc_kont_k2(kont_allocator *alloc, int s0, node *n, kont *k) {
 
 kont *defunc_kont_k3(kont_allocator *alloc) {
   kont *k3 = kont_alloc(alloc);
-  assert(k3 != NULL);
   k3->tag = K3;
   return k3;
 }
@@ -218,7 +219,9 @@ void opt_sum(node *n) {
 
 /* use stack */
 
-typedef struct vkont {
+typedef struct vkont vkont;
+
+struct vkont {
   kont_tag tag;
   union {
     struct {
@@ -229,26 +232,28 @@ typedef struct vkont {
       node *n;
     } k2;
   } u;
-} vkont;
+};
 
 #define MAKE_K1(_n)                      \
-  (struct vkont) {                       \
+  (vkont) {                              \
     .tag = K1, .u = {.k1 = {.n = (_n)} } \
   }
 
 #define MAKE_K2(_s0, _n)                              \
-  (struct vkont) {                                    \
+  (vkont) {                                           \
     .tag = K2, .u = {.k2 = {.s0 = (_s0), .n = (_n)} } \
   }
 
 #define MAKE_K3() \
-  (struct vkont) { .tag = K3 }
+  (vkont) { .tag = K3 }
 
-typedef struct vkont_stack {
+typedef struct vkont_stack vkont_stack;
+
+struct vkont_stack {
   size_t capacity;
   size_t top;
   struct vkont konts[];
-} vkont_stack;
+};
 
 vkont_stack *vkont_stack_create(size_t initial_capacity) {
   vkont_stack *stack = malloc(sizeof(vkont_stack) + initial_capacity * sizeof(struct vkont));
