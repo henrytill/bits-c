@@ -18,8 +18,10 @@ ColumnLimit: 0
 ContinuationIndentWidth: 2
 DerivePointerAlignment: false
 IndentCaseLabels: true
+IndentCaseBlocks: true
 IndentPPDirectives: AfterHash
 IndentWidth: 2
+ObjCBlockIndentWidth: 2
 PointerAlignment: Right
 ReflowComments: true
 SortIncludes: true
