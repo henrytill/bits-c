@@ -133,7 +133,7 @@ check test: $(OBJS) $(BINS) $(TESTS)
 
 .PHONY: lint
 lint:
-	clang-tidy --quiet -p compile_commands.json lib/*.c test/*.c
+	clang-tidy --quiet -p compile_commands.json bin/*.c lib/*.c test/*.c
 
 .PHONY: clean
 clean:

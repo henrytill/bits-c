@@ -11,7 +11,7 @@ exec ./a.out "$@"
  */
 #include <stdio.h>
 
-int main(int argc, char *argv[]) {
+int main(void) {
   printf("Hello, world!\n");
   return 0;
 }
