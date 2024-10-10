@@ -234,17 +234,17 @@ struct vkont {
   } u;
 };
 
-#define MAKE_K1(_n)                      \
+#define K1_INIT(_n)                      \
   (vkont) {                              \
     .tag = K1, .u = {.k1 = {.n = (_n)} } \
   }
 
-#define MAKE_K2(_s0, _n)                              \
+#define K2_INIT(_s0, _n)                              \
   (vkont) {                                           \
     .tag = K2, .u = {.k2 = {.s0 = (_s0), .n = (_n)} } \
   }
 
-#define MAKE_K3() \
+#define K3_INIT() \
   (vkont) { .tag = K3 }
 
 typedef struct vkont_stack vkont_stack;
@@ -309,7 +309,7 @@ void stack_sum_impl(node *n, vkont_stack *k) {
         vkont *f = vkont_stack_peek(k);
         if (f->tag == K1) {
           n = f->u.k1.n->right;
-          *f = MAKE_K2(s, f->u.k1.n);
+          *f = K2_INIT(s, f->u.k1.n);
           break;
         }
         if (f->tag == K2) {
@@ -321,7 +321,7 @@ void stack_sum_impl(node *n, vkont_stack *k) {
         }
       }
     } else {
-      vkont_stack_push(&k, MAKE_K1(n));
+      vkont_stack_push(&k, K1_INIT(n));
       n = n->left;
     }
   }
@@ -329,7 +329,7 @@ void stack_sum_impl(node *n, vkont_stack *k) {
 
 void stack_sum(node *n) {
   vkont_stack *k = vkont_stack_create(128);
-  vkont_stack_push(&k, MAKE_K3());
+  vkont_stack_push(&k, K3_INIT());
   stack_sum_impl(n, k);
   vkont_stack_destroy(k);
 }
