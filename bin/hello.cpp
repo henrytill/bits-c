@@ -21,14 +21,14 @@ constexpr message_kind get_message_kind() {
 
 inline char *make_hello(const char *name) {
   size_t len = (size_t)snprintf(NULL, 0, "Hello, %s", name);
-  char *ret = (char *)calloc(++len, sizeof(*ret));
+  char *ret = (char *)std::calloc(++len, sizeof(*ret));
   (void)snprintf(ret, len, "Hello, %s", name);
   return ret;
 }
 
 inline char *make_goodbye(const char *name) {
   size_t len = (size_t)snprintf(NULL, 0, "Goodbye, %s", name);
-  char *ret = (char *)calloc(++len, sizeof(*ret));
+  char *ret = (char *)std::calloc(++len, sizeof(*ret));
   (void)snprintf(ret, len, "Goodbye, %s", name);
   return ret;
 }
@@ -47,7 +47,7 @@ char *message(const char *name) {
 int main() {
   char *msg = foo::message("world!");
   defer({
-    free(msg);
+    std::free(msg);
     printf("msg freed\n");
   });
 
