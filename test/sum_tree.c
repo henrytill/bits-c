@@ -242,18 +242,20 @@ struct vkont {
   } u;
 };
 
-#define K1_INIT(_n)                      \
-  (vkont) {                              \
-    .tag = K1, .u = {.k1 = {.n = (_n)} } \
-  }
+struct vkont vkont_k1(node *n) {
+  struct vkont ret = {.tag = K1, .u = {.k1 = {.n = n}}};
+  return ret;
+}
 
-#define K2_INIT(_s0, _n)                              \
-  (vkont) {                                           \
-    .tag = K2, .u = {.k2 = {.s0 = (_s0), .n = (_n)} } \
-  }
+struct vkont vkont_k2(int s0, node *n) {
+  struct vkont ret = {.tag = K2, .u = {.k2 = {.s0 = s0, .n = n}}};
+  return ret;
+}
 
-#define K3_INIT() \
-  (vkont) { .tag = K3 }
+struct vkont vkont_k3(void) {
+  struct vkont ret = {.tag = K3};
+  return ret;
+}
 
 typedef struct vkont_stack vkont_stack;
 
@@ -319,7 +321,7 @@ void stack_sum_impl(node *n, vkont_stack *k) {
         vkont *f = vkont_stack_peek(k);
         if (f->tag == K1) {
           n = f->u.k1.n->right;
-          *f = K2_INIT(s, f->u.k1.n);
+          *f = vkont_k2(s, f->u.k1.n);
           break;
         }
         if (f->tag == K2) {
@@ -331,7 +333,7 @@ void stack_sum_impl(node *n, vkont_stack *k) {
         }
       }
     } else {
-      vkont_stack_push(&k, K1_INIT(n));
+      vkont_stack_push(&k, vkont_k1(n));
       n = n->left;
     }
   }
@@ -339,7 +341,7 @@ void stack_sum_impl(node *n, vkont_stack *k) {
 
 void stack_sum(node *n) {
   vkont_stack *k = vkont_stack_create(128);
-  vkont_stack_push(&k, K3_INIT());
+  vkont_stack_push(&k, vkont_k3());
   stack_sum_impl(n, k);
   vkont_stack_destroy(k);
 }
