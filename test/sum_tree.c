@@ -66,6 +66,8 @@ void nested_sum_impl(node *n, void k(int)) {
 }
 
 void nested_sum(node *n) {
+  extern int answer;
+
   void k3(int s) { answer = s; }
   nested_sum_impl(n, k3);
 }
@@ -91,6 +93,8 @@ void blocks_sum_impl(node *n, kontb k) {
 }
 
 void blocks_sum(node *n) {
+  extern int answer;
+
   kontb k3 = ^(int s) { answer = s; };
   blocks_sum_impl(n, k3);
 }
@@ -160,6 +164,8 @@ void defunc_sum_impl(kont_allocator *alloc, node *n, kont *k) {
 }
 
 void defunc_apply(kont_allocator *alloc, kont *k, int s) {
+  extern int answer;
+
   if (k->tag == K1) {
     kont *k2 = defunc_kont_k2(alloc, s, k->u.k1.n, k->u.k1.k);
     defunc_sum_impl(alloc, k->u.k1.n->right, k2);
@@ -186,6 +192,8 @@ void defunc_sum(node *n) {
  * + tail-call elimination of sum
  */
 void opt_sum_impl(kont_allocator *alloc, node *n, kont *k) {
+  extern int answer;
+
   while (true) {
     if (n == NULL) {
       int s = 0;
@@ -302,6 +310,8 @@ struct vkont *vkont_stack_peek(vkont_stack *stack) {
 }
 
 void stack_sum_impl(node *n, vkont_stack *k) {
+  extern int answer;
+
   while (true) {
     if (n == NULL) {
       int s = 0;
@@ -363,6 +373,8 @@ node *pop(stack_node **top) {
 }
 
 void iterative_sum(node *root) {
+  extern int answer;
+
   if (root == NULL) {
     answer = 0;
   }
@@ -394,6 +406,8 @@ struct algo {
 };
 
 int main(void) {
+  extern int answer;
+
   algo algos[] = {
 #ifdef HAS_NESTED_FUNCTIONS
     {"cps (w/nested functions)", &nested_sum},
