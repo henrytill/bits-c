@@ -266,7 +266,7 @@ struct vkont_stack {
 };
 
 vkont_stack *vkont_stack_create(size_t initial_capacity) {
-  vkont_stack *stack = malloc(sizeof(vkont_stack) + initial_capacity * sizeof(struct vkont));
+  vkont_stack *stack = calloc(1, sizeof(vkont_stack) + initial_capacity * sizeof(struct vkont));
   assert(stack != NULL);
   stack->capacity = initial_capacity;
   stack->top = 0;
@@ -311,39 +311,39 @@ struct vkont *vkont_stack_peek(vkont_stack *stack) {
   return &stack->konts[stack->top - 1];
 }
 
-void stack_sum_impl(node *n, vkont_stack *k) {
+void stack_sum_impl(node *n, vkont_stack *ks) {
   extern int answer;
 
   while (true) {
     if (n == NULL) {
       int s = 0;
       while (true) {
-        vkont *f = vkont_stack_peek(k);
-        if (f->tag == K1) {
-          n = f->u.k1.n->right;
-          *f = vkont_k2(s, f->u.k1.n);
+        vkont *k = vkont_stack_peek(ks);
+        if (k->tag == K1) {
+          n = k->u.k1.n->right;
+          *k = vkont_k2(s, k->u.k1.n);
           break;
         }
-        if (f->tag == K2) {
-          s = f->u.k2.s0 + s + f->u.k2.n->value;
-          vkont_stack_pop(k);
-        } else if (f->tag == K3) {
+        if (k->tag == K2) {
+          s = k->u.k2.s0 + s + k->u.k2.n->value;
+          vkont_stack_pop(ks);
+        } else if (k->tag == K3) {
           answer = s;
           return;
         }
       }
     } else {
-      vkont_stack_push(&k, vkont_k1(n));
+      vkont_stack_push(&ks, vkont_k1(n));
       n = n->left;
     }
   }
 }
 
 void stack_sum(node *n) {
-  vkont_stack *k = vkont_stack_create(128);
-  vkont_stack_push(&k, vkont_k3());
-  stack_sum_impl(n, k);
-  vkont_stack_destroy(k);
+  vkont_stack *ks = vkont_stack_create(128);
+  vkont_stack_push(&ks, vkont_k3());
+  stack_sum_impl(n, ks);
+  vkont_stack_destroy(ks);
 }
 
 /* traditional stack iteration */
