@@ -22,6 +22,7 @@ PYTHON3_CFLAGS =
 PYTHON3_LDFLAGS =
 
 OBJS =
+OBJS += lib/expect.o
 OBJS += lib/fnv.o
 OBJS += lib/hashtable.o
 OBJS += lib/hashtable_py.o
@@ -39,6 +40,7 @@ BINS += bin/window
 
 TESTS =
 TESTS += test/arena
+TESTS += test/expect_test
 TESTS += test/fnv_test
 TESTS += test/hashtable_test
 TESTS += test/message_queue_basic
@@ -50,6 +52,9 @@ TESTS += test/sum_tree
 
 .PHONY: all
 all: $(OBJS) $(BINS) $(TESTS)
+
+lib/expect.o: lib/expect.c include/expect.h
+	$(CC) $(ALL_CFLAGS) -o $@ -c $<
 
 lib/fnv.o: lib/fnv.c include/fnv.h
 	$(CC) $(ALL_CFLAGS) -DNDEBUG -o $@ -c $<
@@ -97,6 +102,9 @@ bin/window: bin/window.c
 test/arena: test/arena.c
 	$(CC) $(ALL_CFLAGS) $(ARENA_CFLAGS) $(.ALLSRC) $(LDFLAGS) $(ARENA_LDFLAGS) -o $@
 
+test/expect_test: test/expect_test.c lib/expect.o
+	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
+
 test/fnv_test: test/fnv_test.c lib/fnv.o
 	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
 
@@ -111,6 +119,7 @@ test/message_queue_block: test/message_queue_block.c lib/message_queue.o test/me
 
 test/notramp: test/notramp.c
 	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
+
 
 test/sum_tree: test/sum_tree.c
 	$(CC) $(ALL_CFLAGS) $(SUM_TREE_CFLAGS) $(.ALLSRC) $(LDFLAGS) $(SUM_TREE_LDFLAGS) -o $@
@@ -130,6 +139,10 @@ check test: $(OBJS) $(BINS) $(TESTS)
 	./test/message_queue_basic
 	./test/message_queue_block
 	env -i PYTHONPATH=lib $(PYTHON3) test/hashtable_test.py
+
+.PHONY: expect
+expect: test/expect_test
+	@./test/expect_test
 
 .PHONY: lint
 lint:
