@@ -39,7 +39,7 @@ BINS += bin/threadtest
 BINS += bin/window
 
 TESTS =
-TESTS += test/arena
+TESTS += test/arena_test
 TESTS += test/expect_test
 TESTS += test/fnv_test
 TESTS += test/hashtable_test
@@ -52,6 +52,8 @@ TESTS += test/sum_tree
 
 .PHONY: all
 all: $(OBJS) $(BINS) $(TESTS)
+
+lib/arena.o: lib/arena.c include/arena.h
 
 lib/expect.o: lib/expect.c include/expect.h
 	$(CC) $(ALL_CFLAGS) -o $@ -c $<
@@ -99,8 +101,8 @@ bin/threadtest: bin/threadtest.c
 bin/window: bin/window.c
 	$(CC) $(WINDOW_CFLAGS) $(.ALLSRC) $(WINDOW_LDFLAGS) -lX11 -lGL -lGLU -lGLEW -o $@
 
-test/arena: test/arena.c
-	$(CC) $(ALL_CFLAGS) $(ARENA_CFLAGS) $(.ALLSRC) $(LDFLAGS) $(ARENA_LDFLAGS) -o $@
+test/arena_test: test/arena_test.c lib/arena.o
+	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
 
 test/expect_test: test/expect_test.c lib/expect.o
 	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
