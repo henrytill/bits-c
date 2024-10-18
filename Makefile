@@ -22,6 +22,7 @@ PYTHON3_CFLAGS =
 PYTHON3_LDFLAGS =
 
 OBJS =
+OBJS += lib/arena.o
 OBJS += lib/coroutine.o
 OBJS += lib/expect.o
 OBJS += lib/fnv.o
@@ -60,7 +61,6 @@ lib/arena.o: lib/arena.c include/arena.h
 lib/coroutine.o: lib/coroutine.c include/coroutine.h
 
 lib/expect.o: lib/expect.c include/expect.h
-	$(CC) $(ALL_CFLAGS) -o $@ -c $<
 
 lib/fnv.o: lib/fnv.c include/fnv.h
 	$(CC) $(ALL_CFLAGS) -DNDEBUG -o $@ -c $<
@@ -75,8 +75,6 @@ lib/hashtable.so: lib/fnv.o lib/hashtable.o lib/hashtable_py.o
 	$(CC) -shared $(PYTHON3_LDFLAGS) -o $@ $(.ALLSRC)
 
 lib/message_queue.o: lib/message_queue.c include/message_queue.h
-
-test/message_queue_expected.o: test/message_queue_expected.c
 
 bin/base64: bin/base64.c
 	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -lcrypto -o $@
@@ -126,9 +124,10 @@ test/message_queue_basic: test/message_queue_basic.c lib/message_queue.o
 test/message_queue_block: test/message_queue_block.c lib/message_queue.o test/message_queue_expected.o
 	$(CC) $(ALL_CFLAGS) -pthread $(.ALLSRC) $(LDFLAGS) -o $@
 
+test/message_queue_expected.o: test/message_queue_expected.c
+
 test/notramp: test/notramp.c
 	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
-
 
 test/sum_tree: test/sum_tree.c
 	$(CC) $(ALL_CFLAGS) $(SUM_TREE_CFLAGS) $(.ALLSRC) $(LDFLAGS) $(SUM_TREE_LDFLAGS) -o $@
@@ -143,6 +142,8 @@ check test: $(OBJS) $(BINS) $(TESTS)
 	./bin/curling
 	./bin/demo_oop
 	./bin/threadtest foo bar baz
+	./test/arena_test
+	./test/coroutine_test
 	./test/fnv_test
 	./test/hashtable_test
 	./test/message_queue_basic
