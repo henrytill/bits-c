@@ -24,6 +24,7 @@ compile_commands.json
 bin/greet
 bin/greet.d
 test/arena_test
+test/coroutine_test
 test/expect_test
 test/notramp
 test/sum_tree

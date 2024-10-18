@@ -22,6 +22,7 @@ PYTHON3_CFLAGS =
 PYTHON3_LDFLAGS =
 
 OBJS =
+OBJS += lib/coroutine.o
 OBJS += lib/expect.o
 OBJS += lib/fnv.o
 OBJS += lib/hashtable.o
@@ -40,6 +41,7 @@ BINS += bin/window
 
 TESTS =
 TESTS += test/arena_test
+TESTS += test/coroutine_test
 TESTS += test/expect_test
 TESTS += test/fnv_test
 TESTS += test/hashtable_test
@@ -54,6 +56,8 @@ TESTS += test/sum_tree
 all: $(OBJS) $(BINS) $(TESTS)
 
 lib/arena.o: lib/arena.c include/arena.h
+
+lib/coroutine.o: lib/coroutine.c include/coroutine.h
 
 lib/expect.o: lib/expect.c include/expect.h
 	$(CC) $(ALL_CFLAGS) -o $@ -c $<
@@ -102,6 +106,9 @@ bin/window: bin/window.c
 	$(CC) $(WINDOW_CFLAGS) $(.ALLSRC) $(WINDOW_LDFLAGS) -lX11 -lGL -lGLU -lGLEW -o $@
 
 test/arena_test: test/arena_test.c lib/arena.o
+	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
+
+test/coroutine_test: test/coroutine_test.c lib/coroutine.o
 	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
 
 test/expect_test: test/expect_test.c lib/expect.o
