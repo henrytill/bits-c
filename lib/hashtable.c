@@ -86,7 +86,6 @@ void table_destroy(struct table *t, void finalize(void *))
     free(t);
 }
 
-///
 /// Get the index of a key
 ///
 /// @param columns_len The number of columns in the table
@@ -94,7 +93,6 @@ void table_destroy(struct table *t, void finalize(void *))
 /// @return The index of the key
 ///
 /// @note The number of columns must be a power of 2
-///
 static uint64_t get_index(size_t columns_len, const char *key)
 {
     assert(ISPOW2(columns_len));
