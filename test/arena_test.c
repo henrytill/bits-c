@@ -5,9 +5,7 @@
 
 int main(void)
 {
-    extern size_t pagesize;
-
-    pagesize = get_pagesize();
+    arena_init();
 
     struct point {
         int x;

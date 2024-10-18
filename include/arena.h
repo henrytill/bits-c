@@ -3,9 +3,7 @@
 
 #include <stddef.h>
 
-extern size_t pagesize;
-
-size_t get_pagesize(void);
+void arena_init(void);
 
 void *arena_allocate(size_t n, size_t t);
 

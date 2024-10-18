@@ -34,6 +34,13 @@ size_t get_pagesize(void)
     return (size_t)result;
 }
 
+void arena_init(void)
+{
+    extern size_t pagesize;
+
+    pagesize = get_pagesize();
+}
+
 static inline size_t nextpage(size_t size)
 {
     extern size_t pagesize;
