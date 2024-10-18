@@ -49,7 +49,7 @@ static inline size_t calc_size(size_t n)
     return nextpage(((n + 3) & ~3UL) + MEMINCR * 1024 + sizeof(struct arena));
 }
 
-void *allocate(size_t n, size_t t)
+void *arena_allocate(size_t n, size_t t)
 {
     extern struct arena *arena[];
 
@@ -77,7 +77,7 @@ void *allocate(size_t n, size_t t)
     return ap->avail - n;
 }
 
-void deallocate(size_t t)
+void arena_deallocate(size_t t)
 {
     extern struct arena first[];
     extern struct arena *arena[];
@@ -89,7 +89,7 @@ void deallocate(size_t t)
     }
 }
 
-void unmap(size_t t)
+void arena_free(size_t t)
 {
     extern struct arena first[];
     extern struct arena *arena[];
@@ -116,31 +116,31 @@ int main(void)
 
 #define PRINT_POINT(_pt) printf(#_pt " = {x = %d, y = %d}\n", (_pt)->x, (_pt)->y)
 
-    struct point *p = allocate(sizeof(*p), 0);
+    struct point *p = arena_allocate(sizeof(*p), 0);
     p->x = 4;
     p->y = 2;
     PRINT_POINT(p);
 
-    struct point *q = allocate(sizeof(*q), 0);
+    struct point *q = arena_allocate(sizeof(*q), 0);
     q->x = 5;
     q->y = 3;
     PRINT_POINT(q);
 
-    deallocate(0);
+    arena_deallocate(0);
 
-    struct point *r = allocate(sizeof(*r), 0);
+    struct point *r = arena_allocate(sizeof(*r), 0);
     r->x = 4;
     r->y = 2;
     PRINT_POINT(r);
 
-    struct point *s = allocate(sizeof(*s), 0);
+    struct point *s = arena_allocate(sizeof(*s), 0);
     s->x = 5;
     s->y = 3;
     PRINT_POINT(s);
 
 #undef PRINT_POINT
 
-    unmap(0);
+    arena_free(0);
 
     return EXIT_SUCCESS;
 }
