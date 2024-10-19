@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef DIFF_PROGRAM
-#    define DIFF_PROGRAM "/usr/bin/diff"
+#ifndef EXPECT_DIFF_PROGRAM
+#    define EXPECT_DIFF_PROGRAM "/usr/bin/diff"
 #endif
 
 int expect_getpromote(void);

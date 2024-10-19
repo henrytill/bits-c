@@ -126,7 +126,7 @@ int expect_insert(const char *filename, int lineno, const char *toinsert, int pr
         case 0:
             {
                 char *argv[] = {"diff", "-u", (char *)filename, tempfilename, NULL};
-                return execv(DIFF_PROGRAM, argv);
+                return execv(EXPECT_DIFF_PROGRAM, argv);
             }
         default:
             {
