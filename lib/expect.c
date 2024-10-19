@@ -11,16 +11,16 @@
 
 int expect_getpromote(void)
 {
-    char *p = getenv("PROMOTE");
-    if (p == NULL) {
+    char *s = getenv("PROMOTE");
+    if (s == NULL) {
         return 0;
     }
     char *end = NULL;
-    const int ret = (int)strtol(p, &end, 10);
-    if (p == end) {
+    const long p = strtol(s, &end, 10);
+    if (s == end) {
         return 0;
     }
-    return ret;
+    return p > 0L;
 }
 
 static int fcopy(const char *src_filename, const char *dst_filename)
