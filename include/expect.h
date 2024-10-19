@@ -14,7 +14,7 @@ int expect_insert(const char *filename, int lineno, const char *toinsert, int pr
 
 #define EXPECT(_expected, _actual)                                         \
     do {                                                                   \
-        const char *__a[] = _actual;                                       \
+        const char *__a[1] = _actual;                                      \
         if (strcmp(_expected, __a[0]) == 0) {                              \
             break;                                                         \
         }                                                                  \
