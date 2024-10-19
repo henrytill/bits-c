@@ -119,34 +119,29 @@ int expect_insert(const char *filename, int lineno, const char *toinsert, int pr
 
     {
         pid_t pid = fork();
-        switch (pid) {
-        case -1:
+        if (pid == -1) {
             perror("fork");
             exit(EXIT_FAILURE);
-        case 0:
-            {
-                char *argv[] = {"diff", "-u", (char *)filename, tempfilename, NULL};
-                return execv(EXPECT_DIFF_PROGRAM, argv);
-            }
-        default:
-            {
-                int rc = -1;
-                wait(NULL);
-                if (promote) {
-                    printf("Promoting %s to %s\n", tempfilename, filename);
-                    rc = fcopy(tempfilename, filename);
-                    if (rc != 0) {
-                        perror("Error copying temporary file to original");
-                        unlink(tempfilename);
-                        return -1;
-                    }
-                }
-                rc = unlink(tempfilename);
+        } else if (pid == 0) {
+            char *argv[] = {"diff", "-u", (char *)filename, tempfilename, NULL};
+            return execv(EXPECT_DIFF_PROGRAM, argv);
+        } else {
+            int rc = -1;
+            wait(NULL);
+            if (promote) {
+                printf("Promoting %s to %s\n", tempfilename, filename);
+                rc = fcopy(tempfilename, filename);
                 if (rc != 0) {
-                    perror("Warning: Could not delete temporary file");
+                    perror("Error copying temporary file to original");
+                    unlink(tempfilename);
+                    return -1;
                 }
-                return 0;
             }
+            rc = unlink(tempfilename);
+            if (rc != 0) {
+                perror("Warning: Could not delete temporary file");
+            }
+            return 0;
         }
     }
 }
