@@ -38,11 +38,11 @@ static int fcopy(const char *srcname, const char *dstname)
         return -1;
     }
 
-    char buffer[BUFFER_LENGTH];
-    size_t bytes_read;
+    char buf[BUFFER_LENGTH];
+    size_t nread;
 
-    while ((bytes_read = fread(buffer, 1, BUFFER_LENGTH, src)) > 0) {
-        if (fwrite(buffer, 1, bytes_read, dst) != bytes_read) {
+    while ((nread = fread(buf, 1, BUFFER_LENGTH, src)) > 0) {
+        if (fwrite(buf, 1, nread, dst) != nread) {
             perror("Error writing to destination file");
             (void)fclose(src);
             (void)fclose(dst);
@@ -91,9 +91,9 @@ int expect_insert(const char *filename, int lineno, const char *toinsert, int pr
         {
             char *line = NULL;
             size_t len = 0;
-            ssize_t read;
+            ssize_t nchar;
 
-            for (int i = 1; (read = getline(&line, &len, input)) != -1; ++i) {
+            for (int i = 1; (nchar = getline(&line, &len, input)) != -1; ++i) {
                 if (i == lineno) {
                     char *open = strchr(line, '{');
                     char *close = strrchr(line, '}');
