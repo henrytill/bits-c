@@ -30,9 +30,9 @@
 #define SAME_TYPE(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
 
 #define CONTAINER_OF_(ptr, type, member) ({                                                                    \
-    char *__mptr = (char *)(ptr);                                                                              \
+    char *mptr = (char *)(ptr);                                                                                \
     static_assert(SAME_TYPE(*(ptr), ((type *)0)->member) || SAME_TYPE(*(ptr), void), "pointer type mismatch"); \
-    ((type *)(__mptr - offsetof(type, member)));                                                               \
+    ((type *)(mptr - offsetof(type, member)));                                                                 \
 })
 
 #define CONTAINER_OF(ptr, type, member)                                           \
@@ -41,9 +41,9 @@
         const typeof(*(ptr)) *: ((const type *)CONTAINER_OF_(ptr, type, member)), \
         default: ((type *)CONTAINER_OF_(ptr, type, member)))
 
-#define SEND(obj, method, ...) ({        \
-    typeof(obj) __obj = (obj);           \
-    __obj->method(__obj, ##__VA_ARGS__); \
+#define SEND(obj, method, ...) ({              \
+    typeof(obj) receiver = (obj);              \
+    receiver->method(receiver, ##__VA_ARGS__); \
 })
 
 // Cleanup

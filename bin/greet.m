@@ -3,7 +3,7 @@
 #import <stdlib.h>
 
 @interface Greeter : NSObject {
-    NSString *_message;
+    NSString *message_;
 }
 @property(nonatomic, copy) NSString *message;
 - (instancetype)initWithMessage:(NSString *)message;
@@ -12,12 +12,12 @@
 @end
 
 @implementation Greeter
-@synthesize message = _message; // This creates getter and setter methods
+@synthesize message = message_; // This creates getter and setter methods
 - (instancetype)initWithMessage:(NSString *)message
 {
     self = [super init];
     if (self) {
-        _message = [message copy];
+        message_ = [message copy];
     }
     return self;
 }
@@ -31,7 +31,7 @@
 }
 - (void)dealloc
 {
-    [_message release];
+    [message_ release];
     [super dealloc];
 }
 @end
