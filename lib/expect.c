@@ -23,15 +23,15 @@ int expect_getpromote(void)
     return p > 0L;
 }
 
-static int fcopy(const char *src_filename, const char *dst_filename)
+static int fcopy(const char *srcname, const char *dstname)
 {
-    FILE *src = fopen(src_filename, "rb");
+    FILE *src = fopen(srcname, "rb");
     if (src == NULL) {
         perror("Error opening source file");
         return -1;
     }
 
-    FILE *dst = fopen(dst_filename, "wb");
+    FILE *dst = fopen(dstname, "wb");
     if (dst == NULL) {
         perror("Error opening destination file");
         (void)fclose(src);
