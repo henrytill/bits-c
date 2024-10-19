@@ -35,8 +35,10 @@ BINS =
 BINS += bin/base64
 BINS += bin/curling
 BINS += bin/demo_oop
+BINS += bin/notramp
 BINS += bin/overflow
 BINS += bin/poll
+BINS += bin/sum_tree
 BINS += bin/threadtest
 BINS += bin/window
 
@@ -48,8 +50,6 @@ TESTS += test/fnv_test
 TESTS += test/hashtable_test
 TESTS += test/message_queue_basic
 TESTS += test/message_queue_block
-TESTS += test/notramp
-TESTS += test/sum_tree
 
 -include config.mk
 
@@ -94,8 +94,14 @@ bin/hello: bin/hello.cpp
 bin/overflow: bin/overflow.c
 	$(CC) $(ALL_CFLAGS) -ftrapv $(.ALLSRC) $(LDFLAGS) -o $@
 
+bin/notramp: bin/notramp.c
+	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
+
 bin/poll: bin/poll.c
 	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
+
+bin/sum_tree: bin/sum_tree.c
+	$(CC) $(ALL_CFLAGS) $(SUM_TREE_CFLAGS) $(.ALLSRC) $(LDFLAGS) $(SUM_TREE_LDFLAGS) -o $@
 
 bin/threadtest: bin/threadtest.c
 	$(CC) $(ALL_CFLAGS) -D_POSIX_C_SOURCE=200809L -pthread $(.ALLSRC) $(LDFLAGS) -o $@
@@ -126,11 +132,6 @@ test/message_queue_block: test/message_queue_block.c lib/message_queue.o test/me
 
 test/message_queue_expected.o: test/message_queue_expected.c
 
-test/notramp: test/notramp.c
-	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
-
-test/sum_tree: test/sum_tree.c
-	$(CC) $(ALL_CFLAGS) $(SUM_TREE_CFLAGS) $(.ALLSRC) $(LDFLAGS) $(SUM_TREE_LDFLAGS) -o $@
 
 .SUFFIXES: .c .o
 .c.o:

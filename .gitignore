@@ -23,8 +23,8 @@ config.mk
 compile_commands.json
 bin/greet
 bin/greet.d
+bin/notramp
+bin/sum_tree
 test/arena_test
 test/coroutine_test
 test/expect_test
-test/notramp
-test/sum_tree
