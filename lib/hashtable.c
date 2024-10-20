@@ -45,7 +45,7 @@ struct entry {
 
 struct table {
     size_t columns_len;
-    struct entry *columns;
+    struct entry columns[];
 };
 
 struct table *table_create(const size_t columns_len)
@@ -54,17 +54,15 @@ struct table *table_create(const size_t columns_len)
         debug_fprintf(stderr, "%s: columns_len must be a power of 2\n", __func__);
         return NULL;
     }
-    struct table *ret = calloc(1, sizeof(*ret));
+    struct table *ret = calloc(1, sizeof(*ret) + (columns_len * sizeof(struct entry)));
     assert(ret != NULL);
-    ret->columns = calloc(columns_len, sizeof(*ret->columns));
-    assert(ret->columns != NULL);
     ret->columns_len = columns_len;
     return ret;
 }
 
 void table_destroy(struct table *t, void finalize(void *))
 {
-    if (t == NULL || t->columns == NULL) {
+    if (t == NULL) {
         return;
     }
     struct entry *curr = NULL;
@@ -82,7 +80,6 @@ void table_destroy(struct table *t, void finalize(void *))
             finalize(t->columns[i].value);
         }
     }
-    free(t->columns);
     free(t);
 }
 
@@ -102,7 +99,7 @@ static uint64_t get_index(size_t columns_len, const char *key)
 
 int table_put(struct table *t, const char *key, void *value)
 {
-    if (t == NULL || t->columns == NULL) {
+    if (t == NULL) {
         return -1;
     }
     if (key == NULL || value == NULL) {
@@ -111,7 +108,7 @@ int table_put(struct table *t, const char *key, void *value)
 
     const uint64_t index = get_index(t->columns_len, key);
     debug_printf("%s: key: %s, index: %" PRIu64 "\n", __func__, key, index);
-    struct entry *curr = t->columns + index;
+    struct entry *curr = &t->columns[index];
     struct entry *prev = NULL;
 
     while (curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0) {
@@ -142,7 +139,7 @@ int table_put(struct table *t, const char *key, void *value)
 
 void *table_get(struct table *t, const char *key)
 {
-    if (t == NULL || t->columns == NULL) {
+    if (t == NULL) {
         return NULL;
     }
     if (key == NULL) {
@@ -151,7 +148,7 @@ void *table_get(struct table *t, const char *key)
 
     const uint64_t index = get_index(t->columns_len, key);
     debug_printf("%s: key: %s, index: %" PRIu64 "\n", __func__, key, index);
-    struct entry *curr = t->columns + index;
+    struct entry *curr = &t->columns[index];
 
     while (curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0) {
         curr = curr->next;
