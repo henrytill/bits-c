@@ -22,4 +22,4 @@ int expect_insert(const char *filename, int lineno, const char *toinsert, int pr
         exit(EXIT_FAILURE);                                                \
     } while (0)
 
-#endif
+#endif // C_BITS_EXPECT_H

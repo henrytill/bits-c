@@ -36,4 +36,4 @@
         return &alloc->items[alloc->count++];                                  \
     }
 
-#endif
+#endif // C_BITS_ALLOCATOR_H

@@ -1,5 +1,5 @@
-#ifndef COROUTINE_H
-#define COROUTINE_H
+#ifndef C_BITS_COROUTINE_H
+#define C_BITS_COROUTINE_H
 
 #include <setjmp.h>
 
@@ -18,4 +18,4 @@ void coroutine_yield(coroutine *c);
 
 int coroutine_next(coroutine *c);
 
-#endif /* COROUTINE_H */
+#endif // C_BITS_COROUTINE_H

@@ -11,4 +11,4 @@ void arena_deallocate(size_t t);
 
 void arena_free(size_t t);
 
-#endif
+#endif // C_BITS_ARENA_H

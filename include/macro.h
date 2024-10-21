@@ -1,5 +1,5 @@
-#ifndef C_BITS_MACRO
-#define C_BITS_MACRO
+#ifndef C_BITS_MACRO_H
+#define C_BITS_MACRO_H
 
 #include <assert.h>
 #include <stddef.h>
@@ -70,4 +70,4 @@
 
 #define STATIC_ASSERT(e) static_assert((e), #e)
 
-#endif // C_BITS_MACRO
+#endif // C_BITS_MACRO_H
