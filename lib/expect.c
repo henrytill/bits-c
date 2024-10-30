@@ -38,28 +38,30 @@ static int fcopy(const char *srcname, const char *dstname)
         return -1;
     }
 
-    char buf[BUFFER_LENGTH];
-    size_t nread;
+    {
+        __label__ cleanup;
+        int ret = -1;
+        char buf[BUFFER_LENGTH] = {0};
+        size_t nread = 0;
 
-    while ((nread = fread(buf, 1, BUFFER_LENGTH, src)) > 0) {
-        if (fwrite(buf, 1, nread, dst) != nread) {
-            perror("Error writing to destination file");
-            (void)fclose(src);
-            (void)fclose(dst);
-            return -1;
+        while ((nread = fread(buf, 1, BUFFER_LENGTH, src)) > 0) {
+            if (fwrite(buf, 1, nread, dst) != nread) {
+                perror("Error writing to destination file");
+                goto cleanup;
+            }
         }
-    }
 
-    if (ferror(src) != 0) {
-        perror("Error reading from source file");
+        if (ferror(src) != 0) {
+            perror("Error reading from source file");
+            goto cleanup;
+        }
+
+        ret = 0;
+    cleanup:
         (void)fclose(src);
         (void)fclose(dst);
-        return -1;
+        return ret;
     }
-
-    (void)fclose(src);
-    (void)fclose(dst);
-    return 0;
 }
 
 int expect_insert(const char *filename, int lineno, const char *toinsert, int promote)
