@@ -18,12 +18,9 @@ jobs:
         sudo apt-get install -yqq --no-install-recommends \
           libcurl4-openssl-dev libopengl-dev libglew-dev \
           python3-hypothesis gobjc libgnustep-base-dev
-    - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
+    - run: ./configure
+    - run: make
+    - run: make check
   zig:
     runs-on: ubuntu-latest
     steps:
