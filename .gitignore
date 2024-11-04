@@ -1,5 +1,7 @@
 /__pycache__/
 /.hypothesis
+/.zig-cache
+/zig-out
 a.out
 *.o
 *.so
