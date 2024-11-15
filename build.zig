@@ -99,7 +99,7 @@ pub fn build(b: *std.Build) void {
     b.installArtifact(messageQueueBlockExe);
 
     const hashtableTests = b.addTest(.{
-        .root_source_file = b.path("test.zig"),
+        .root_source_file = b.path("test/test.zig"),
         .target = target,
         .optimize = optimize,
     });
