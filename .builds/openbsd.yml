@@ -8,17 +8,17 @@ packages:
 secrets:
   - fff26745-7b06-40da-b5b9-5f4bd6f29596
 sources:
-  - git@git.sr.ht:~henrytill/c-bits
+  - git@git.sr.ht:~henrytill/bits-c
 tasks:
   - print-versions: |
       python3 --version
   - configure: |
-      cd c-bits
+      cd bits-c
       ./configure
       cat config.mk
   - build: |
-      cd c-bits
+      cd bits-c
       make
   - test: |
-      cd c-bits
+      cd bits-c
       make check
