@@ -189,11 +189,11 @@ void defunc_apply(kont_allocator *alloc, kont *k, int s)
     }
 }
 
-#define KONT_ARENA_SIZE 128
+#define KONT_POOL_SIZE 128
 
 void defunc_sum(node *n)
 {
-    kont_allocator *alloc = kont_allocator_create(KONT_ARENA_SIZE);
+    kont_allocator *alloc = kont_allocator_create(KONT_POOL_SIZE);
     kont *k3 = defunc_kont_k3(alloc);
     defunc_sum_impl(alloc, n, k3);
     kont_allocator_destroy(alloc);
@@ -235,7 +235,7 @@ void opt_sum_impl(kont_allocator *alloc, node *n, kont *k)
 
 void opt_sum(node *n)
 {
-    kont_allocator *alloc = kont_allocator_create(KONT_ARENA_SIZE);
+    kont_allocator *alloc = kont_allocator_create(KONT_POOL_SIZE);
     kont *k3 = defunc_kont_k3(alloc);
     opt_sum_impl(alloc, n, k3);
     kont_allocator_destroy(alloc);
@@ -456,9 +456,9 @@ int main(void)
         {NULL, NULL},
     };
 
-#define NODE_ARENA_SIZE 128
+#define NODE_POOL_SIZE 128
 
-    node_allocator *alloc = node_allocator_create(NODE_ARENA_SIZE);
+    node_allocator *alloc = node_allocator_create(NODE_POOL_SIZE);
 
 #define BRANCH(value, left, right) node_create(alloc, value, left, right)
 #define LEAF(value)                node_create(alloc, value, NULL, NULL)
