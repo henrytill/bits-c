@@ -2,6 +2,7 @@ image: alpine/latest
 packages:
   - curl-dev
   - glew-dev
+  - libgomp
   - mesa-dev
   - openssl-dev
   - openssl-libs-static

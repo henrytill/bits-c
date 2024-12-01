@@ -70,9 +70,9 @@ case "$(uname -s)" in
     if [ -n "$(command -v gnustep-config)" ]; then
       GREET_CFLAGS="$(gnustep-config --debug-flags --objc-flags)"
       GREET_LDFLAGS="$(gnustep-config --base-libs)"
-      EXTRA_BIN="bin/hello bin/greet"
+      EXTRA_BIN="bin/hello bin/hello_omp bin/greet"
     else
-      EXTRA_BIN="bin/hello"
+      EXTRA_BIN="bin/hello bin/hello_omp"
     fi
     write_config_linux
     ;;

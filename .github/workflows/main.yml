@@ -17,7 +17,8 @@ jobs:
         sudo apt-get update
         sudo apt-get install -yqq --no-install-recommends \
           libcurl4-openssl-dev libopengl-dev libglew-dev \
-          python3-hypothesis gobjc libgnustep-base-dev
+          python3-hypothesis gobjc libgnustep-base-dev \
+          libgomp1
     - run: ./configure
     - run: make
     - run: make check

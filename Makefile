@@ -91,6 +91,9 @@ bin/greet: bin/greet.m
 bin/hello: bin/hello.cpp
 	$(CXX) $(ALL_CXXFLAGS) -DSAY_GOODBYE $(.ALLSRC) -o $@
 
+bin/hello_omp: bin/hello_omp.c
+	$(CC) $(ALL_CFLAGS) -fopenmp $(.ALLSRC) $(LDFLAGS) -o $@
+
 bin/overflow: bin/overflow.c
 	$(CC) $(ALL_CFLAGS) -ftrapv $(.ALLSRC) $(LDFLAGS) -o $@
 

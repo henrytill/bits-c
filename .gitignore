@@ -13,6 +13,7 @@ bin/demo_oop
 bin/greet
 bin/greet.d
 bin/hello
+bin/hello_omp
 bin/notramp
 bin/overflow
 bin/poll
