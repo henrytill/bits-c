@@ -98,6 +98,7 @@ void table_destroy(struct table *t, void finalize(void *))
 static uint64_t get_index(size_t columns_len, const char *key)
 {
     assert(ISPOW2(columns_len));
+    assert(key != NULL);
     const uint64_t hash = fnv_hash(strlen(key) + 1, (const unsigned char *)key);
     return hash & (uint64_t)(columns_len - 1);
 }
