@@ -8,13 +8,20 @@
 
 struct message_queue
 {
-    struct message *buffer; // Buffer to hold messages
-    uint32_t capacity;      // Maximum size of the buffer
-    size_t front;           // Index of the front message in the buffer
-    size_t rear;            // Index of the rear message in the buffer
-    sem_t *empty;           // Semaphore to track empty slots in the buffer
-    sem_t *full;            // Semaphore to track filled slots in the buffer
-    pthread_mutex_t *lock;  // Mutex lock to protect buffer access
+    /// Buffer to hold messages
+    struct message *buffer;
+    /// Maximum size of the buffer
+    uint32_t capacity;
+    /// Index of the front message in the buffer
+    size_t front;
+    /// Index of the rear message in the buffer
+    size_t rear;
+    /// Semaphore to track empty slots in the buffer
+    sem_t *empty;
+    /// Semaphore to track filled slots in the buffer
+    sem_t *full;
+    /// Mutex lock to protect buffer access
+    pthread_mutex_t *lock;
 };
 
 /// Create a semaphore.
@@ -28,12 +35,14 @@ static sem_t *create_semaphore(uint32_t value)
     {
         return NULL;
     }
+
     const int rc = sem_init(sem, 0, value);
     if (rc == -1)
     {
         free(sem);
         return NULL;
     }
+
     return sem;
 }
 
@@ -46,6 +55,7 @@ static void destroy_semaphore(sem_t *sem)
     {
         return;
     }
+
     sem_destroy(sem);
     free(sem);
 }
@@ -60,12 +70,14 @@ static pthread_mutex_t *create_mutex(void)
     {
         return NULL;
     }
+
     const int rc = pthread_mutex_init(mutex, NULL);
     if (rc != 0)
     {
         free(mutex);
         return NULL;
     }
+
     return mutex;
 }
 
@@ -78,6 +90,7 @@ static void destroy_mutex(pthread_mutex_t *mutex)
     {
         return;
     }
+
     pthread_mutex_destroy(mutex);
     free(mutex);
 }
@@ -88,27 +101,32 @@ static int message_queue_init(struct message_queue *queue, uint32_t capacity)
     {
         return -MSGQ_FAILURE_NULL_POINTER;
     }
+
     queue->buffer = calloc((size_t)capacity, sizeof(*queue->buffer));
     if (queue->buffer == NULL)
     {
         return -MSGQ_FAILURE_MALLOC;
     }
+
     queue->capacity = capacity;
     queue->front = 0;
     queue->rear = 0;
+
     queue->empty = create_semaphore(capacity);
     if (queue->empty == NULL)
     {
         free(queue->buffer);
         return -MSGQ_FAILURE_SEM_CREATE;
     }
+
     queue->full = create_semaphore(0);
     if (queue->full == NULL)
     {
         destroy_semaphore(queue->empty);
         free(queue->buffer);
         return -MSGQ_FAILURE_SEM_CREATE;
-    };
+    }
+
     queue->lock = create_mutex();
     if (queue->lock == NULL)
     {
@@ -117,6 +135,7 @@ static int message_queue_init(struct message_queue *queue, uint32_t capacity)
         free(queue->buffer);
         return -MSGQ_FAILURE_MUTEX_CREATE;
     }
+
     return 0;
 }
 
@@ -126,9 +145,11 @@ static void message_queue_finish(struct message_queue *queue)
     {
         return;
     }
+
     queue->capacity = 0;
     queue->front = 0;
     queue->rear = 0;
+
     if (queue->buffer != NULL)
     {
         free(queue->buffer);
@@ -158,12 +179,14 @@ struct message_queue *message_queue_create(uint32_t capacity)
     {
         return NULL;
     }
+
     int rc = message_queue_init(queue, capacity);
     if (rc < 0)
     {
         free(queue);
         return NULL;
     }
+
     return queue;
 }
 
@@ -173,6 +196,7 @@ void message_queue_destroy(struct message_queue *queue)
     {
         return;
     }
+
     message_queue_finish(queue);
     free(queue);
 }
@@ -188,23 +212,28 @@ int message_queue_put(struct message_queue *queue, struct message *in)
     {
         return -MSGQ_FAILURE_SEM_TRY_WAIT;
     }
+
     rc = pthread_mutex_lock(queue->lock);
     if (rc != 0)
     {
         return -MSGQ_FAILURE_MUTEX_LOCK;
     }
+
     queue->buffer[queue->rear] = *in;
     queue->rear = (queue->rear + 1) % queue->capacity;
+
     rc = pthread_mutex_unlock(queue->lock);
     if (rc != 0)
     {
         return -MSGQ_FAILURE_MUTEX_UNLOCK;
     }
+
     rc = sem_post(queue->full);
     if (rc == -1)
     {
         return -MSGQ_FAILURE_SEM_POST;
     }
+
     return 0;
 }
 
@@ -215,23 +244,28 @@ int message_queue_get(struct message_queue *queue, struct message *out)
     {
         return -MSGQ_FAILURE_SEM_WAIT;
     }
+
     rc = pthread_mutex_lock(queue->lock);
     if (rc != 0)
     {
         return -MSGQ_FAILURE_MUTEX_LOCK;
     }
+
     *out = queue->buffer[queue->front];
     queue->front = (queue->front + 1) % queue->capacity;
+
     rc = pthread_mutex_unlock(queue->lock);
     if (rc != 0)
     {
         return -MSGQ_FAILURE_MUTEX_UNLOCK;
     }
+
     rc = sem_post(queue->empty);
     if (rc == -1)
     {
         return -MSGQ_FAILURE_SEM_POST;
     }
+
     return 0;
 }
 
@@ -241,6 +275,7 @@ uint32_t message_queue_size(struct message_queue *queue)
     {
         return 0;
     }
+
     int ret = 0;
     sem_getvalue(queue->full, &ret);
     return (uint32_t)ret;
