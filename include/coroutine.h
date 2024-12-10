@@ -5,7 +5,8 @@
 
 typedef struct coroutine coroutine;
 
-struct coroutine {
+struct coroutine
+{
     jmp_buf callee;
     jmp_buf caller;
 };

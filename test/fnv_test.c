@@ -8,7 +8,8 @@
 #include "macro.h"
 
 // https://datatracker.ietf.org/doc/html/draft-eastlake-fnv-03#page-15
-static const struct test_vector {
+static const struct test_vector
+{
     const char *input;
     uint64_t expected;
 } TEST_VECTORS[] = {
@@ -20,7 +21,8 @@ static const struct test_vector {
 
 static bool check(const char *input, const uint64_t expected, const uint64_t actual)
 {
-    if (expected == actual) {
+    if (expected == actual)
+    {
         return true;
     }
     eprintf("input: \"%s\", expected: %" PRIu64 ", actual: %" PRIu64 "\n", input, expected, actual);
@@ -32,10 +34,12 @@ int main(void)
     extern const struct test_vector TEST_VECTORS[];
 
     const char *input = NULL;
-    for (size_t i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i) {
+    for (size_t i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i)
+    {
         const uint64_t expected = TEST_VECTORS[i].expected;
         const uint64_t actual = fnv_hash(strlen(input) + 1, (const unsigned char *)input);
-        if (!check(input, expected, actual)) {
+        if (!check(input, expected, actual))
+        {
             return EXIT_FAILURE;
         }
     }

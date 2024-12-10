@@ -8,7 +8,8 @@
 #include "macro.h"
 
 #define TEST(e)                                         \
-    if (!(e)) {                                         \
+    if (!(e))                                           \
+    {                                                   \
         eprintf("%s:%d: %s\n", __FILE__, __LINE__, #e); \
         exit(EXIT_FAILURE);                             \
     }
@@ -29,7 +30,8 @@
 TEST_VECTORS_ENTRIES
 #undef X
 
-static const struct test_vector {
+static const struct test_vector
+{
     const char *input;
     const size_t input_len;
     const char *base64;
@@ -80,7 +82,8 @@ int main(void)
     char actual_base64[BASE64_LEN_MAX + 1];
     char output[INPUT_LEN_MAX + 1];
 
-    for (size_t i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i) {
+    for (size_t i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i)
+    {
         ARRAY_CLEAR(actual_base64);
         ARRAY_CLEAR(output);
 

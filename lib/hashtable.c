@@ -37,20 +37,23 @@ TEST_ENTRIES
 #undef TEST_ENTRIES
 #undef STATIC_ASSERT
 
-struct entry {
+struct entry
+{
     struct entry *next;
     const char *key;
     void *value;
 };
 
-struct table {
+struct table
+{
     size_t columns_len;
     struct entry columns[];
 };
 
 struct table *table_create(const size_t columns_len)
 {
-    if (!ISPOW2(columns_len)) {
+    if (!ISPOW2(columns_len))
+    {
         debug_fprintf(stderr, "%s: columns_len must be a power of 2\n", __func__);
         return NULL;
     }
@@ -62,18 +65,23 @@ struct table *table_create(const size_t columns_len)
 
 void table_destroy(struct table *t, void finalize(void *))
 {
-    if (t == NULL) {
+    if (t == NULL)
+    {
         return;
     }
-    for (size_t i = 0; i < t->columns_len; ++i) {
-        for (struct entry *curr = t->columns[i].next, *next = NULL; curr != NULL; curr = next) {
+    for (size_t i = 0; i < t->columns_len; ++i)
+    {
+        for (struct entry *curr = t->columns[i].next, *next = NULL; curr != NULL; curr = next)
+        {
             next = curr->next;
-            if (finalize != NULL && curr->value != NULL) {
+            if (finalize != NULL && curr->value != NULL)
+            {
                 finalize(curr->value);
             }
             free(curr);
         }
-        if (finalize != NULL && t->columns[i].value != NULL) {
+        if (finalize != NULL && t->columns[i].value != NULL)
+        {
             finalize(t->columns[i].value);
         }
     }
@@ -96,10 +104,12 @@ static uint64_t get_index(size_t columns_len, const char *key)
 
 int table_put(struct table *t, const char *key, void *value)
 {
-    if (t == NULL) {
+    if (t == NULL)
+    {
         return -1;
     }
-    if (key == NULL || value == NULL) {
+    if (key == NULL || value == NULL)
+    {
         return -1;
     }
 
@@ -108,17 +118,20 @@ int table_put(struct table *t, const char *key, void *value)
     struct entry *curr = &t->columns[index];
     struct entry *prev = NULL;
 
-    while (curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0) {
+    while (curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0)
+    {
         prev = curr;
         curr = curr->next;
     }
     // existing node
-    if (curr != NULL && curr->key != NULL) {
+    if (curr != NULL && curr->key != NULL)
+    {
         curr->value = value;
         return 0;
     }
     // uninitialized key (first or deleted node)
-    if (curr != NULL) {
+    if (curr != NULL)
+    {
         curr->key = key;
         curr->value = value;
         return 0;
@@ -136,10 +149,12 @@ int table_put(struct table *t, const char *key, void *value)
 
 void *table_get(struct table *t, const char *key)
 {
-    if (t == NULL) {
+    if (t == NULL)
+    {
         return NULL;
     }
-    if (key == NULL) {
+    if (key == NULL)
+    {
         return NULL;
     }
 
@@ -147,10 +162,12 @@ void *table_get(struct table *t, const char *key)
     debug_printf("%s: key: %s, index: %" PRIu64 "\n", __func__, key, index);
     struct entry *curr = &t->columns[index];
 
-    while (curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0) {
+    while (curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0)
+    {
         curr = curr->next;
     }
-    if (curr == NULL) {
+    if (curr == NULL)
+    {
         return NULL;
     }
     return curr->value;

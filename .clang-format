@@ -12,7 +12,7 @@ AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 BasedOnStyle: LLVM
 BreakBeforeBinaryOperators: NonAssignment
-BreakBeforeBraces: WebKit
+BreakBeforeBraces: Allman
 BreakBeforeTernaryOperators: true
 ColumnLimit: 0
 ContinuationIndentWidth: 4
@@ -21,6 +21,7 @@ IndentCaseLabels: false
 IndentCaseBlocks: true
 IndentPPDirectives: AfterHash
 IndentWidth: 4
+NamespaceIndentation: All
 ObjCBlockIndentWidth: 4
 PointerAlignment: Right
 ReflowComments: true

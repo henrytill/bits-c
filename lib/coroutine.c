@@ -14,14 +14,19 @@
                                               :                \
                                               : "r"(p))
 
-enum {
+enum
+{
     WORKING = 1,
     DONE
 };
 
-enum { FRAME_SIZE = 5 }; /* fairly arbitrary */
+enum
+{
+    FRAME_SIZE = 5
+}; /* fairly arbitrary */
 
-struct start_params {
+struct start_params
+{
     coroutine *c;
     func f;
     void *arg;
@@ -31,7 +36,8 @@ struct start_params {
 
 void coroutine_yield(coroutine *c)
 {
-    if (setjmp(c->callee) == 0) {
+    if (setjmp(c->callee) == 0)
+    {
         longjmp(c->caller, WORKING);
     }
 }
@@ -39,9 +45,12 @@ void coroutine_yield(coroutine *c)
 int coroutine_next(coroutine *c)
 {
     int ret = setjmp(c->caller);
-    if (ret == 0) {
+    if (ret == 0)
+    {
         longjmp(c->callee, WORKING);
-    } else {
+    }
+    else
+    {
         return ret == WORKING;
     }
 }
@@ -61,7 +70,8 @@ void coroutine_start(coroutine *c, func f, void *arg, void *stack_pointer)
     /* ...so we read p back from $fp */
     get_frame_pointer(p);
     /* and now we read our params from p */
-    if (setjmp(p->c->callee) == 0) {
+    if (setjmp(p->c->callee) == 0)
+    {
         set_stack_pointer(p->old_stack_pointer);
         set_frame_pointer(p->old_frame_pointer);
         return;

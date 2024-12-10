@@ -6,11 +6,13 @@
 
 /* https://web.archive.org/web/20220528063158/https://www.embeddedrelated.com/showarticle/455.php */
 
-enum {
+enum
+{
     STACK_SIZE = 1024
 };
 
-struct iter {
+struct iter
+{
     coroutine *c;
     int xmax;
     int ymax;
@@ -22,8 +24,10 @@ void iterate(void *p)
 {
     struct iter *it = p;
 
-    for (int x = 0; x < it->xmax; ++x) {
-        for (int y = 0; y < it->ymax; ++y) {
+    for (int x = 0; x < it->xmax; ++x)
+    {
+        for (int y = 0; y < it->ymax; ++y)
+        {
             it->x = x;
             it->y = y;
             coroutine_yield(it->c);
@@ -47,7 +51,8 @@ int main(void)
 
     stack_pointer = stack + STACK_SIZE; /* stacks typically grow downward (arch-dependent) */
     coroutine_start(it.c, &iterate, &it, stack_pointer);
-    while (coroutine_next(it.c)) {
+    while (coroutine_next(it.c))
+    {
         printf("%d %d\n", it.x, it.y);
     }
     return EXIT_SUCCESS;

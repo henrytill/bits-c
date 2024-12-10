@@ -7,7 +7,8 @@ int main(void)
 {
     arena_init();
 
-    struct point {
+    struct point
+    {
         int x;
         int y;
     };

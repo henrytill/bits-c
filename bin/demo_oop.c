@@ -7,11 +7,13 @@
 struct person;
 
 /// Base class methods.
-struct person_operations {
+struct person_operations
+{
     void (*hello)(const struct person *self);
 };
 
-struct person {
+struct person
+{
     const struct person_operations *ops;
     char *name;
     int age;
@@ -30,7 +32,8 @@ static const struct person_operations PERSON_OPS = {
 };
 
 /// Derived class.
-struct student {
+struct student
+{
     struct person person;
     char *school;
 };
@@ -72,7 +75,8 @@ int main(void)
         .next = &bob,
     };
 
-    for (const struct person *p = &alice; p != NULL; p = p->next) {
+    for (const struct person *p = &alice; p != NULL; p = p->next)
+    {
         SEND(p, ops->hello);
     }
 

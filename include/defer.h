@@ -3,7 +3,8 @@
 #pragma once
 
 template <typename F>
-struct deferred {
+struct deferred
+{
     F f;
     deferred(F f) : f(f) {}
     ~deferred() { f(); }

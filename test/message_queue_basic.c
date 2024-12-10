@@ -36,17 +36,23 @@ static void *produce(void *data)
     const char *tag_str = NULL;
     int rc = -1;
 
-    for (intptr_t value = 0; value <= COUNT;) {
+    for (intptr_t value = 0; value <= COUNT;)
+    {
         msg.tag = (value < COUNT) ? MSG_TAG_SOME : MSG_TAG_QUIT;
         msg.value = value;
         tag_str = message_tag_str(msg.tag);
 
         rc = message_queue_put(queue, &msg);
-        if (rc < 0) {
+        if (rc < 0)
+        {
             message_queue_fail(rc, "message_queue_put failed");
-        } else if (rc == 1) {
+        }
+        else if (rc == 1)
+        {
             printf("blocked: {%s, %" PRIdPTR "}\n", tag_str, value);
-        } else {
+        }
+        else
+        {
             printf("produced: {%s, %" PRIdPTR "}\n", tag_str, value);
             value += 1;
         }
@@ -58,7 +64,8 @@ static void *produce(void *data)
 static int consume(struct message_queue *queue, struct message *out)
 {
     const int rc = message_queue_get(queue, out);
-    if (rc < 0) {
+    if (rc < 0)
+    {
         message_queue_fail(rc, "message_queue_get failed");
     }
     printf("consumed: {%s, %" PRIdPTR "}\n", message_tag_str(out->tag), out->value);
@@ -72,7 +79,8 @@ int main(void)
     int ret = EXIT_FAILURE;
 
     struct message_queue *queue = message_queue_create(QUEUE_CAP);
-    if (queue == NULL) {
+    if (queue == NULL)
+    {
         fail("message_queue_create failed");
     }
 
@@ -81,33 +89,39 @@ int main(void)
     pthread_t thread_id;
 
     rc = pthread_attr_init(&thread_attr);
-    if (rc != 0) {
+    if (rc != 0)
+    {
         errno = rc;
         perror("pthread_attr_init");
         goto out_destroy_queue;
     }
 
     rc = pthread_create(&thread_id, &thread_attr, produce, queue);
-    if (rc != 0) {
+    if (rc != 0)
+    {
         errno = rc;
         perror("pthread_create");
         goto out_destroy_attr;
     }
 
     struct message msg;
-    for (;;) {
+    for (;;)
+    {
         rc = consume(queue, &msg);
-        if (rc == 0) {
+        if (rc == 0)
+        {
             break;
         }
-        if (rc < 0) {
+        if (rc < 0)
+        {
             goto out_destroy_queue;
         }
     }
 
     void *thread_ret = NULL;
     rc = pthread_join(thread_id, thread_ret);
-    if (rc != 0) {
+    if (rc != 0)
+    {
         errno = rc;
         perror("pthread_join");
         goto out_destroy_attr;

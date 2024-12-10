@@ -4,7 +4,8 @@
 #define ALLOCATOR_DEFINE(T)                                                    \
     typedef struct T##_allocator T##_allocator;                                \
                                                                                \
-    struct T##_allocator {                                                     \
+    struct T##_allocator                                                       \
+    {                                                                          \
         size_t capacity;                                                       \
         size_t count;                                                          \
         T items[];                                                             \
@@ -13,7 +14,8 @@
     T##_allocator *T##_allocator_create(size_t capacity)                       \
     {                                                                          \
         T##_allocator *ret = calloc(1, sizeof(*ret) + (capacity * sizeof(T))); \
-        if (ret == NULL) {                                                     \
+        if (ret == NULL)                                                       \
+        {                                                                      \
             (void)fprintf(stderr, "%s: calloc failed\n", __func__);            \
             exit(EXIT_FAILURE);                                                \
         }                                                                      \
@@ -29,7 +31,8 @@
                                                                                \
     T *T##_alloc(T##_allocator *alloc)                                         \
     {                                                                          \
-        if (alloc->count >= alloc->capacity) {                                 \
+        if (alloc->count >= alloc->capacity)                                   \
+        {                                                                      \
             (void)fprintf(stderr, "%s: capacity exceeded\n", __func__);        \
             exit(EXIT_FAILURE);                                                \
         }                                                                      \

@@ -2,7 +2,8 @@
 #import <stdio.h>
 #import <stdlib.h>
 
-@interface Greeter : NSObject {
+@interface Greeter : NSObject
+{
     NSString *message_;
 }
 @property(nonatomic, copy) NSString *message;
@@ -16,7 +17,8 @@
 - (instancetype)initWithMessage:(NSString *)message
 {
     self = [super init];
-    if (self) {
+    if (self)
+    {
         message_ = [message copy];
     }
     return self;

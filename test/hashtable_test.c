@@ -4,7 +4,8 @@
 
 #include "hashtable.h"
 
-static const struct test_vector {
+static const struct test_vector
+{
     const char *key;
     char *value;
 } TEST_VECTORS[] = {
@@ -24,23 +25,28 @@ int main(void)
     struct table *t = table_create(8);
 
     value = table_get(t, "not_in_table");
-    if (value != NULL) {
+    if (value != NULL)
+    {
         goto out_table_destroy;
     }
 
-    for (size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
+    for (size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i)
+    {
         table_put(t, key, TEST_VECTORS[i].value);
     }
 
-    for (size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
+    for (size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i)
+    {
         value = table_get(t, key);
-        if (strcmp(TEST_VECTORS[i].value, value) != 0) {
+        if (strcmp(TEST_VECTORS[i].value, value) != 0)
+        {
             goto out_table_destroy;
         }
     }
 
     value = table_get(t, "not_in_table");
-    if (value != NULL) {
+    if (value != NULL)
+    {
         goto out_table_destroy;
     }
 

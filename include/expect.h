@@ -13,9 +13,11 @@ int expect_getpromote(void);
 int expect_insert(const char *filename, int lineno, const char *toinsert, int promote);
 
 #define EXPECT(expected_, actual_)                                         \
-    do {                                                                   \
+    do                                                                     \
+    {                                                                      \
         const char *a_[1] = actual_;                                       \
-        if (strcmp(expected_, a_[0]) == 0) {                               \
+        if (strcmp(expected_, a_[0]) == 0)                                 \
+        {                                                                  \
             break;                                                         \
         }                                                                  \
         expect_insert(__FILE__, __LINE__, expected_, expect_getpromote()); \

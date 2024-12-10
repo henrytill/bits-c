@@ -11,7 +11,8 @@
 #include "macro.h"
 
 /// storage allocation arena
-struct arena {
+struct arena
+{
     /// link to next arena
     struct arena *next;
     /// address of one past end of arena
@@ -63,16 +64,21 @@ void *arena_allocate(size_t n, size_t t)
     extern struct arena *arena[];
 
     struct arena *ap = NULL;
-    for (ap = arena[t]; ap->avail + n > ap->limit; arena[t] = ap) {
-        if (ap->next != NULL) {
+    for (ap = arena[t]; ap->avail + n > ap->limit; arena[t] = ap)
+    {
+        if (ap->next != NULL)
+        {
             // move to next arena
             ap = ap->next;
             ap->avail = (char *)ap + sizeof(*ap);
-        } else {
+        }
+        else
+        {
             // allocate a new arena
             const size_t m = calc_size(n);
             ap->next = calloc(1, m);
-            if (ap->next == NULL) {
+            if (ap->next == NULL)
+            {
                 eprintf("%s: calloc failed", __func__);
                 exit(EXIT_FAILURE);
             }
@@ -91,9 +97,12 @@ void arena_deallocate(size_t t)
     extern struct arena first[];
     extern struct arena *arena[];
 
-    if ((arena[t] = first[t].next) != NULL) {
+    if ((arena[t] = first[t].next) != NULL)
+    {
         arena[t]->avail = (char *)arena[t] + sizeof(*arena[t]);
-    } else {
+    }
+    else
+    {
         arena[t] = &first[t];
     }
 }
@@ -104,7 +113,8 @@ void arena_free(size_t t)
     extern struct arena *arena[];
 
     struct arena *ap = first[t].next;
-    while (ap != NULL) {
+    while (ap != NULL)
+    {
         struct arena *next = ap->next;
         free(ap);
         ap = next;
