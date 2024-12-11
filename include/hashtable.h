@@ -34,4 +34,12 @@ int table_put(struct table *t, const char *key, void *value);
 /// @return The value of the key, or NULL if the key is not found
 void *table_get(struct table *t, const char *key);
 
+/// Delete a key-value pair from a table
+///
+/// @param t The table to delete from
+/// @param key The key to delete
+/// @param finalize A function to finalize the value of the entry
+/// @return 0 on success, -1 if the key is not found or on error
+int table_delete(struct table *t, const char *key, void finalize(void *));
+
 #endif // C_BITS_HASHTABLE_H

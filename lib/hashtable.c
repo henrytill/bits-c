@@ -173,3 +173,62 @@ void *table_get(struct table *t, const char *key)
     }
     return curr->value;
 }
+
+int table_delete(struct table *t, const char *key, void finalize(void *))
+{
+    if (t == NULL)
+    {
+        return -1;
+    }
+    if (key == NULL)
+    {
+        return -1;
+    }
+
+    const uint64_t index = get_index(t->columns_len, key);
+    struct entry *curr = &t->columns[index];
+    struct entry *prev = NULL;
+
+    while (curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0)
+    {
+        prev = curr;
+        curr = curr->next;
+    }
+    // not found
+    if (curr == NULL || curr->key == NULL)
+    {
+        assert(curr->value == NULL);
+        return -1;
+    }
+    // found
+    if (curr->value != NULL && finalize != NULL)
+    {
+        finalize(curr->value);
+    }
+    if (prev == NULL)
+    {
+        // deleting from the first entry (embedded in the table)
+        if (curr->next != NULL)
+        {
+            // move next entry to the current entry
+            struct entry *next = curr->next;
+            curr->key = next->key;
+            curr->value = next->value;
+            curr->next = next->next;
+            free(next);
+        }
+        else
+        {
+            // clear the entry
+            curr->key = NULL;
+            curr->value = NULL;
+        }
+    }
+    else
+    {
+        // deleting from the chain
+        prev->next = curr->next;
+        free(curr);
+    }
+    return 0;
+}

@@ -50,6 +50,25 @@ int main(void)
         goto out_table_destroy;
     }
 
+    int rc = -1;
+    for (size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i)
+    {
+        rc = table_delete(t, key, NULL);
+        if (rc != 0)
+        {
+            goto out_table_destroy;
+        }
+    }
+
+    for (size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i)
+    {
+        value = table_get(t, key);
+        if (value != NULL)
+        {
+            goto out_table_destroy;
+        }
+    }
+
     ret = EXIT_SUCCESS;
 out_table_destroy:
     table_destroy(t, NULL);
