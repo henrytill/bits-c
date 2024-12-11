@@ -15,8 +15,6 @@ static const struct test_vector {
 };
 
 int main(void) {
-  extern const struct test_vector TEST_VECTORS[];
-
   int ret = EXIT_FAILURE;
   const char *key = NULL;
   char *value = NULL;

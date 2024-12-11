@@ -27,8 +27,6 @@ static bool check(const char *input, const uint64_t expected, const uint64_t act
 }
 
 int main(void) {
-  extern const struct test_vector TEST_VECTORS[];
-
   const char *input = NULL;
   for (size_t i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i) {
     const uint64_t expected = TEST_VECTORS[i].expected;

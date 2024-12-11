@@ -24,8 +24,6 @@ static void message_queue_fail(int rc, const char *msg) {
 }
 
 static void *produce(void *data) {
-  extern const int COUNT;
-
   assert(data != NULL);
 
   struct message_queue *queue = data;
@@ -62,8 +60,6 @@ static int consume(struct message_queue *queue, struct message *out) {
 }
 
 int main(void) {
-  extern const uint32_t QUEUE_CAP;
-
   int ret = EXIT_FAILURE;
 
   struct message_queue *queue = message_queue_create(QUEUE_CAP);

@@ -11,14 +11,14 @@
 #include "macro.h"
 #include "message_queue.h"
 
+extern const size_t EXPECTED_LEN;
+extern const struct message EXPECTED[];
+
 static const unsigned DELAY = 1U;
 
 static const uint32_t QUEUE_CAP = 1U;
 
 static void *produce(void *data) {
-  extern const size_t EXPECTED_LEN;       // NOLINT(readability-identifier-naming)
-  extern const struct message EXPECTED[]; // NOLINT(readability-identifier-naming)
-
   assert(data != NULL);
   struct message_queue *queue = data;
 
@@ -36,10 +36,6 @@ static void *produce(void *data) {
 }
 
 static int consume(struct message_queue *queue) {
-  extern const unsigned DELAY;
-  extern const size_t EXPECTED_LEN;       // NOLINT(readability-identifier-naming)
-  extern const struct message EXPECTED[]; // NOLINT(readability-identifier-naming)
-
   struct message consumed[EXPECTED_LEN];
 
   for (size_t i = 0; i < EXPECTED_LEN; ++i) {
@@ -57,8 +53,6 @@ static int consume(struct message_queue *queue) {
 }
 
 int main(void) {
-  extern const uint32_t QUEUE_CAP;
-
   int ret = EXIT_FAILURE;
 
   struct message_queue *queue = message_queue_create(QUEUE_CAP);

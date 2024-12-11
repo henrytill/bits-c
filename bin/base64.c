@@ -65,8 +65,6 @@ static size_t base64_decode(const size_t in_strlen,
 }
 
 int main(void) {
-  extern const struct test_vector TEST_VECTORS[];
-
   const char *input = NULL;
   size_t input_len = 0;
   const char *expected_base64 = NULL;

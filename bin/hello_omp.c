@@ -3,11 +3,10 @@
 
 // clang-format off
 
-int main(void)
-{
-    #pragma omp parallel
-    printf("Hello, world.\n");
-    return 0;
+int main(void) {
+  #pragma omp parallel
+  printf("Hello, world.\n");
+  return 0;
 }
 
 // clang-format on

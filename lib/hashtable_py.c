@@ -110,7 +110,6 @@ static struct PyModuleDef hashtable_module = {
   hashtable_methods,
 };
 
-PyMODINIT_FUNC PyInit_hashtable(void) // NOLINT(readability-identifier-naming)
-{
+PyMODINIT_FUNC PyInit_hashtable(void) { // NOLINT(readability-identifier-naming)
   return PyModule_Create(&hashtable_module);
 }
