@@ -24,7 +24,7 @@ static struct arena first[] = {{0}, {0}, {0}}, *arena[] = {&first[0], &first[1],
 
 static const size_t MEMINCR = 10;
 
-size_t pagesize = 0;
+static size_t pagesize = 0;
 
 size_t get_pagesize(void) {
   long result = sysconf(_SC_PAGESIZE);
