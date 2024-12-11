@@ -1,3 +1,4 @@
+#include <cassert>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -13,19 +14,23 @@ namespace foo
         GOODBYE = 1,
     };
 
+#ifndef SAY_GOODBYE
     constexpr message_kind get_message_kind()
     {
-#ifndef SAY_GOODBYE
         return message_kind::HELLO;
-#else
-        return message_kind::GOODBYE;
-#endif
     }
+#else
+    constexpr message_kind get_message_kind()
+    {
+        return message_kind::GOODBYE;
+    }
+#endif
 
     inline char *make_hello(const char *name)
     {
         size_t len = (size_t)std::snprintf(NULL, 0, "Hello, %s", name);
         char *ret = (char *)std::calloc(++len, sizeof(*ret));
+        assert(ret != NULL);
         (void)std::snprintf(ret, len, "Hello, %s", name);
         return ret;
     }
@@ -34,6 +39,7 @@ namespace foo
     {
         size_t len = (size_t)std::snprintf(NULL, 0, "Goodbye, %s", name);
         char *ret = (char *)std::calloc(++len, sizeof(*ret));
+        assert(ret != NULL);
         (void)std::snprintf(ret, len, "Goodbye, %s", name);
         return ret;
     }
