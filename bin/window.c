@@ -16,6 +16,8 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
 
+#define UNUSED_PARAM __attribute__((unused))
+
 #define eprintf(...) (void)fprintf(stderr, __VA_ARGS__)
 
 static GLint att[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None};
@@ -33,13 +35,10 @@ static void print_glew_version(void) {
   printf("GLEW Version: %s\n", version);
 }
 
-void GLAPIENTRY message_callback(__attribute__((unused)) GLenum source,
-                                 GLenum type,
-                                 __attribute__((unused)) GLuint id,
-                                 GLenum severity,
-                                 __attribute__((unused)) GLsizei length,
-                                 const GLchar *message,
-                                 __attribute__((unused)) const void *user) {
+void GLAPIENTRY message_callback(UNUSED_PARAM GLenum source, GLenum type,
+                                 UNUSED_PARAM GLuint id, GLenum severity,
+                                 UNUSED_PARAM GLsizei length, const GLchar *message,
+                                 UNUSED_PARAM const void *user) {
   eprintf("GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
           (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
           type, severity, message);
@@ -160,6 +159,8 @@ int main(void) {
         printf("Received WM_DELETE_WINDOW\n");
         loop_stat = 0;
       }
+      break;
+    default:
       break;
     }
   }
