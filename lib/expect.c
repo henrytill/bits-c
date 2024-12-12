@@ -75,6 +75,7 @@ int expect_insert(const char *filename, int lineno, const char *toinsert, int pr
     FILE *input = fopen(filename, "r");
     if (input == NULL) {
       perror("Error opening input file");
+      close(tempfd);
       return -1;
     }
 
