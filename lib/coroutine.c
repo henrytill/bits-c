@@ -20,8 +20,8 @@ enum {
 };
 
 enum {
-  FRAME_SIZE = 5
-}; /* fairly arbitrary */
+  FRAME_SIZE = 5 /* fairly arbitrary */
+};
 
 struct start_params {
   coroutine *c;
