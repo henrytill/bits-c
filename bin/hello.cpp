@@ -23,17 +23,21 @@ constexpr message_kind get_message_kind() {
 #endif
 
 inline char *make_hello(const char *name) {
-  size_t len = (size_t)std::snprintf(NULL, 0, "Hello, %s", name);
+  size_t len = (size_t)std::snprintf(nullptr, 0, "Hello, %s", name);
   char *ret = (char *)std::calloc(++len, sizeof(*ret));
-  assert(ret != NULL);
+  if (ret == nullptr) {
+    return nullptr;
+  }
   (void)std::snprintf(ret, len, "Hello, %s", name);
   return ret;
 }
 
 inline char *make_goodbye(const char *name) {
-  size_t len = (size_t)std::snprintf(NULL, 0, "Goodbye, %s", name);
+  size_t len = (size_t)std::snprintf(nullptr, 0, "Goodbye, %s", name);
   char *ret = (char *)std::calloc(++len, sizeof(*ret));
-  assert(ret != NULL);
+  if (ret == nullptr) {
+    return nullptr;
+  }
   (void)std::snprintf(ret, len, "Goodbye, %s", name);
   return ret;
 }
