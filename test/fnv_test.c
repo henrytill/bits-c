@@ -18,7 +18,7 @@ static const struct test_vector {
   {NULL, 0},
 };
 
-static bool check(const char *input, const uint64_t expected, const uint64_t actual) {
+static bool check(const char input[static 1], const uint64_t expected, const uint64_t actual) {
   if (expected == actual) {
     return true;
   }
@@ -29,8 +29,11 @@ static bool check(const char *input, const uint64_t expected, const uint64_t act
 int main(void) {
   const char *input = NULL;
   for (size_t i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i) {
+    if (input == NULL) {
+      return EXIT_FAILURE;
+    }
     const uint64_t expected = TEST_VECTORS[i].expected;
-    const uint64_t actual = fnv_hash(strlen(input) + 1, (const unsigned char *)input);
+    const uint64_t actual = fnv_hash(strlen(input) + 1, (unsigned char const *)input);
     if (!check(input, expected, actual)) {
       return EXIT_FAILURE;
     }

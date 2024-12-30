@@ -67,6 +67,6 @@
 /// Returns 1 if x is a power of 2
 #define ISPOW2(x) (((x) & ((x) - 1)) == 0)
 
-#define STATIC_ASSERT(e) static_assert((e), #e)
+#define STATIC_ASSERT(e) _Static_assert((e), #e)
 
 #endif // C_BITS_MACRO_H

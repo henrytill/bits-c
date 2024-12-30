@@ -67,17 +67,15 @@ int main(void) {
     fail("message_queue_create failed");
   }
 
-  int rc = -1;
   pthread_attr_t thread_attr;
-  pthread_t thread_id;
-
-  rc = pthread_attr_init(&thread_attr);
+  int rc = pthread_attr_init(&thread_attr);
   if (rc != 0) {
     errno = rc;
     perror("pthread_attr_init");
     goto out_destroy_queue;
   }
 
+  pthread_t thread_id;
   rc = pthread_create(&thread_id, &thread_attr, produce, queue);
   if (rc != 0) {
     errno = rc;
@@ -97,7 +95,7 @@ int main(void) {
   }
 
   void *thread_ret = NULL;
-  rc = pthread_join(thread_id, thread_ret);
+  rc = pthread_join(thread_id, &thread_ret);
   if (rc != 0) {
     errno = rc;
     perror("pthread_join");

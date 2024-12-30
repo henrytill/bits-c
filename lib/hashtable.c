@@ -54,7 +54,9 @@ struct table *table_create(const size_t columns_len) {
     return NULL;
   }
   struct table *ret = calloc(1, sizeof(*ret) + (columns_len * sizeof(struct entry)));
-  assert(ret != NULL);
+  if (ret == NULL) {
+    return NULL;
+  }
   ret->columns_len = columns_len;
   return ret;
 }
@@ -85,7 +87,7 @@ void table_destroy(struct table *t, void finalize(void *)) {
 /// @return The index of the key
 ///
 /// @note The number of columns must be a power of 2
-static uint64_t get_index(size_t columns_len, const char *key) {
+static uint64_t get_index(const size_t columns_len, const char *key) {
   assert(ISPOW2(columns_len));
   assert(key != NULL);
   const uint64_t hash = fnv_hash(strlen(key) + 1, (const unsigned char *)key);
@@ -122,7 +124,9 @@ int table_put(struct table *t, const char *key, void *value) {
   }
   // new node
   curr = calloc(1, sizeof(*curr));
-  assert(curr != NULL);
+  if (curr == NULL) {
+    return -1;
+  }
   curr->next = NULL;
   curr->key = key;
   curr->value = value;

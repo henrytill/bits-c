@@ -258,7 +258,7 @@ struct vkont_stack {
 };
 
 vkont_stack *vkont_stack_create(size_t initial_capacity) {
-  vkont_stack *stack = calloc(1, sizeof(vkont_stack) + initial_capacity * sizeof(struct vkont));
+  vkont_stack *stack = calloc(1, sizeof(vkont_stack) + (initial_capacity * sizeof(struct vkont)));
   assert(stack != NULL);
   stack->capacity = initial_capacity;
   stack->top = 0;
@@ -309,6 +309,9 @@ void stack_sum_impl(node *n, vkont_stack *ks) {
       int s = 0;
       while (true) {
         vkont *k = vkont_stack_peek(ks);
+        if (k == NULL) {
+          return;
+        }
         if (k->tag == K1) {
           n = k->u.k1.n->right;
           *k = vkont_k2(s, k->u.k1.n);

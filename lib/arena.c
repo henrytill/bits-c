@@ -37,18 +37,18 @@ void arena_init(void) {
   pagesize = get_pagesize();
 }
 
-static inline size_t nextpage(size_t size) {
+static inline size_t nextpage(const size_t size) {
   assert(pagesize > 0);
   assert(ISPOW2(pagesize));
   assert(size <= (SIZE_MAX - pagesize - 1));
   return (size + pagesize - 1) & ~(pagesize - 1);
 }
 
-static inline size_t calc_size(size_t n) {
-  return nextpage(((n + 3) & ~3UL) + MEMINCR * 1024 + sizeof(struct arena));
+static inline size_t calc_size(const size_t n) {
+  return nextpage(((n + 3) & ~3UL) + (MEMINCR * 1024) + sizeof(struct arena));
 }
 
-void *arena_allocate(size_t n, size_t t) {
+void *arena_allocate(const size_t n, const size_t t) {
   struct arena *ap = NULL;
   for (ap = arena[t]; ap->avail + n > ap->limit; arena[t] = ap) {
     if (ap->next != NULL) {
@@ -73,7 +73,7 @@ void *arena_allocate(size_t n, size_t t) {
   return ap->avail - n;
 }
 
-void arena_deallocate(size_t t) {
+void arena_deallocate(const size_t t) {
   if ((arena[t] = first[t].next) != NULL) {
     arena[t]->avail = (char *)arena[t] + sizeof(*arena[t]);
   } else {
@@ -81,7 +81,7 @@ void arena_deallocate(size_t t) {
   }
 }
 
-void arena_free(size_t t) {
+void arena_free(const size_t t) {
   struct arena *ap = first[t].next;
   while (ap != NULL) {
     struct arena *next = ap->next;
