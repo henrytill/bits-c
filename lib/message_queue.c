@@ -230,12 +230,12 @@ int message_queue_get(struct message_queue *queue, struct message *out) {
   return 0;
 }
 
-uint32_t message_queue_size(struct message_queue *queue) {
+int message_queue_size(struct message_queue *queue) {
   if (queue == NULL) {
     return 0;
   }
 
   int ret = 0;
   sem_getvalue(queue->full, &ret);
-  return (uint32_t)ret;
+  return ret;
 }
