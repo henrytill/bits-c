@@ -27,7 +27,7 @@ static const size_t MEMINCR = 10;
 static size_t pagesize = 0;
 
 size_t get_pagesize(void) {
-  long result = sysconf(_SC_PAGESIZE);
+  const long result = sysconf(_SC_PAGESIZE);
   STATIC_ASSERT(SIZE_MAX >> 1 == LONG_MAX);
   assert(result > 0);
   return (size_t)result;
