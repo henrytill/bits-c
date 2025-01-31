@@ -36,11 +36,11 @@ int main(void) {
   void *stack_pointer;
 
   struct iter it = {
-    .c = &c,
-    .xmax = 2,
-    .ymax = 2,
-    .x = 0,
-    .y = 0,
+      .c = &c,
+      .xmax = 2,
+      .ymax = 2,
+      .x = 0,
+      .y = 0,
   };
 
   stack_pointer = stack + STACK_SIZE; /* stacks typically grow downward (arch-dependent) */

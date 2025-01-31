@@ -95,19 +95,19 @@ static PyObject *py_table_get(PyObject *self, PyObject *args) {
 }
 
 static PyMethodDef hashtable_methods[] = {
-  {"create", py_table_create, METH_VARARGS, "Create a new table"},
-  {"destroy", py_table_destroy, METH_VARARGS, "Destroy an existing table"},
-  {"put", py_table_put, METH_VARARGS, "Insert a key-value pair into the table"},
-  {"get", py_table_get, METH_VARARGS, "Retrieve a value by key from the table"},
-  {NULL, NULL, 0, NULL},
+    {"create", py_table_create, METH_VARARGS, "Create a new table"},
+    {"destroy", py_table_destroy, METH_VARARGS, "Destroy an existing table"},
+    {"put", py_table_put, METH_VARARGS, "Insert a key-value pair into the table"},
+    {"get", py_table_get, METH_VARARGS, "Retrieve a value by key from the table"},
+    {NULL, NULL, 0, NULL},
 };
 
 static struct PyModuleDef hashtable_module = {
-  PyModuleDef_HEAD_INIT,
-  "hashtable",
-  NULL,
-  -1,
-  hashtable_methods,
+    PyModuleDef_HEAD_INIT,
+    "hashtable",
+    NULL,
+    -1,
+    hashtable_methods,
 };
 
 PyMODINIT_FUNC PyInit_hashtable(void) { // NOLINT(readability-identifier-naming)

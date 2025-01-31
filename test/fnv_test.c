@@ -12,10 +12,10 @@ static const struct test_vector {
   const char *input;
   uint64_t expected;
 } TEST_VECTORS[] = {
-  {"", 0xaf63bd4c8601b7df},
-  {"a", 0x089be207b544f1e4},
-  {"foobar", 0x34531ca7168b8f38},
-  {NULL, 0},
+    {"", 0xaf63bd4c8601b7df},
+    {"a", 0x089be207b544f1e4},
+    {"foobar", 0x34531ca7168b8f38},
+    {NULL, 0},
 };
 
 static bool check(const char input[static 1], const uint64_t expected, const uint64_t actual) {

@@ -30,7 +30,7 @@ static void person_hello(const person *self) {
 
 /// Base class vtable.
 static const person_operations PERSON_OPS = {
-  .hello = person_hello,
+    .hello = person_hello,
 };
 
 struct student {
@@ -47,30 +47,30 @@ static void student_hello(const person *self) {
 
 /// Derived class vtable.
 static const person_operations STUDENT_OPS = {
-  .hello = student_hello,
+    .hello = student_hello,
 };
 
 int main(void) {
   student carol = {
-    .person = {
-      .ops = &STUDENT_OPS,
-      .name = "Carol",
-      .age = 22,
-      .next = NULL,
-    },
-    .school = "MIT",
+      .person = {
+          .ops = &STUDENT_OPS,
+          .name = "Carol",
+          .age = 22,
+          .next = NULL,
+      },
+      .school = "MIT",
   };
   person bob = {
-    .ops = &PERSON_OPS,
-    .name = "Bob",
-    .age = 21,
-    .next = &carol.person,
+      .ops = &PERSON_OPS,
+      .name = "Bob",
+      .age = 21,
+      .next = &carol.person,
   };
   person alice = {
-    .ops = &PERSON_OPS,
-    .name = "Alice",
-    .age = 20,
-    .next = &bob,
+      .ops = &PERSON_OPS,
+      .name = "Alice",
+      .age = 20,
+      .next = &bob,
   };
 
   for (const person *p = &alice; p != NULL; p = p->next) {

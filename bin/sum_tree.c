@@ -401,16 +401,16 @@ struct algo {
 int main(void) {
   algo algos[] = {
 #ifdef HAS_NESTED_FUNCTIONS
-    {"cps (w/nested functions)", &nested_sum},
+      {"cps (w/nested functions)", &nested_sum},
 #endif
 #ifdef HAS_BLOCKS
-    {"cps (w/blocks)", &blocks_sum},
+      {"cps (w/blocks)", &blocks_sum},
 #endif
-    {"defunc", &defunc_sum},
-    {"opt", &opt_sum},
-    {"stack", &stack_sum},
-    {"iterative", &iterative_sum},
-    {NULL, NULL},
+      {"defunc", &defunc_sum},
+      {"opt", &opt_sum},
+      {"stack", &stack_sum},
+      {"iterative", &iterative_sum},
+      {NULL, NULL},
   };
 
 #define NODE_POOL_SIZE 128
@@ -421,13 +421,13 @@ int main(void) {
 #define LEAF(value)                node_create(alloc, value, NULL, NULL)
 
   node *ns[] = {
-    LEAF(123),
-    BRANCH(1, LEAF(2), NULL),
-    BRANCH(1, NULL, LEAF(2)),
-    BRANCH(1, LEAF(200), LEAF(3)),
-    BRANCH(1, LEAF(2), BRANCH(3, LEAF(4), LEAF(5))),
-    BRANCH(1, BRANCH(3, LEAF(4), LEAF(5)), LEAF(2)),
-    NULL,
+      LEAF(123),
+      BRANCH(1, LEAF(2), NULL),
+      BRANCH(1, NULL, LEAF(2)),
+      BRANCH(1, LEAF(200), LEAF(3)),
+      BRANCH(1, LEAF(2), BRANCH(3, LEAF(4), LEAF(5))),
+      BRANCH(1, BRANCH(3, LEAF(4), LEAF(5)), LEAF(2)),
+      NULL,
   };
 
 #undef LEAF

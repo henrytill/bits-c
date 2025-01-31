@@ -11,7 +11,7 @@ static const struct test_vector {
 #define X(prefix) {#prefix "_key", #prefix "_value"},
 #include "hashtable_vectors.def"
 #undef X
-  {NULL, NULL},
+    {NULL, NULL},
 };
 
 int main(void) {

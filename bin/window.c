@@ -88,8 +88,8 @@ int main(void) {
   Colormap cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
 
   XSetWindowAttributes swa = {
-    .colormap = cmap,
-    .event_mask = ExposureMask | KeyPressMask,
+      .colormap = cmap,
+      .event_mask = ExposureMask | KeyPressMask,
   };
 
   Window win = XCreateWindow(dpy, root, 0, 0, 600, 600, 0,

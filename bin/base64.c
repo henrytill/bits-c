@@ -36,9 +36,9 @@ static const struct test_vector {
   const size_t base64_len;
 } TEST_VECTORS[] = {
 #define X(s, b) {(s), strlen((s)), (b), strlen((b))},
-  TEST_VECTORS_ENTRIES
+    TEST_VECTORS_ENTRIES
 #undef X
-  {NULL, 0, NULL, 0},
+    {NULL, 0, NULL, 0},
 };
 
 #define ARRAY_SIZE(arr) (sizeof((arr)) / sizeof((arr)[0]))

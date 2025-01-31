@@ -35,11 +35,11 @@
   ((type *)(mptr - offsetof(type, member)));                                                                 \
 })
 
-#define CONTAINER_OF(ptr, type, member)                                       \
-  _Generic(                                                                   \
-    ptr,                                                                      \
-    const typeof(*(ptr)) *: ((const type *)CONTAINER_OF_(ptr, type, member)), \
-    default: ((type *)CONTAINER_OF_(ptr, type, member)))
+#define CONTAINER_OF(ptr, type, member)                                         \
+  _Generic(                                                                     \
+      ptr,                                                                      \
+      const typeof(*(ptr)) *: ((const type *)CONTAINER_OF_(ptr, type, member)), \
+      default: ((type *)CONTAINER_OF_(ptr, type, member)))
 
 #define SEND(obj, method, ...) ({            \
   typeof(obj) receiver = (obj);              \
