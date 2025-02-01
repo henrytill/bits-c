@@ -25,5 +25,6 @@ test/coroutine_test
 test/expect_test
 test/fnv_test
 test/hashtable_test
+test/lambda_test
 test/message_queue_basic
 test/message_queue_block

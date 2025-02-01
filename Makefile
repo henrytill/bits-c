@@ -48,6 +48,7 @@ TESTS += test/coroutine_test
 TESTS += test/expect_test
 TESTS += test/fnv_test
 TESTS += test/hashtable_test
+TESTS += test/lambda_test
 TESTS += test/message_queue_basic
 TESTS += test/message_queue_block
 
@@ -126,6 +127,9 @@ test/fnv_test: test/fnv_test.c lib/fnv.o
 
 test/hashtable_test: test/hashtable_test.c lib/hashtable.o lib/fnv.o
 	$(CC) $(ALL_CFLAGS) $(.ALLSRC) $(LDFLAGS) -o $@
+
+test/lambda_test: test/lambda_test.cpp
+	$(CXX) $(ALL_CXXFLAGS) $(.ALLSRC) -o $@
 
 test/message_queue_basic: test/message_queue_basic.c lib/message_queue.o
 	$(CC) $(ALL_CFLAGS) -pthread $(.ALLSRC) $(LDFLAGS) -o $@
