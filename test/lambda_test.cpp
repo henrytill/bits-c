@@ -1,24 +1,26 @@
-#include <algorithm>
 #include <iostream>
-#include <memory>
 
 #include "lambda.h"
 
 auto main(void) -> int {
-  auto show = ExprShow(std::cout);
+  auto show = expr_show(std::cout);
 
   // (\x . x)
-  auto xx = Abs{"x", Var{"x"}};
+  auto id = lam("x", var("x"));
 
-  show(xx);
+  show(id);
   std::cout << std::endl;
 
-  auto ft = std::make_unique<Abs>("f", Var{"t"});
-
   // (\t . (\f . t))
-  auto tft = Abs{"t", std::move(ft)};
+  auto k = lam("t", lam("f", var("t")));
 
-  show(tft);
+  show(k);
+  std::cout << std::endl;
+
+  // ((\x . x) y)
+  auto app1 = app(lam("x", var("x")), var("y"));
+
+  show(app1);
   std::cout << std::endl;
 
   return 0;
