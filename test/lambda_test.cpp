@@ -18,7 +18,7 @@ auto main(void) -> int {
   std::cout << std::endl;
 
   // ((\x . x) y)
-  auto app1 = app(lam("x", var("x")), var("y"));
+  auto app1 = app(std::move(id), var("y"));
 
   show(app1);
   std::cout << std::endl;
