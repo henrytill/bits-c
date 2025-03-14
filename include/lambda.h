@@ -16,7 +16,7 @@ using expr_ptr = std::unique_ptr<expr>;
 struct var : expr {
   std::string name;
 
-  explicit var(std::string n) : name(std::move(n)) {}
+  explicit var(std::string n) : name{std::move(n)} {}
 
   operator expr_ptr() && {
     return std::make_unique<var>(std::move(name));
@@ -30,7 +30,7 @@ struct lam : expr {
   expr_ptr body;
 
   lam(std::string p, expr_ptr b)
-      : param(std::move(p)), body(std::move(b)) {}
+      : param{std::move(p)}, body{std::move(b)} {}
 
   operator expr_ptr() && {
     return std::make_unique<lam>(std::move(param), std::move(body));
@@ -44,7 +44,7 @@ struct app : expr {
   expr_ptr arg;
 
   app(expr_ptr f, expr_ptr a)
-      : fun(std::move(f)), arg(std::move(a)) {}
+      : fun{std::move(f)}, arg{std::move(a)} {}
 
   operator expr_ptr() && {
     return std::make_unique<app>(std::move(fun), std::move(arg));
@@ -69,7 +69,7 @@ class expr_show : public expr_visitor {
   std::ostream &out;
 
 public:
-  explicit expr_show(std::ostream &out) : out(out) {}
+  explicit expr_show(std::ostream &out) : out{out} {}
 
   void visit(var &e) override { out << e.name; }
 
