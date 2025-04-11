@@ -370,6 +370,7 @@ node *pop(stack_node **top) {
 void iterative_sum(node *root) {
   if (root == NULL) {
     answer = 0;
+    return;
   }
 
   int sum = 0;
