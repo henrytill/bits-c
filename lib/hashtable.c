@@ -65,13 +65,17 @@ void table_destroy(struct table *t, void finalize(void *)) {
   if (t == NULL) {
     return;
   }
+  struct entry *curr = NULL;
+  struct entry *next = NULL;
   for (size_t i = 0; i < t->columns_len; ++i) {
-    for (struct entry *curr = t->columns[i].next, *next = NULL; curr != NULL; curr = next) {
+    curr = t->columns[i].next;
+    while (curr != NULL) {
       next = curr->next;
       if (finalize != NULL && curr->value != NULL) {
         finalize(curr->value);
       }
       free(curr);
+      curr = next;
     }
     if (finalize != NULL && t->columns[i].value != NULL) {
       finalize(t->columns[i].value);
