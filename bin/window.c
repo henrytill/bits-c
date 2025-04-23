@@ -31,14 +31,14 @@ static void print_gl_version(void) {
 }
 
 static void print_glew_version(void) {
-  const GLubyte *version = glewGetString(GLEW_VERSION);
+  GLubyte const *version = glewGetString(GLEW_VERSION);
   printf("GLEW Version: %s\n", version);
 }
 
 void GLAPIENTRY message_callback(UNUSED_PARAM GLenum source, GLenum type,
                                  UNUSED_PARAM GLuint id, GLenum severity,
-                                 UNUSED_PARAM GLsizei length, const GLchar *message,
-                                 UNUSED_PARAM const void *user) {
+                                 UNUSED_PARAM GLsizei length, GLchar const *message,
+                                 UNUSED_PARAM void const *user) {
   eprintf("GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
           (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
           type, severity, message);

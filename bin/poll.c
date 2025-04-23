@@ -6,7 +6,7 @@
 
 #include "macro.h"
 
-static inline void handle_error(const char *msg) {
+static inline void handle_error(char const *msg) {
   perror(msg);
   exit(EXIT_FAILURE);
 }

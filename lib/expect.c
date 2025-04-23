@@ -15,14 +15,14 @@ int expect_getpromote(void) {
     return 0;
   }
   char *end = NULL;
-  const long p = strtol(s, &end, 10);
+  long const p = strtol(s, &end, 10);
   if (s == end) {
     return 0;
   }
   return p > 0L;
 }
 
-static int fcopy(const char *srcname, const char *dstname) {
+static int fcopy(char const *srcname, char const *dstname) {
   FILE *src = fopen(srcname, "rb");
   if (src == NULL) {
     perror("Error opening source file");
@@ -62,7 +62,7 @@ static int fcopy(const char *srcname, const char *dstname) {
   }
 }
 
-int expect_insert(const char *filename, int lineno, const char *toinsert, int promote) {
+int expect_insert(char const *filename, int lineno, char const *toinsert, int promote) {
   char tempfilename[] = "tempXXXXXX";
 
   {

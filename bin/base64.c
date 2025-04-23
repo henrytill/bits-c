@@ -29,12 +29,12 @@
 TEST_VECTORS_ENTRIES
 #undef X
 
-static const struct test_vector {
-  const char *input;
-  const size_t input_len;
-  const char *base64;
-  const size_t base64_len;
-} TEST_VECTORS[] = {
+static struct test_vector {
+  char const *input;
+  size_t const input_len;
+  char const *base64;
+  size_t const base64_len;
+} const TEST_VECTORS[] = {
 #define X(s, b) {(s), strlen((s)), (b), strlen((b))},
     TEST_VECTORS_ENTRIES
 #undef X
@@ -48,26 +48,26 @@ static const struct test_vector {
 
 #define ARRAY_CLEAR(arr) memset((arr), 0, sizeof((arr))) // NOLINT(clang-analyzer-security.*)
 
-static size_t base64_encode(const size_t in_strlen,
-                            const char in[in_strlen + 1],
+static size_t base64_encode(size_t const in_strlen,
+                            char const in[in_strlen + 1],
                             char *out) {
   return (size_t)EVP_EncodeBlock((unsigned char *)out,
-                                 (const unsigned char *)in,
+                                 (unsigned char const *)in,
                                  (int)in_strlen);
 }
 
-static size_t base64_decode(const size_t in_strlen,
-                            const char in[in_strlen + 1],
+static size_t base64_decode(size_t const in_strlen,
+                            char const in[in_strlen + 1],
                             char *out) {
   return (size_t)EVP_DecodeBlock((unsigned char *)out,
-                                 (const unsigned char *)in,
+                                 (unsigned char const *)in,
                                  (int)in_strlen);
 }
 
 int main(void) {
-  const char *input = NULL;
+  char const *input = NULL;
   size_t input_len = 0;
-  const char *expected_base64 = NULL;
+  char const *expected_base64 = NULL;
   size_t expected_base64_len = 0;
 
   size_t codec_len = 0;

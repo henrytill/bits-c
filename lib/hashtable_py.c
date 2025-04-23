@@ -45,7 +45,7 @@ static PyObject *py_table_destroy(PyObject *self, PyObject *args) {
 
 static PyObject *py_table_put(PyObject *self, PyObject *args) {
   PyObject *py_table = NULL;
-  const char *key = NULL;
+  char const *key = NULL;
   PyObject *value = NULL;
 
   int rc = PyArg_ParseTuple(args, "OsO", &py_table, &key, &value);
@@ -72,7 +72,7 @@ static PyObject *py_table_put(PyObject *self, PyObject *args) {
 
 static PyObject *py_table_get(PyObject *self, PyObject *args) {
   PyObject *py_table = NULL;
-  const char *key = NULL;
+  char const *key = NULL;
 
   int rc = PyArg_ParseTuple(args, "Os", &py_table, &key);
   if (rc == 0) {

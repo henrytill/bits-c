@@ -33,7 +33,7 @@ static sem_t *create_semaphore(uint32_t value) {
     return NULL;
   }
 
-  const int rc = sem_init(sem, 0, value);
+  int const rc = sem_init(sem, 0, value);
   if (rc == -1) {
     free(sem);
     return NULL;
@@ -63,7 +63,7 @@ static pthread_mutex_t *create_mutex(void) {
     return NULL;
   }
 
-  const int rc = pthread_mutex_init(mutex, NULL);
+  int const rc = pthread_mutex_init(mutex, NULL);
   if (rc != 0) {
     free(mutex);
     return NULL;

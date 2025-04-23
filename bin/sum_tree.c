@@ -45,8 +45,8 @@ int recursive_sum(node *n) {
   if (n == NULL) {
     return 0;
   }
-  const int suml = recursive_sum(n->left);
-  const int sumr = recursive_sum(n->right);
+  int const suml = recursive_sum(n->left);
+  int const sumr = recursive_sum(n->right);
   return suml + sumr + n->value;
 }
 

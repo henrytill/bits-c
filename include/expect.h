@@ -10,11 +10,11 @@
 
 int expect_getpromote(void);
 
-int expect_insert(const char *filename, int lineno, const char *toinsert, int promote);
+int expect_insert(char const *filename, int lineno, char const *toinsert, int promote);
 
 #define EXPECT(expected_, actual_)                                     \
   do {                                                                 \
-    const char *a_[1] = actual_;                                       \
+    char const *a_[1] = actual_;                                       \
     if (strcmp(expected_, a_[0]) == 0) {                               \
       break;                                                           \
     }                                                                  \

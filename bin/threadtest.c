@@ -17,7 +17,7 @@ struct thread_info {
 
 static struct thread_info info[MAX_THREADS];
 
-static void handle_errno(int err, const char *msg) {
+static void handle_errno(int err, char const *msg) {
   errno = err;
   perror(msg);
   exit(EXIT_FAILURE);
@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  const int num_threads = argc - optind;
+  int const num_threads = argc - optind;
 
   if (num_threads > MAX_THREADS) {
     eprintf("Too many threads; max is %d\n", MAX_THREADS);

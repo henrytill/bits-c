@@ -11,12 +11,12 @@
 #include "macro.h"
 #include "message_queue.h"
 
-extern const size_t EXPECTED_LEN;
-extern const struct message EXPECTED[];
+extern size_t const EXPECTED_LEN;
+extern struct message const EXPECTED[];
 
-static const unsigned DELAY = 1U;
+static unsigned const DELAY = 1U;
 
-static const uint32_t QUEUE_CAP = 1U;
+static uint32_t const QUEUE_CAP = 1U;
 
 static void *produce(void *data) {
   assert(data != NULL);

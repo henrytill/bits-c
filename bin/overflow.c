@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static int add1(const int x) {
+static int add1(int const x) {
   return x + 1;
 }
 

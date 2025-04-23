@@ -9,16 +9,16 @@
 #include "macro.h"
 #include "message_queue.h"
 
-static const int COUNT = 100;
+static int const COUNT = 100;
 
-static const uint32_t QUEUE_CAP = 4U;
+static uint32_t const QUEUE_CAP = 4U;
 
-static void fail(const char *msg) {
+static void fail(char const *msg) {
   eprintf("%s\n", msg);
   exit(EXIT_FAILURE);
 }
 
-static void message_queue_fail(int rc, const char *msg) {
+static void message_queue_fail(int rc, char const *msg) {
   eprintf("%s: %s\n", msg, message_queue_failure_str((enum message_queue_failure)(-rc)));
   exit(EXIT_FAILURE);
 }
@@ -28,7 +28,7 @@ static void *produce(void *data) {
 
   struct message_queue *queue = data;
   struct message msg = {0};
-  const char *tag_str = NULL;
+  char const *tag_str = NULL;
   int rc = -1;
 
   for (intptr_t value = 0; value <= COUNT;) {
@@ -51,7 +51,7 @@ static void *produce(void *data) {
 }
 
 static int consume(struct message_queue *queue, struct message *out) {
-  const int rc = message_queue_get(queue, out);
+  int const rc = message_queue_get(queue, out);
   if (rc < 0) {
     message_queue_fail(rc, "message_queue_get failed");
   }

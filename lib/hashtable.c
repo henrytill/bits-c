@@ -39,7 +39,7 @@ TEST_ENTRIES
 
 struct entry {
   struct entry *next;
-  const char *key;
+  char const *key;
   void *value;
 };
 
@@ -48,7 +48,7 @@ struct table {
   struct entry columns[];
 };
 
-struct table *table_create(const size_t columns_len) {
+struct table *table_create(size_t const columns_len) {
   if (!ISPOW2(columns_len)) {
     debug_fprintf(stderr, "%s: columns_len must be a power of 2\n", __func__);
     return NULL;
@@ -87,14 +87,14 @@ void table_destroy(struct table *t, void finalize(void *)) {
 /// @return The index of the key
 ///
 /// @note The number of columns must be a power of 2
-static uint64_t get_index(const size_t columns_len, const char *key) {
+static uint64_t get_index(size_t const columns_len, char const *key) {
   assert(ISPOW2(columns_len));
   assert(key != NULL);
-  const uint64_t hash = fnv_hash(strlen(key) + 1, (const unsigned char *)key);
+  uint64_t const hash = fnv_hash(strlen(key) + 1, (unsigned char const *)key);
   return hash & (uint64_t)(columns_len - 1);
 }
 
-int table_put(struct table *t, const char *key, void *value) {
+int table_put(struct table *t, char const *key, void *value) {
   if (t == NULL) {
     return -1;
   }
@@ -102,7 +102,7 @@ int table_put(struct table *t, const char *key, void *value) {
     return -1;
   }
 
-  const uint64_t index = get_index(t->columns_len, key);
+  uint64_t const index = get_index(t->columns_len, key);
   debug_printf("%s: key: %s, index: %" PRIu64 "\n", __func__, key, index);
   struct entry *curr = &t->columns[index];
   struct entry *prev = NULL;
@@ -135,7 +135,7 @@ int table_put(struct table *t, const char *key, void *value) {
   return 0;
 }
 
-void *table_get(struct table *t, const char *key) {
+void *table_get(struct table *t, char const *key) {
   if (t == NULL) {
     return NULL;
   }
@@ -143,7 +143,7 @@ void *table_get(struct table *t, const char *key) {
     return NULL;
   }
 
-  const uint64_t index = get_index(t->columns_len, key);
+  uint64_t const index = get_index(t->columns_len, key);
   debug_printf("%s: key: %s, index: %" PRIu64 "\n", __func__, key, index);
   struct entry *curr = &t->columns[index];
 
@@ -156,7 +156,7 @@ void *table_get(struct table *t, const char *key) {
   return curr->value;
 }
 
-int table_delete(struct table *t, const char *key, void finalize(void *)) {
+int table_delete(struct table *t, char const *key, void finalize(void *)) {
   if (t == NULL) {
     return -1;
   }
@@ -164,7 +164,7 @@ int table_delete(struct table *t, const char *key, void finalize(void *)) {
     return -1;
   }
 
-  const uint64_t index = get_index(t->columns_len, key);
+  uint64_t const index = get_index(t->columns_len, key);
   struct entry *curr = &t->columns[index];
   struct entry *prev = NULL;
 

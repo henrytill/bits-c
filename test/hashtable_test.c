@@ -4,10 +4,10 @@
 
 #include "hashtable.h"
 
-static const struct test_vector {
-  const char *key;
+static struct test_vector {
+  char const *key;
   char *value;
-} TEST_VECTORS[] = {
+} const TEST_VECTORS[] = {
 #define X(prefix) {#prefix "_key", #prefix "_value"},
 #include "hashtable_vectors.def"
 #undef X
@@ -16,7 +16,7 @@ static const struct test_vector {
 
 int main(void) {
   int ret = EXIT_FAILURE;
-  const char *key = NULL;
+  char const *key = NULL;
   char *value = NULL;
   struct table *t = table_create(8);
 

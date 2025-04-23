@@ -22,7 +22,7 @@ constexpr message_kind get_message_kind() {
 }
 #endif
 
-inline char *make_hello(const char *name) {
+inline char *make_hello(char const *name) {
   size_t len = (size_t)std::snprintf(nullptr, 0, "Hello, %s", name);
   char *ret = (char *)std::calloc(++len, sizeof(*ret));
   if (ret == nullptr) {
@@ -32,7 +32,7 @@ inline char *make_hello(const char *name) {
   return ret;
 }
 
-inline char *make_goodbye(const char *name) {
+inline char *make_goodbye(char const *name) {
   size_t len = (size_t)std::snprintf(nullptr, 0, "Goodbye, %s", name);
   char *ret = (char *)std::calloc(++len, sizeof(*ret));
   if (ret == nullptr) {
@@ -43,7 +43,7 @@ inline char *make_goodbye(const char *name) {
 }
 
 template <message_kind kind = get_message_kind()>
-char *message(const char *name) {
+char *message(char const *name) {
   if constexpr (kind == message_kind::HELLO) {
     return make_hello(name);
   } else {
