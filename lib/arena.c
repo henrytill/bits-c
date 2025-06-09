@@ -30,6 +30,7 @@ size_t get_pagesize(void) {
   long const result = sysconf(_SC_PAGESIZE);
   STATIC_ASSERT(SIZE_MAX >> 1 == LONG_MAX);
   assert(result > 0);
+  assert(ISPOW2(result));
   return (size_t)result;
 }
 
@@ -39,7 +40,6 @@ void arena_init(void) {
 
 static inline size_t nextpage(size_t const size) {
   assert(pagesize > 0);
-  assert(ISPOW2(pagesize));
   assert(size <= (SIZE_MAX - pagesize - 1));
   return (size + pagesize - 1) & ~(pagesize - 1);
 }
