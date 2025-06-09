@@ -10,7 +10,7 @@
 #define BUFFER_LENGTH 4096
 
 int expect_getpromote(void) {
-  char *s = getenv("PROMOTE");
+  char *s = getenv(EXPECT_PROMOTE_VAR);
   if (s == NULL) {
     return 0;
   }

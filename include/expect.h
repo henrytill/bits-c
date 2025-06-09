@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef EXPECT_PROMOTE_VAR
+#  define EXPECT_PROMOTE_VAR "PROMOTE"
+#endif
+
 #ifndef EXPECT_DIFF_PROGRAM
 #  define EXPECT_DIFF_PROGRAM "/usr/bin/diff"
 #endif
