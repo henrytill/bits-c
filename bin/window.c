@@ -101,19 +101,21 @@ int main(void) {
         .event_mask = ExposureMask | KeyPressMask,
     };
 
+    unsigned long valuemask = CWColormap | CWEventMask;
+
     Window win = XCreateWindow(
-        dpy,
-        root,
-        0,
-        0,
-        600,
-        600,
-        0,
-        vi->depth,
-        InputOutput,
-        vi->visual,
-        CWColormap | CWEventMask,
-        &swa
+        dpy,         // display
+        root,        // parent
+        0,           // x
+        0,           // y
+        600,         // width
+        600,         // height
+        0,           // border_width
+        vi->depth,   // depth
+        InputOutput, // class
+        vi->visual,  // visual
+        valuemask,   // valuemask
+        &swa         // attributes
     );
 
     XClassHint *class_hint = XAllocClassHint();
