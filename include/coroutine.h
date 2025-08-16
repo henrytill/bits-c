@@ -6,8 +6,8 @@
 typedef struct coroutine coroutine;
 
 struct coroutine {
-  jmp_buf callee;
-  jmp_buf caller;
+    jmp_buf callee;
+    jmp_buf caller;
 };
 
 typedef void (*func)(void *);
