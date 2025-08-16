@@ -35,13 +35,22 @@ static void print_glew_version(void) {
     printf("GLEW Version: %s\n", version);
 }
 
-void GLAPIENTRY message_callback(UNUSED_PARAM GLenum source, GLenum type,
-                                 UNUSED_PARAM GLuint id, GLenum severity,
-                                 UNUSED_PARAM GLsizei length, GLchar const *message,
-                                 UNUSED_PARAM void const *user) {
-    eprintf("GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-            (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
-            type, severity, message);
+void GLAPIENTRY message_callback(
+    UNUSED_PARAM GLenum source,
+    GLenum type,
+    UNUSED_PARAM GLuint id,
+    GLenum severity,
+    UNUSED_PARAM GLsizei length,
+    GLchar const *message,
+    UNUSED_PARAM void const *user
+) {
+    eprintf(
+        "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+        (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
+        type,
+        severity,
+        message
+    );
 }
 
 static void draw_quad(void) {
@@ -92,10 +101,20 @@ int main(void) {
         .event_mask = ExposureMask | KeyPressMask,
     };
 
-    Window win = XCreateWindow(dpy, root, 0, 0, 600, 600, 0,
-                               vi->depth, InputOutput,
-                               vi->visual, CWColormap | CWEventMask,
-                               &swa);
+    Window win = XCreateWindow(
+        dpy,
+        root,
+        0,
+        0,
+        600,
+        600,
+        0,
+        vi->depth,
+        InputOutput,
+        vi->visual,
+        CWColormap | CWEventMask,
+        &swa
+    );
 
     XClassHint *class_hint = XAllocClassHint();
     if (class_hint == NULL) {

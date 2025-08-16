@@ -48,20 +48,20 @@ static struct test_vector {
 
 #define ARRAY_CLEAR(arr) memset((arr), 0, sizeof((arr))) // NOLINT(clang-analyzer-security.*)
 
-static size_t base64_encode(size_t const in_strlen,
-                            char const in[in_strlen + 1],
-                            char *out) {
-    return (size_t)EVP_EncodeBlock((unsigned char *)out,
-                                   (unsigned char const *)in,
-                                   (int)in_strlen);
+static size_t base64_encode(size_t const in_strlen, char const in[in_strlen + 1], char *out) {
+    return (size_t)EVP_EncodeBlock(
+        (unsigned char *)out,
+        (unsigned char const *)in,
+        (int)in_strlen
+    );
 }
 
-static size_t base64_decode(size_t const in_strlen,
-                            char const in[in_strlen + 1],
-                            char *out) {
-    return (size_t)EVP_DecodeBlock((unsigned char *)out,
-                                   (unsigned char const *)in,
-                                   (int)in_strlen);
+static size_t base64_decode(size_t const in_strlen, char const in[in_strlen + 1], char *out) {
+    return (size_t)EVP_DecodeBlock(
+        (unsigned char *)out,
+        (unsigned char const *)in,
+        (int)in_strlen
+    );
 }
 
 int main(void) {

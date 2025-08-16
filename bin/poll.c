@@ -20,10 +20,13 @@ static nfds_t handle_events(nfds_t nfds_open, nfds_t nfds, struct pollfd *pfds) 
             continue;
         }
 
-        printf("fd=%d; events: %s%s%s\n", pfds[i].fd,
-               (pfds[i].revents & POLLIN) ? "POLLIN " : "",
-               (pfds[i].revents & POLLHUP) ? "POLLHUP " : "",
-               (pfds[i].revents & POLLERR) ? "POLLERR " : "");
+        printf(
+            "fd=%d; events: %s%s%s\n",
+            pfds[i].fd,
+            (pfds[i].revents & POLLIN) ? "POLLIN " : "",
+            (pfds[i].revents & POLLHUP) ? "POLLHUP " : "",
+            (pfds[i].revents & POLLERR) ? "POLLERR " : ""
+        );
 
         if (pfds[i].revents & POLLHUP || pfds[i].revents & POLLERR) {
             printf("closing fd %d\n", pfds[i].fd);

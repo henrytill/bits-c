@@ -39,7 +39,8 @@
     _Generic(                                                                     \
         ptr,                                                                      \
         typeof(*(ptr)) const *: ((type const *)CONTAINER_OF_(ptr, type, member)), \
-        default: ((type *)CONTAINER_OF_(ptr, type, member)))
+        default: ((type *)CONTAINER_OF_(ptr, type, member))                       \
+    )
 
 #define SEND(obj, method, ...) ({              \
     typeof(obj) receiver = (obj);              \

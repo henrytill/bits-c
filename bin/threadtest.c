@@ -25,8 +25,12 @@ static void handle_errno(int err, char const *msg) {
 
 static void *start(void *data) {
     struct thread_info *info = data;
-    printf("Thread %d: top of stack near %p; argv_string=%s\n",
-           info->thread_num, (void *)&info, info->arg);
+    printf(
+        "Thread %d: top of stack near %p; argv_string=%s\n",
+        info->thread_num,
+        (void *)&info,
+        info->arg
+    );
     for (char *p = info->arg; *p != '\0'; ++p) {
         *p = (char)toupper(*p);
     }
@@ -73,8 +77,11 @@ static void run_threads(size_t stack_size, int num_threads, char *args[]) {
         if (rc != 0) {
             handle_errno(rc, "pthread_join");
         }
-        printf("Joined with thread %d; returned value was %s\n",
-               info[i].thread_num, (char *)res);
+        printf(
+            "Joined with thread %d; returned value was %s\n",
+            info[i].thread_num,
+            (char *)res
+        );
     }
 }
 
