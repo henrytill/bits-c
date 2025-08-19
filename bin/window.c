@@ -94,14 +94,12 @@ int main(void) {
         goto out_close_display;
     }
 
-    Colormap cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
+    unsigned long valuemask = CWColormap | CWEventMask;
 
     XSetWindowAttributes swa = {
-        .colormap = cmap,
+        .colormap = XCreateColormap(dpy, root, vi->visual, AllocNone),
         .event_mask = ExposureMask | KeyPressMask,
     };
-
-    unsigned long valuemask = CWColormap | CWEventMask;
 
     Window win = XCreateWindow(
         dpy,         // display
