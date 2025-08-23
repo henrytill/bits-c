@@ -10,8 +10,7 @@ pub fn build(b: *std.Build) void {
 
     const fnvObj = b.addObject(.{
         .name = "fnv",
-        .target = target,
-        .optimize = optimize,
+        .root_module = b.createModule(.{ .target = target, .optimize = optimize }),
     });
 
     fnvObj.addCSourceFile(.{ .file = b.path("lib/fnv.c"), .flags = flags });
@@ -20,8 +19,7 @@ pub fn build(b: *std.Build) void {
 
     const fnvTestExe = b.addExecutable(.{
         .name = "fnv_test",
-        .target = target,
-        .optimize = optimize,
+        .root_module = b.createModule(.{ .target = target, .optimize = optimize }),
     });
 
     fnvTestExe.addCSourceFile(.{ .file = b.path("test/fnv_test.c"), .flags = flags });
@@ -32,8 +30,7 @@ pub fn build(b: *std.Build) void {
 
     const hashtableObj = b.addObject(.{
         .name = "hashtable",
-        .target = target,
-        .optimize = optimize,
+        .root_module = b.createModule(.{ .target = target, .optimize = optimize }),
     });
 
     hashtableObj.addCSourceFile(.{ .file = b.path("lib/hashtable.c"), .flags = flags });
@@ -42,8 +39,7 @@ pub fn build(b: *std.Build) void {
 
     const hashtableTestExe = b.addExecutable(.{
         .name = "hashtable_test",
-        .target = target,
-        .optimize = optimize,
+        .root_module = b.createModule(.{ .target = target, .optimize = optimize }),
     });
 
     hashtableTestExe.addCSourceFile(.{ .file = b.path("test/hashtable_test.c"), .flags = flags });
@@ -55,8 +51,7 @@ pub fn build(b: *std.Build) void {
 
     const messageQueueObj = b.addObject(.{
         .name = "message_queue",
-        .target = target,
-        .optimize = optimize,
+        .root_module = b.createModule(.{ .target = target, .optimize = optimize }),
     });
 
     messageQueueObj.addCSourceFile(.{ .file = b.path("lib/message_queue.c"), .flags = flags });
@@ -65,8 +60,7 @@ pub fn build(b: *std.Build) void {
 
     const messageQueueBasicExe = b.addExecutable(.{
         .name = "message_queue_basic",
-        .target = target,
-        .optimize = optimize,
+        .root_module = b.createModule(.{ .target = target, .optimize = optimize }),
     });
 
     messageQueueBasicExe.addCSourceFile(.{ .file = b.path("test/message_queue_basic.c"), .flags = flags });
@@ -77,8 +71,7 @@ pub fn build(b: *std.Build) void {
 
     const messageQueueExpectedObj = b.addObject(.{
         .name = "message_queue_expected",
-        .target = target,
-        .optimize = optimize,
+        .root_module = b.createModule(.{ .target = target, .optimize = optimize }),
     });
 
     messageQueueExpectedObj.addCSourceFile(.{ .file = b.path("test/message_queue_expected.c"), .flags = flags });
@@ -87,8 +80,7 @@ pub fn build(b: *std.Build) void {
 
     const messageQueueBlockExe = b.addExecutable(.{
         .name = "message_queue_block",
-        .target = target,
-        .optimize = optimize,
+        .root_module = b.createModule(.{ .target = target, .optimize = optimize }),
     });
 
     messageQueueBlockExe.addCSourceFile(.{ .file = b.path("test/message_queue_block.c"), .flags = flags });
@@ -99,9 +91,11 @@ pub fn build(b: *std.Build) void {
     b.installArtifact(messageQueueBlockExe);
 
     const hashtableTests = b.addTest(.{
-        .root_source_file = b.path("test/hashtable_test.zig"),
-        .target = target,
-        .optimize = optimize,
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("test/hashtable_test.zig"),
+            .target = target,
+            .optimize = optimize,
+        }),
     });
 
     hashtableTests.addIncludePath(includePath);
