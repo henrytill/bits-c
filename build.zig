@@ -1,106 +1,143 @@
 const std = @import("std");
 
-pub fn build(b: *std.Build) void {
+const Build = std.Build;
+
+const Params = struct {
+    name: []const u8,
+    file: Build.LazyPath,
+    target: Build.ResolvedTarget,
+    optimize: std.builtin.OptimizeMode,
+    includePath: Build.LazyPath,
+    flags: []const []const u8 = &.{ "-std=gnu11", "-Wall", "-Wextra", "-Wconversion", "-Wsign-conversion" },
+};
+
+fn createCObj(
+    b: *Build,
+    ps: Params,
+) *Build.Step.Compile {
+    const root_module = b.createModule(.{ .target = ps.target, .optimize = ps.optimize, .link_libc = true });
+    root_module.addCSourceFile(.{ .file = ps.file, .flags = ps.flags });
+    root_module.addIncludePath(ps.includePath);
+
+    const ret = b.addObject(.{
+        .name = ps.name,
+        .root_module = root_module,
+    });
+
+    return ret;
+}
+
+fn createCExecutable(
+    b: *Build,
+    ps: Params,
+    os: []const *Build.Step.Compile,
+) *Build.Step.Compile {
+    const root_module = b.createModule(.{ .target = ps.target, .optimize = ps.optimize, .link_libc = true });
+    root_module.addCSourceFile(.{ .file = ps.file, .flags = ps.flags });
+    root_module.addIncludePath(ps.includePath);
+
+    for (os) |o| {
+        root_module.addObject(o);
+    }
+
+    const ret = b.addExecutable(.{
+        .name = ps.name,
+        .root_module = root_module,
+    });
+
+    return ret;
+}
+
+pub fn build(b: *Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
-
-    const flags = &.{ "-std=gnu11", "-Wall", "-Wextra", "-Wconversion", "-Wsign-conversion" };
-
     const includePath = b.path("include");
 
-    const fnvObj = b.addObject(.{
+    const fnvObj = createCObj(b, .{
         .name = "fnv",
-        .root_module = b.createModule(.{ .target = target, .optimize = optimize }),
+        .file = b.path("lib/fnv.c"),
+        .target = target,
+        .optimize = optimize,
+        .includePath = includePath,
     });
 
-    fnvObj.addCSourceFile(.{ .file = b.path("lib/fnv.c"), .flags = flags });
-    fnvObj.linkLibC();
-    fnvObj.addIncludePath(includePath);
-
-    const fnvTestExe = b.addExecutable(.{
+    const fnvTestExe = createCExecutable(b, .{
         .name = "fnv_test",
-        .root_module = b.createModule(.{ .target = target, .optimize = optimize }),
-    });
+        .file = b.path("test/fnv_test.c"),
+        .target = target,
+        .optimize = optimize,
+        .includePath = includePath,
+    }, &.{fnvObj});
 
-    fnvTestExe.addCSourceFile(.{ .file = b.path("test/fnv_test.c"), .flags = flags });
-    fnvTestExe.addObject(fnvObj);
-    fnvTestExe.linkLibC();
-    fnvTestExe.addIncludePath(includePath);
     b.installArtifact(fnvTestExe);
 
-    const hashtableObj = b.addObject(.{
+    const hashtableObj = createCObj(b, .{
         .name = "hashtable",
-        .root_module = b.createModule(.{ .target = target, .optimize = optimize }),
+        .file = b.path("lib/hashtable.c"),
+        .target = target,
+        .optimize = optimize,
+        .includePath = includePath,
     });
 
-    hashtableObj.addCSourceFile(.{ .file = b.path("lib/hashtable.c"), .flags = flags });
-    hashtableObj.linkLibC();
-    hashtableObj.addIncludePath(includePath);
-
-    const hashtableTestExe = b.addExecutable(.{
+    const hashtableTestExe = createCExecutable(b, .{
         .name = "hashtable_test",
-        .root_module = b.createModule(.{ .target = target, .optimize = optimize }),
-    });
+        .file = b.path("test/hashtable_test.c"),
+        .target = target,
+        .optimize = optimize,
+        .includePath = includePath,
+    }, &.{ fnvObj, hashtableObj });
 
-    hashtableTestExe.addCSourceFile(.{ .file = b.path("test/hashtable_test.c"), .flags = flags });
-    hashtableTestExe.addObject(fnvObj);
-    hashtableTestExe.addObject(hashtableObj);
-    hashtableTestExe.linkLibC();
-    hashtableTestExe.addIncludePath(includePath);
     b.installArtifact(hashtableTestExe);
 
-    const messageQueueObj = b.addObject(.{
+    const messageQueueObj = createCObj(b, .{
         .name = "message_queue",
-        .root_module = b.createModule(.{ .target = target, .optimize = optimize }),
+        .file = b.path("lib/message_queue.c"),
+        .target = target,
+        .optimize = optimize,
+        .includePath = includePath,
     });
 
-    messageQueueObj.addCSourceFile(.{ .file = b.path("lib/message_queue.c"), .flags = flags });
-    messageQueueObj.linkLibC();
-    messageQueueObj.addIncludePath(includePath);
-
-    const messageQueueBasicExe = b.addExecutable(.{
+    const messageQueueBasicExe = createCExecutable(b, .{
         .name = "message_queue_basic",
-        .root_module = b.createModule(.{ .target = target, .optimize = optimize }),
-    });
+        .file = b.path("test/message_queue_basic.c"),
+        .target = target,
+        .optimize = optimize,
+        .includePath = includePath,
+    }, &.{messageQueueObj});
 
-    messageQueueBasicExe.addCSourceFile(.{ .file = b.path("test/message_queue_basic.c"), .flags = flags });
-    messageQueueBasicExe.addObject(messageQueueObj);
-    messageQueueBasicExe.linkLibC();
-    messageQueueBasicExe.addIncludePath(includePath);
     b.installArtifact(messageQueueBasicExe);
 
-    const messageQueueExpectedObj = b.addObject(.{
+    const messageQueueExpectedObj = createCObj(b, .{
         .name = "message_queue_expected",
-        .root_module = b.createModule(.{ .target = target, .optimize = optimize }),
+        .file = b.path("test/message_queue_expected.c"),
+        .target = target,
+        .optimize = optimize,
+        .includePath = includePath,
     });
 
-    messageQueueExpectedObj.addCSourceFile(.{ .file = b.path("test/message_queue_expected.c"), .flags = flags });
-    messageQueueExpectedObj.linkLibC();
-    messageQueueExpectedObj.addIncludePath(includePath);
-
-    const messageQueueBlockExe = b.addExecutable(.{
+    const messageQueueBlockExe = createCExecutable(b, .{
         .name = "message_queue_block",
-        .root_module = b.createModule(.{ .target = target, .optimize = optimize }),
-    });
+        .file = b.path("test/message_queue_block.c"),
+        .target = target,
+        .optimize = optimize,
+        .includePath = includePath,
+    }, &.{ messageQueueObj, messageQueueExpectedObj });
 
-    messageQueueBlockExe.addCSourceFile(.{ .file = b.path("test/message_queue_block.c"), .flags = flags });
-    messageQueueBlockExe.addObject(messageQueueObj);
-    messageQueueBlockExe.addObject(messageQueueExpectedObj);
-    messageQueueBlockExe.linkLibC();
-    messageQueueBlockExe.addIncludePath(includePath);
     b.installArtifact(messageQueueBlockExe);
 
+    const hashtableTestRoot = b.createModule(.{
+        .root_source_file = b.path("test/hashtable_test.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+    hashtableTestRoot.addIncludePath(includePath);
+    hashtableTestRoot.addObject(fnvObj);
+    hashtableTestRoot.addObject(hashtableObj);
+
     const hashtableTests = b.addTest(.{
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("test/hashtable_test.zig"),
-            .target = target,
-            .optimize = optimize,
-        }),
+        .root_module = hashtableTestRoot,
     });
 
-    hashtableTests.addIncludePath(includePath);
-    hashtableTests.addObject(fnvObj);
-    hashtableTests.addObject(hashtableObj);
     b.installArtifact(hashtableTests);
 
     const runHashtableTests = b.addRunArtifact(hashtableTests);
