@@ -7,7 +7,7 @@
 struct expr_visitor;
 
 struct expr {
-	virtual ~expr() = default;
+	virtual ~expr()                      = default;
 	virtual void accept(expr_visitor &v) = 0;
 };
 
@@ -31,7 +31,7 @@ struct var : expr {
 
 struct lam : expr {
 	std::string param;
-	expr_ptr body;
+	expr_ptr    body;
 
 	lam(std::string p, expr_ptr b)
 		: param{std::move(p)}

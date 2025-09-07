@@ -39,12 +39,12 @@ TEST_ENTRIES
 
 struct entry {
 	struct entry *next;
-	char const *key;
-	void *value;
+	char const   *key;
+	void         *value;
 };
 
 struct table {
-	size_t columns_len;
+	size_t       columns_len;
 	struct entry columns[];
 };
 
@@ -126,7 +126,7 @@ int table_put(struct table *t, char const *key, void *value)
 	}
 	// uninitialized key (first or deleted node)
 	if (curr != NULL) {
-		curr->key = key;
+		curr->key   = key;
 		curr->value = value;
 		return 0;
 	}
@@ -135,8 +135,8 @@ int table_put(struct table *t, char const *key, void *value)
 	if (curr == NULL) {
 		return -1;
 	}
-	curr->next = NULL;
-	curr->key = key;
+	curr->next  = NULL;
+	curr->key   = key;
 	curr->value = value;
 	assert(prev != NULL);
 	prev->next = curr;
@@ -175,8 +175,8 @@ int table_delete(struct table *t, char const *key, void finalize(void *))
 	}
 
 	uint64_t const index = get_index(t->columns_len, key);
-	struct entry *curr = &t->columns[index];
-	struct entry *prev = NULL;
+	struct entry  *curr  = &t->columns[index];
+	struct entry  *prev  = NULL;
 
 	while (curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0) {
 		prev = curr;
@@ -196,13 +196,13 @@ int table_delete(struct table *t, char const *key, void finalize(void *))
 		if (curr->next != NULL) {
 			// move next entry to the current entry
 			struct entry *next = curr->next;
-			curr->key = next->key;
-			curr->value = next->value;
-			curr->next = next->next;
+			curr->key          = next->key;
+			curr->value        = next->value;
+			curr->next         = next->next;
 			free(next);
 		} else {
 			// clear the entry
-			curr->key = NULL;
+			curr->key   = NULL;
 			curr->value = NULL;
 		}
 	} else {

@@ -29,15 +29,15 @@ static void *produce(void *data)
 {
 	assert(data != NULL);
 
-	struct message_queue *queue = data;
-	struct message msg = {0};
-	char const *tag_str = NULL;
-	int rc = -1;
+	struct message_queue *queue   = data;
+	struct message        msg     = {0};
+	char const           *tag_str = NULL;
+	int                   rc      = -1;
 
 	for (intptr_t value = 0; value <= COUNT;) {
-		msg.tag = (value < COUNT) ? MSG_TAG_SOME : MSG_TAG_QUIT;
+		msg.tag   = (value < COUNT) ? MSG_TAG_SOME : MSG_TAG_QUIT;
 		msg.value = value;
-		tag_str = message_tag_str(msg.tag);
+		tag_str   = message_tag_str(msg.tag);
 
 		rc = message_queue_put(queue, &msg);
 		if (rc < 0) {
@@ -73,7 +73,7 @@ int main(void)
 	}
 
 	pthread_attr_t thread_attr;
-	int rc = pthread_attr_init(&thread_attr);
+	int            rc = pthread_attr_init(&thread_attr);
 	if (rc != 0) {
 		errno = rc;
 		perror("pthread_attr_init");
@@ -100,7 +100,7 @@ int main(void)
 	}
 
 	void *thread_ret = NULL;
-	rc = pthread_join(thread_id, &thread_ret);
+	rc               = pthread_join(thread_id, &thread_ret);
 	if (rc != 0) {
 		errno = rc;
 		perror("pthread_join");

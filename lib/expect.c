@@ -15,8 +15,8 @@ int expect_getpromote(void)
 	if (s == NULL) {
 		return 0;
 	}
-	char *end = NULL;
-	long const p = strtol(s, &end, 10);
+	char      *end = NULL;
+	long const p   = strtol(s, &end, 10);
 	if (s == end) {
 		return 0;
 	}
@@ -40,9 +40,9 @@ static int fcopy(char const *srcname, char const *dstname)
 
 	{
 		__label__ cleanup;
-		int ret = -1;
-		char buf[BUFFER_LENGTH] = {0};
-		size_t nread = 0;
+		int    ret                = -1;
+		char   buf[BUFFER_LENGTH] = {0};
+		size_t nread              = 0;
 
 		while ((nread = fread(buf, 1, BUFFER_LENGTH, src)) > 0) {
 			if (fwrite(buf, 1, nread, dst) != nread) {
@@ -92,13 +92,13 @@ int expect_insert(char const *filename, int lineno, char const *toinsert, int pr
 		}
 
 		{
-			char *line = NULL;
-			size_t len = 0;
+			char   *line = NULL;
+			size_t  len  = 0;
 			ssize_t nchar;
 
 			for (int i = 1; (nchar = getline(&line, &len, input)) != -1; ++i) {
 				if (i == lineno) {
-					char *open = strchr(line, '{');
+					char *open  = strchr(line, '{');
 					char *close = strrchr(line, '}');
 					if (open != NULL && close != NULL && open < close) {
 						(void)fwrite(line, 1, (size_t)(open - line + 1), output);

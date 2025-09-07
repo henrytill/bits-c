@@ -58,20 +58,20 @@ void *arena_allocate(size_t const n, size_t const t)
 	for (ap = arena[t]; ap->avail + n > ap->limit; arena[t] = ap) {
 		if (ap->next != NULL) {
 			// move to next arena
-			ap = ap->next;
+			ap        = ap->next;
 			ap->avail = (char *)ap + sizeof(*ap);
 		} else {
 			// allocate a new arena
 			size_t const m = calc_size(n);
-			ap->next = calloc(1, m);
+			ap->next       = calloc(1, m);
 			if (ap->next == NULL) {
 				eprintf("%s: calloc failed", __func__);
 				exit(EXIT_FAILURE);
 			}
-			ap = ap->next;
+			ap        = ap->next;
 			ap->limit = (char *)ap + m;
 			ap->avail = (char *)ap + sizeof(*ap);
-			ap->next = NULL;
+			ap->next  = NULL;
 		}
 	}
 	ap->avail += n;

@@ -14,7 +14,7 @@ static inline void handle_error(char const *msg)
 
 static nfds_t handle_events(nfds_t nfds_open, nfds_t nfds, struct pollfd *pfds)
 {
-	char buf[10];
+	char    buf[10];
 	ssize_t num_bytes = 0;
 
 	for (nfds_t i = 0; i < nfds; ++i) {
@@ -49,10 +49,10 @@ static nfds_t handle_events(nfds_t nfds_open, nfds_t nfds, struct pollfd *pfds)
 
 int main(int argc, char *argv[])
 {
-	int ready = -1;
-	nfds_t nfds_open = 0;
-	nfds_t nfds = 0;
-	struct pollfd *pfds = NULL;
+	int            ready     = -1;
+	nfds_t         nfds_open = 0;
+	nfds_t         nfds      = 0;
+	struct pollfd *pfds      = NULL;
 
 	if (argc < 2) {
 		eprintf("Usage: %s file...\n", argv[0]);

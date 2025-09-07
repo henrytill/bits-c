@@ -6,15 +6,15 @@
 
 enum message_queue_failure {
 	MSGQ_FAILURE_NULL_POINTER = 1,
-	MSGQ_FAILURE_MALLOC = 2,
-	MSGQ_FAILURE_SEM_CREATE = 3,
-	MSGQ_FAILURE_SEM_POST = 4,
+	MSGQ_FAILURE_MALLOC       = 2,
+	MSGQ_FAILURE_SEM_CREATE   = 3,
+	MSGQ_FAILURE_SEM_POST     = 4,
 	MSGQ_FAILURE_SEM_TRY_WAIT = 5,
-	MSGQ_FAILURE_SEM_WAIT = 6,
+	MSGQ_FAILURE_SEM_WAIT     = 6,
 	MSGQ_FAILURE_MUTEX_CREATE = 7,
-	MSGQ_FAILURE_MUTEX_LOCK = 8,
+	MSGQ_FAILURE_MUTEX_LOCK   = 8,
 	MSGQ_FAILURE_MUTEX_UNLOCK = 9,
-	MSGQ_FAILURE_MAX = 10,
+	MSGQ_FAILURE_MAX          = 10,
 };
 
 static inline char const *message_queue_failure_str(enum message_queue_failure failure)
@@ -47,7 +47,7 @@ enum message_tag {
 	MSG_TAG_NONE = 0,
 	MSG_TAG_SOME = 1,
 	MSG_TAG_QUIT = 2,
-	MSG_TAG_MAX = 3,
+	MSG_TAG_MAX  = 3,
 };
 
 static inline char const *message_tag_str(enum message_tag tag)
@@ -66,7 +66,7 @@ static inline char const *message_tag_str(enum message_tag tag)
 
 struct message {
 	enum message_tag tag;
-	intptr_t value;
+	intptr_t         value;
 };
 
 /// A thread-safe bounded message queue

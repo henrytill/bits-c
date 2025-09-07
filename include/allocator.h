@@ -7,7 +7,7 @@
 	struct T##_allocator {                                                         \
 		size_t capacity;                                                       \
 		size_t count;                                                          \
-		T items[];                                                             \
+		T      items[];                                                        \
 	};                                                                             \
                                                                                        \
 	T##_allocator *T##_allocator_create(size_t capacity)                           \
@@ -18,7 +18,7 @@
 			exit(EXIT_FAILURE);                                            \
 		}                                                                      \
 		ret->capacity = capacity;                                              \
-		ret->count = 0;                                                        \
+		ret->count    = 0;                                                     \
 		return ret;                                                            \
 	}                                                                              \
                                                                                        \

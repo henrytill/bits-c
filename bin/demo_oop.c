@@ -18,9 +18,9 @@ struct person_operations {
 
 struct person {
 	person_operations const *ops;
-	char *name;
-	int age;
-	person *next;
+	char                    *name;
+	int                      age;
+	person                  *next;
 };
 
 static void person_hello(person const *self)
@@ -37,7 +37,7 @@ static person_operations const PERSON_OPS = {
 
 struct student {
 	person person;
-	char *school;
+	char  *school;
 };
 
 /// Derived class override of person_operations::hello
@@ -59,23 +59,23 @@ int main(void)
 {
 	student carol = {
 		.person = {
-			.ops = &STUDENT_OPS,
+			.ops  = &STUDENT_OPS,
 			.name = "Carol",
-			.age = 22,
+			.age  = 22,
 			.next = NULL,
 		},
 		.school = "MIT",
 	};
 	person bob = {
-		.ops = &PERSON_OPS,
+		.ops  = &PERSON_OPS,
 		.name = "Bob",
-		.age = 21,
+		.age  = 21,
 		.next = &carol.person,
 	};
 	person alice = {
-		.ops = &PERSON_OPS,
+		.ops  = &PERSON_OPS,
 		.name = "Alice",
-		.age = 20,
+		.age  = 20,
 		.next = &bob,
 	};
 

@@ -30,9 +30,9 @@ TEST_VECTORS_ENTRIES
 #undef X
 
 static struct test_vector {
-	char const *input;
+	char const  *input;
 	size_t const input_len;
-	char const *base64;
+	char const  *base64;
 	size_t const base64_len;
 } const TEST_VECTORS[] = {
 #define X(s, b) {(s), strlen((s)), (b), strlen((b))},
@@ -50,8 +50,8 @@ static struct test_vector {
 
 static size_t base64_encode(
 	size_t const in_strlen,
-	char const in[in_strlen + 1],
-	char *out)
+	char const   in[in_strlen + 1],
+	char        *out)
 {
 	return (size_t)EVP_EncodeBlock(
 		(unsigned char *)out,
@@ -61,8 +61,8 @@ static size_t base64_encode(
 
 static size_t base64_decode(
 	size_t const in_strlen,
-	char const in[in_strlen + 1],
-	char *out)
+	char const   in[in_strlen + 1],
+	char        *out)
 {
 	return (size_t)EVP_DecodeBlock(
 		(unsigned char *)out,
@@ -72,10 +72,10 @@ static size_t base64_decode(
 
 int main(void)
 {
-	char const *input = NULL;
-	size_t input_len = 0;
-	char const *expected_base64 = NULL;
-	size_t expected_base64_len = 0;
+	char const *input               = NULL;
+	size_t      input_len           = 0;
+	char const *expected_base64     = NULL;
+	size_t      expected_base64_len = 0;
 
 	size_t codec_len = 0;
 
@@ -86,8 +86,8 @@ int main(void)
 		ARRAY_CLEAR(actual_base64);
 		ARRAY_CLEAR(output);
 
-		input_len = TEST_VECTORS[i].input_len;
-		expected_base64 = TEST_VECTORS[i].base64;
+		input_len           = TEST_VECTORS[i].input_len;
+		expected_base64     = TEST_VECTORS[i].base64;
 		expected_base64_len = TEST_VECTORS[i].base64_len;
 
 		printf("input: %s\n", input);

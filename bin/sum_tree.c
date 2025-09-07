@@ -15,7 +15,7 @@ static int answer = -1;
 typedef struct node node;
 
 struct node {
-	int value;
+	int   value;
 	node *left;
 	node *right;
 };
@@ -24,9 +24,9 @@ ALLOCATOR_DEFINE(node)
 
 node *node_create(node_allocator *alloc, int value, node *left, node *right)
 {
-	node *ret = node_alloc(alloc);
+	node *ret  = node_alloc(alloc);
 	ret->value = value;
-	ret->left = left;
+	ret->left  = left;
 	ret->right = right;
 	return ret;
 }
@@ -124,7 +124,7 @@ struct kont {
 			kont *k;
 		} k1;
 		struct {
-			int s0;
+			int   s0;
 			node *n;
 			kont *k;
 		} k2;
@@ -135,8 +135,8 @@ ALLOCATOR_DEFINE(kont)
 
 kont *defunc_kont_k1(kont_allocator *alloc, node *n, kont *k)
 {
-	kont *k1 = kont_alloc(alloc);
-	k1->tag = K1;
+	kont *k1   = kont_alloc(alloc);
+	k1->tag    = K1;
 	k1->u.k1.n = n;
 	k1->u.k1.k = k;
 	return k1;
@@ -144,18 +144,18 @@ kont *defunc_kont_k1(kont_allocator *alloc, node *n, kont *k)
 
 kont *defunc_kont_k2(kont_allocator *alloc, int s0, node *n, kont *k)
 {
-	kont *k2 = kont_alloc(alloc);
-	k2->tag = K2;
+	kont *k2    = kont_alloc(alloc);
+	k2->tag     = K2;
 	k2->u.k2.s0 = s0;
-	k2->u.k2.n = n;
-	k2->u.k2.k = k;
+	k2->u.k2.n  = n;
+	k2->u.k2.k  = k;
 	return k2;
 }
 
 kont *defunc_kont_k3(kont_allocator *alloc)
 {
 	kont *k3 = kont_alloc(alloc);
-	k3->tag = K3;
+	k3->tag  = K3;
 	return k3;
 }
 
@@ -188,7 +188,7 @@ void defunc_apply(kont_allocator *alloc, kont *k, int s)
 void defunc_sum(node *n)
 {
 	kont_allocator *alloc = kont_allocator_create(KONT_POOL_SIZE);
-	kont *k3 = defunc_kont_k3(alloc);
+	kont           *k3    = defunc_kont_k3(alloc);
 	defunc_sum_impl(alloc, n, k3);
 	kont_allocator_destroy(alloc);
 }
@@ -228,7 +228,7 @@ void opt_sum_impl(kont_allocator *alloc, node *n, kont *k)
 void opt_sum(node *n)
 {
 	kont_allocator *alloc = kont_allocator_create(KONT_POOL_SIZE);
-	kont *k3 = defunc_kont_k3(alloc);
+	kont           *k3    = defunc_kont_k3(alloc);
 	opt_sum_impl(alloc, n, k3);
 	kont_allocator_destroy(alloc);
 }
@@ -244,7 +244,7 @@ struct vkont {
 			node *n;
 		} k1;
 		struct {
-			int s0;
+			int   s0;
 			node *n;
 		} k2;
 	} u;
@@ -271,8 +271,8 @@ struct vkont vkont_k3(void)
 typedef struct vkont_stack vkont_stack;
 
 struct vkont_stack {
-	size_t capacity;
-	size_t top;
+	size_t       capacity;
+	size_t       top;
 	struct vkont konts[];
 };
 
@@ -281,7 +281,7 @@ vkont_stack *vkont_stack_create(size_t initial_capacity)
 	vkont_stack *stack = calloc(1, sizeof(vkont_stack) + (initial_capacity * sizeof(struct vkont)));
 	assert(stack != NULL);
 	stack->capacity = initial_capacity;
-	stack->top = 0;
+	stack->top      = 0;
 	return stack;
 }
 
@@ -297,12 +297,12 @@ bool vkont_stack_is_empty(vkont_stack *stack)
 
 void vkont_stack_resize(vkont_stack **stack_ptr)
 {
-	vkont_stack *stack = *stack_ptr;
-	size_t new_capacity = stack->capacity * 2;
-	vkont_stack *new_stack = realloc(stack, sizeof(vkont_stack) + new_capacity * sizeof(struct vkont));
+	vkont_stack *stack        = *stack_ptr;
+	size_t       new_capacity = stack->capacity * 2;
+	vkont_stack *new_stack    = realloc(stack, sizeof(vkont_stack) + new_capacity * sizeof(struct vkont));
 	assert(new_stack != NULL);
 	new_stack->capacity = new_capacity;
-	*stack_ptr = new_stack;
+	*stack_ptr          = new_stack;
 }
 
 void vkont_stack_push(vkont_stack **stack_ptr, struct vkont vk)
@@ -340,7 +340,7 @@ void stack_sum_impl(node *n, vkont_stack *ks)
 					return;
 				}
 				if (k->tag == K1) {
-					n = k->u.k1.n->right;
+					n  = k->u.k1.n->right;
 					*k = vkont_k2(s, k->u.k1.n);
 					break;
 				}
@@ -372,7 +372,7 @@ void stack_sum(node *n)
 typedef struct stack_node stack_node;
 
 struct stack_node {
-	node *node;
+	node       *node;
 	stack_node *next;
 };
 
@@ -382,7 +382,7 @@ void push(stack_node **top, node *n)
 	assert(new != NULL);
 	new->node = n;
 	new->next = *top;
-	*top = new;
+	*top      = new;
 }
 
 node *pop(stack_node **top)
@@ -391,8 +391,8 @@ node *pop(stack_node **top)
 		return NULL;
 	};
 	stack_node *tmp = *top;
-	node *ret = tmp->node;
-	*top = (*top)->next;
+	node       *ret = tmp->node;
+	*top            = (*top)->next;
 	free(tmp);
 	return ret;
 }
@@ -404,7 +404,7 @@ void iterative_sum(node *root)
 		return;
 	}
 
-	int sum = 0;
+	int         sum   = 0;
 	stack_node *stack = NULL;
 	push(&stack, root);
 
@@ -466,14 +466,14 @@ int main(void)
 #undef LEAF
 #undef BRANCH
 
-	algo a = {0};
-	node *n = NULL;
-	int ref = 0;
+	algo  a   = {0};
+	node *n   = NULL;
+	int   ref = 0;
 
 	for (size_t i = 0; (a = algos[i]).name != NULL; ++i) {
 		printf("=== %s ===\n", a.name);
 		for (size_t j = 0; (n = ns[j]) != NULL; ++j) {
-			ref = recursive_sum(n);
+			ref    = recursive_sum(n);
 			answer = -1;
 			a.f(n);
 			assert(ref == answer);

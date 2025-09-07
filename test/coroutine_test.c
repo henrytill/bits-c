@@ -12,10 +12,10 @@ enum {
 
 struct iter {
 	coroutine *c;
-	int xmax;
-	int ymax;
-	int x;
-	int y;
+	int        xmax;
+	int        ymax;
+	int        x;
+	int        y;
 };
 
 void iterate(void *p)
@@ -34,15 +34,15 @@ void iterate(void *p)
 int main(void)
 {
 	coroutine c;
-	intptr_t stack[STACK_SIZE];
-	void *stack_pointer;
+	intptr_t  stack[STACK_SIZE];
+	void     *stack_pointer;
 
 	struct iter it = {
-		.c = &c,
+		.c    = &c,
 		.xmax = 2,
 		.ymax = 2,
-		.x = 0,
-		.y = 0,
+		.x    = 0,
+		.y    = 0,
 	};
 
 	stack_pointer = stack + STACK_SIZE; /* stacks typically grow downward (arch-dependent) */
