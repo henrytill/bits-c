@@ -7,11 +7,11 @@
 	: "=r"(p))
 
 #define set_stack_pointer(p) __asm__ volatile("movq %0, %%rsp" \
-	: \
+	:                                                      \
 	: "r"(p))
 
 #define set_frame_pointer(p) __asm__ volatile("movq %0, %%rbp" \
-	: \
+	:                                                      \
 	: "r"(p))
 
 enum {

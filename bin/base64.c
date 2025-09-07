@@ -7,19 +7,19 @@
 
 #include "macro.h"
 
-#define TEST(e) \
-	if (!(e)) { \
+#define TEST(e)                                                 \
+	if (!(e)) {                                             \
 		eprintf("%s:%d: %s\n", __FILE__, __LINE__, #e); \
-		exit(EXIT_FAILURE); \
+		exit(EXIT_FAILURE);                             \
 	}
 
 // https://boringssl.googlesource.com/boringssl/+/master/crypto/base64/base64_test.cc#49
-#define TEST_VECTORS_ENTRIES \
-	X("", "") \
-	X("f", "Zg==") \
-	X("fo", "Zm8=") \
-	X("foo", "Zm9v") \
-	X("foob", "Zm9vYg==") \
+#define TEST_VECTORS_ENTRIES   \
+	X("", "")              \
+	X("f", "Zg==")         \
+	X("fo", "Zm8=")        \
+	X("foo", "Zm9v")       \
+	X("foob", "Zm9vYg==")  \
 	X("fooba", "Zm9vYmE=") \
 	X("foobar", "Zm9vYmFy")
 
