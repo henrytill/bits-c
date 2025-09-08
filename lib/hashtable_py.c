@@ -4,7 +4,7 @@
 
 #include "hashtable.h"
 
-static PyObject *py_table_create(PyObject *self, PyObject *args)
+static PyObject *py_table_create(__attribute__((unused)) PyObject *self, PyObject *args)
 {
 	size_t columns_len = 0;
 
@@ -27,7 +27,7 @@ static void decref(void *value)
 	Py_XDECREF(value);
 }
 
-static PyObject *py_table_destroy(PyObject *self, PyObject *args)
+static PyObject *py_table_destroy(__attribute__((unused)) PyObject *self, PyObject *args)
 {
 	PyObject *py_table = NULL;
 
@@ -46,7 +46,7 @@ static PyObject *py_table_destroy(PyObject *self, PyObject *args)
 	Py_RETURN_NONE;
 }
 
-static PyObject *py_table_put(PyObject *self, PyObject *args)
+static PyObject *py_table_put(__attribute__((unused)) PyObject *self, PyObject *args)
 {
 	PyObject   *py_table = NULL;
 	char const *key      = NULL;
@@ -74,7 +74,7 @@ static PyObject *py_table_put(PyObject *self, PyObject *args)
 	Py_RETURN_NONE;
 }
 
-static PyObject *py_table_get(PyObject *self, PyObject *args)
+static PyObject *py_table_get(__attribute__((unused)) PyObject *self, PyObject *args)
 {
 	PyObject   *py_table = NULL;
 	char const *key      = NULL;
@@ -113,6 +113,10 @@ static struct PyModuleDef hashtable_module = {
 	NULL,
 	-1,
 	hashtable_methods,
+	NULL, /* m_slots */
+	NULL, /* m_traverse */
+	NULL, /* m_clear */
+	NULL, /* m_free */
 };
 
 PyMODINIT_FUNC PyInit_hashtable(void) // NOLINT(readability-identifier-naming)
