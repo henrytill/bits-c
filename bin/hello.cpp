@@ -3,7 +3,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include "defer.h"
+#include "defer.hpp"
 
 namespace foo {
 
