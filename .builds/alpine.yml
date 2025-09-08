@@ -1,6 +1,5 @@
 image: alpine/latest
 packages:
-  - gcc-objc
   - curl-dev
   - glew-dev
   - libgomp

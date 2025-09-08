@@ -1,6 +1,6 @@
 project(
     'bits-c',
-    ['c', 'cpp', 'objc'],
+    ['c', 'cpp'],
     version: '0.1.0',
     default_options: [
         'warning_level=2',
@@ -18,7 +18,6 @@ x11_dep = dependency('x11', required: false)
 glew_dep = dependency('glew', required: false)
 openmp_dep = dependency('openmp', required: false)
 threads_dep = dependency('threads')
-gnustep_dep = dependency('gnustep', required: false)
 
 # Python dependencies for hashtable extension
 python = import('python').find_installation(required: false)
@@ -103,16 +102,6 @@ executable(
     install_dir: 'bin',
 )
 
-if gnustep_dep.found()
-    executable(
-        'greet',
-        'bin/greet.m',
-        include_directories: inc_dir,
-        dependencies: gnustep_dep,
-        install: true,
-        install_dir: 'bin',
-    )
-endif
 
 if openmp_dep.found()
     executable(
