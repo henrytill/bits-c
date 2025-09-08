@@ -11,7 +11,7 @@
 #include "macro.h"
 #include "message_queue.h"
 
-extern size_t const         EXPECTED_LEN;
+extern size_t const EXPECTED_LEN;
 extern struct message const EXPECTED[];
 
 static unsigned const DELAY = 1U;
@@ -65,7 +65,7 @@ int main(void)
 	}
 
 	pthread_attr_t thread_attr;
-	int            rc = pthread_attr_init(&thread_attr);
+	int rc = pthread_attr_init(&thread_attr);
 	if (rc != 0) {
 		errno = rc;
 		perror("pthread_attr_init");
@@ -87,7 +87,7 @@ int main(void)
 	}
 
 	void *thread_ret = NULL;
-	rc               = pthread_join(thread_id, &thread_ret);
+	rc = pthread_join(thread_id, &thread_ret);
 	if (rc != 0) {
 		errno = rc;
 		perror("pthread_join");

@@ -7,13 +7,13 @@
 #include <stdlib.h>
 
 struct message_queue {
-	struct message  *buffer;   ///< Buffer to hold messages
-	uint32_t         capacity; ///< Maximum size of the buffer
-	size_t           front;    ///< Index of the front message in the buffer
-	size_t           rear;     ///< Index of the rear message in the buffer
-	sem_t           *empty;    ///< Semaphore to track empty slots in the buffer
-	sem_t           *full;     ///< Semaphore to track filled slots in the buffer
-	pthread_mutex_t *lock;     ///< Mutex lock to protect buffer access
+	struct message *buffer; ///< Buffer to hold messages
+	uint32_t capacity;      ///< Maximum size of the buffer
+	size_t front;           ///< Index of the front message in the buffer
+	size_t rear;            ///< Index of the rear message in the buffer
+	sem_t *empty;           ///< Semaphore to track empty slots in the buffer
+	sem_t *full;            ///< Semaphore to track filled slots in the buffer
+	pthread_mutex_t *lock;  ///< Mutex lock to protect buffer access
 };
 
 /// Create a semaphore.
@@ -93,8 +93,8 @@ static int message_queue_init(struct message_queue *queue, uint32_t capacity)
 	}
 
 	queue->capacity = capacity;
-	queue->front    = 0;
-	queue->rear     = 0;
+	queue->front = 0;
+	queue->rear = 0;
 
 	queue->empty = create_semaphore(capacity);
 	if (queue->empty == NULL) {
@@ -127,8 +127,8 @@ static void message_queue_finish(struct message_queue *queue)
 	}
 
 	queue->capacity = 0;
-	queue->front    = 0;
-	queue->rear     = 0;
+	queue->front = 0;
+	queue->rear = 0;
 
 	if (queue->buffer != NULL) {
 		free(queue->buffer);
@@ -190,7 +190,7 @@ int message_queue_put(struct message_queue *queue, struct message *in)
 	}
 
 	queue->buffer[queue->rear] = *in;
-	queue->rear                = (queue->rear + 1) % queue->capacity;
+	queue->rear = (queue->rear + 1) % queue->capacity;
 
 	rc = pthread_mutex_unlock(queue->lock);
 	if (rc != 0) {
@@ -217,7 +217,7 @@ int message_queue_get(struct message_queue *queue, struct message *out)
 		return -MSGQ_FAILURE_MUTEX_LOCK;
 	}
 
-	*out         = queue->buffer[queue->front];
+	*out = queue->buffer[queue->front];
 	queue->front = (queue->front + 1) % queue->capacity;
 
 	rc = pthread_mutex_unlock(queue->lock);

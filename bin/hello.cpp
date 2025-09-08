@@ -8,7 +8,7 @@
 namespace foo {
 
 enum class message_kind : uint8_t {
-	HELLO   = 0,
+	HELLO = 0,
 	GOODBYE = 1,
 };
 
@@ -27,7 +27,7 @@ constexpr message_kind get_message_kind()
 inline char *make_hello(char const *name)
 {
 	size_t len = (size_t)std::snprintf(nullptr, 0, "Hello, %s", name);
-	char  *ret = (char *)std::calloc(++len, sizeof(*ret));
+	char *ret = (char *)std::calloc(++len, sizeof(*ret));
 	if (ret == nullptr) {
 		return nullptr;
 	}
@@ -38,7 +38,7 @@ inline char *make_hello(char const *name)
 inline char *make_goodbye(char const *name)
 {
 	size_t len = (size_t)std::snprintf(nullptr, 0, "Goodbye, %s", name);
-	char  *ret = (char *)std::calloc(++len, sizeof(*ret));
+	char *ret = (char *)std::calloc(++len, sizeof(*ret));
 	if (ret == nullptr) {
 		return nullptr;
 	}

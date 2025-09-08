@@ -11,8 +11,8 @@
 
 struct thread_info {
 	pthread_t thread_id;
-	int       thread_num;
-	char     *arg;
+	int thread_num;
+	char *arg;
 };
 
 static struct thread_info info[MAX_THREADS];
@@ -61,8 +61,8 @@ static void run_threads(size_t stack_size, int num_threads, char *args[])
 
 	for (int i = 0; i < num_threads; ++i) {
 		info[i].thread_num = i + 1;
-		info[i].arg        = args[i];
-		rc                 = pthread_create(&info[i].thread_id, &attr, &start, &info[i]);
+		info[i].arg = args[i];
+		rc = pthread_create(&info[i].thread_id, &attr, &start, &info[i]);
 		if (rc != 0) {
 			handle_errno(rc, "pthread_create");
 		}

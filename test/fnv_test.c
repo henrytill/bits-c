@@ -10,7 +10,7 @@
 // https://datatracker.ietf.org/doc/html/draft-eastlake-fnv-03#page-15
 static struct test_vector {
 	char const *input;
-	uint64_t    expected;
+	uint64_t expected;
 } const TEST_VECTORS[] = {
 	{"", 0xaf63bd4c8601b7df},
 	{"a", 0x089be207b544f1e4},
@@ -35,7 +35,7 @@ int main(void)
 			return EXIT_FAILURE;
 		}
 		uint64_t const expected = TEST_VECTORS[i].expected;
-		uint64_t const actual   = fnv_hash(strlen(input) + 1, (unsigned char const *)input);
+		uint64_t const actual = fnv_hash(strlen(input) + 1, (unsigned char const *)input);
 		if (!check(input, expected, actual)) {
 			return EXIT_FAILURE;
 		}

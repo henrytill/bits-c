@@ -38,12 +38,12 @@ static void print_glew_version(void)
 }
 
 void GLAPIENTRY message_callback(
-	UNUSED GLenum      source,
-	GLenum             type,
-	UNUSED GLuint      id,
-	GLenum             severity,
-	UNUSED GLsizei     length,
-	GLchar const      *message,
+	UNUSED GLenum source,
+	GLenum type,
+	UNUSED GLuint id,
+	GLenum severity,
+	UNUSED GLsizei length,
+	GLchar const *message,
 	UNUSED void const *user)
 {
 	eprintf("GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
@@ -99,7 +99,7 @@ int main(void)
 	unsigned long valuemask = CWColormap | CWEventMask;
 
 	XSetWindowAttributes swa = {
-		.colormap   = XCreateColormap(dpy, root, vi->visual, AllocNone),
+		.colormap = XCreateColormap(dpy, root, vi->visual, AllocNone),
 		.event_mask = ExposureMask | KeyPressMask,
 	};
 
@@ -128,7 +128,7 @@ int main(void)
 	XSetClassHint(dpy, win, class_hint);
 
 	Atom wm_delete_window = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
-	int  rc               = XSetWMProtocols(dpy, win, &wm_delete_window, 1);
+	int rc = XSetWMProtocols(dpy, win, &wm_delete_window, 1);
 	if (rc != 1) {
 		eprintf("Failed to XSetWMProtocols\n");
 		goto out_free_class_hint;
@@ -162,7 +162,7 @@ int main(void)
 		printf("Enabled debug output\n");
 	}
 
-	XEvent            xev;
+	XEvent xev;
 	XWindowAttributes gwa;
 
 	int loop_stat = 1;

@@ -12,16 +12,16 @@
 
 /// storage allocation arena
 struct arena {
-	struct arena *next;  ///< link to next arena
-	char         *limit; ///< address of one past end of arena
-	char         *avail; ///< next available location
+	struct arena *next; ///< link to next arena
+	char *limit;        ///< address of one past end of arena
+	char *avail;        ///< next available location
 };
 
 static struct arena first[] = {{0}, {0}, {0}}, *arena[] = {&first[0], &first[1], &first[2]};
 
 static size_t const MIN_ARENA_SIZE = (size_t)64 * 1024; // 64KB minimum arena size
-static size_t const WORD_SIZE      = sizeof(void *);
-static size_t const GROWTH_FACTOR  = 2; // Double arena size when growing
+static size_t const WORD_SIZE = sizeof(void *);
+static size_t const GROWTH_FACTOR = 2; // Double arena size when growing
 
 static size_t pagesize = 0;
 
@@ -110,7 +110,7 @@ void *arena_allocate(size_t const n, size_t const t)
 	for (ap = arena[t]; ap->avail + n > ap->limit; arena[t] = ap) {
 		if (ap->next != NULL) {
 			// move to next arena
-			ap        = ap->next;
+			ap = ap->next;
 			ap->avail = (char *)ap + sizeof(*ap);
 		} else {
 			// allocate a new arena
@@ -124,10 +124,10 @@ void *arena_allocate(size_t const n, size_t const t)
 				eprintf("%s: calloc failed", __func__);
 				exit(EXIT_FAILURE);
 			}
-			ap        = ap->next;
+			ap = ap->next;
 			ap->avail = (char *)ap + sizeof(*ap);
 			ap->limit = (char *)ap + m;
-			ap->next  = NULL;
+			ap->next = NULL;
 		}
 	}
 	ap->avail += n;

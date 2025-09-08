@@ -5,7 +5,7 @@
 #include "macro.h"
 
 static uint64_t const FNV_OFFSET_BASIS = 0xcbf29ce484222325;
-static uint64_t const FNV_PRIME        = 0x100000001b3;
+static uint64_t const FNV_PRIME = 0x100000001b3;
 
 // Imagine if this didn't hold...
 STATIC_ASSERT(CHAR_BIT == 8);

@@ -48,9 +48,9 @@ static PyObject *py_table_destroy(__attribute__((unused)) PyObject *self, PyObje
 
 static PyObject *py_table_put(__attribute__((unused)) PyObject *self, PyObject *args)
 {
-	PyObject   *py_table = NULL;
-	char const *key      = NULL;
-	PyObject   *value    = NULL;
+	PyObject *py_table = NULL;
+	char const *key = NULL;
+	PyObject *value = NULL;
 
 	int const rc = PyArg_ParseTuple(args, "OsO", &py_table, &key, &value);
 	if (rc == 0) {
@@ -76,8 +76,8 @@ static PyObject *py_table_put(__attribute__((unused)) PyObject *self, PyObject *
 
 static PyObject *py_table_get(__attribute__((unused)) PyObject *self, PyObject *args)
 {
-	PyObject   *py_table = NULL;
-	char const *key      = NULL;
+	PyObject *py_table = NULL;
+	char const *key = NULL;
 
 	int const rc = PyArg_ParseTuple(args, "Os", &py_table, &key);
 	if (rc == 0) {

@@ -25,10 +25,10 @@ enum {
 
 struct start_params {
 	coroutine *c;
-	func       f;
-	void      *arg;
-	void      *old_stack_pointer;
-	void      *old_frame_pointer;
+	func f;
+	void *arg;
+	void *old_stack_pointer;
+	void *old_frame_pointer;
 };
 
 void coroutine_yield(coroutine *c)
@@ -53,8 +53,8 @@ void coroutine_start(coroutine *c, func f, void *arg, void *stack_pointer)
 	struct start_params *p = ((struct start_params *)stack_pointer) - 1;
 
 	/* save params before stack switching */
-	p->c   = c;
-	p->f   = f;
+	p->c = c;
+	p->f = f;
 	p->arg = arg;
 	get_stack_pointer(p->old_stack_pointer);
 	get_frame_pointer(p->old_frame_pointer);
