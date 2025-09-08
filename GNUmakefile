@@ -1,5 +1,0 @@
-.POSIX:
-
-.ALLSRC = $^
-
-include Makefile

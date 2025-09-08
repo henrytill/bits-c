@@ -2,9 +2,9 @@ image: openbsd/latest
 packages:
   - curl
   - glew
-  - python3
-  - py3-setuptools
   - py3-hypothesis
+  - meson
+  - ninja
 secrets:
   - fff26745-7b06-40da-b5b9-5f4bd6f29596
 sources:
@@ -14,11 +14,10 @@ tasks:
       python3 --version
   - configure: |
       cd bits-c
-      ./configure
-      cat config.mk
+      meson setup builddir
   - build: |
       cd bits-c
-      make
+      ninja -C builddir
   - test: |
       cd bits-c
-      make check
+      meson test -C builddir
