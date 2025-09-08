@@ -19,7 +19,7 @@ jobs:
           libcurl4-openssl-dev libopengl-dev libglew-dev \
           python3-hypothesis gobjc libgnustep-base-dev \
           libgomp1 meson ninja-build
-    - run: meson setup builddir
+    - run: meson setup builddir --native-file objc.ini
     - run: ninja -C builddir
     - run: meson test -C builddir
   zig:

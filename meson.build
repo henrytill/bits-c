@@ -1,10 +1,11 @@
 project(
     'bits-c',
-    'c',
+    ['c', 'cpp', 'objc'],
     version: '0.1.0',
     default_options: [
         'warning_level=2',
         'c_std=gnu11',
+        'cpp_std=c++17',
     ],
 )
 
@@ -17,6 +18,7 @@ x11_dep = dependency('x11', required: false)
 glew_dep = dependency('glew', required: false)
 openmp_dep = dependency('openmp', required: false)
 threads_dep = dependency('threads')
+gnustep_dep = dependency('gnustep', required: false)
 
 # Python dependencies for hashtable extension
 python = import('python').find_installation(required: false)
@@ -92,6 +94,25 @@ executable(
     install: true,
     install_dir: 'bin',
 )
+
+executable(
+    'hello',
+    'bin/hello.cpp',
+    include_directories: inc_dir,
+    install: true,
+    install_dir: 'bin',
+)
+
+if gnustep_dep.found()
+    executable(
+        'greet',
+        'bin/greet.m',
+        include_directories: inc_dir,
+        dependencies: gnustep_dep,
+        install: true,
+        install_dir: 'bin',
+    )
+endif
 
 if openmp_dep.found()
     executable(
@@ -216,12 +237,19 @@ message_queue_block_test = executable(
     dependencies: threads_dep,
 )
 
+lambda_test = executable(
+    'lambda_test',
+    'test/lambda_test.cpp',
+    include_directories: inc_dir,
+)
+
 # Register tests
 test('arena_test', arena_test)
 test('coroutine_test', coroutine_test)
 test('expect_test', expect_test)
 test('fnv_test', fnv_test)
 test('hashtable_test', hashtable_test)
+test('lambda_test', lambda_test)
 test('message_queue_basic_test', message_queue_basic_test)
 test('message_queue_block_test', message_queue_block_test)
 
