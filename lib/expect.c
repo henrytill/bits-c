@@ -46,16 +46,18 @@ static int fcopy(char const *srcname, char const *dstname)
 		char   buf[BUF_LEN] = {0};
 		size_t nread        = 0;
 
-		while ((nread = fread(buf, 1, BUF_LEN, src)) > 0) {
-			if (fwrite(buf, 1, nread, dst) != nread) {
-				perror("Error writing to destination file");
+		while (!feof(src)) {
+			nread = fread(buf, 1, BUF_LEN, src);
+			if (ferror(src) != 0) {
+				perror("Error reading from source file");
 				goto cleanup;
 			}
-		}
-
-		if (ferror(src) != 0) {
-			perror("Error reading from source file");
-			goto cleanup;
+			if (nread > 0) {
+				if (fwrite(buf, 1, nread, dst) != nread) {
+					perror("Error writing to destination file");
+					goto cleanup;
+				}
+			}
 		}
 
 		ret = 0;
@@ -94,11 +96,10 @@ int expect_insert(char const *filename, int lineno, char const *toinsert, int pr
 		}
 
 		{
-			char   *line  = NULL;
-			size_t  len   = 0;
-			ssize_t nchar = 0;
+			char  *line = NULL;
+			size_t len  = 0;
 
-			for (int i = 1; (nchar = getline(&line, &len, input)) != -1; ++i) {
+			for (int i = 1; getline(&line, &len, input) != -1; ++i) {
 				if (i == lineno) {
 					char *open  = strchr(line, '{');
 					char *close = strrchr(line, '}');
