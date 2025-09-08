@@ -7,20 +7,13 @@
 #include <stdlib.h>
 
 struct message_queue {
-	/// Buffer to hold messages
-	struct message *buffer;
-	/// Maximum size of the buffer
-	uint32_t capacity;
-	/// Index of the front message in the buffer
-	size_t front;
-	/// Index of the rear message in the buffer
-	size_t rear;
-	/// Semaphore to track empty slots in the buffer
-	sem_t *empty;
-	/// Semaphore to track filled slots in the buffer
-	sem_t *full;
-	/// Mutex lock to protect buffer access
-	pthread_mutex_t *lock;
+	struct message  *buffer;   ///< Buffer to hold messages
+	uint32_t         capacity; ///< Maximum size of the buffer
+	size_t           front;    ///< Index of the front message in the buffer
+	size_t           rear;     ///< Index of the rear message in the buffer
+	sem_t           *empty;    ///< Semaphore to track empty slots in the buffer
+	sem_t           *full;     ///< Semaphore to track filled slots in the buffer
+	pthread_mutex_t *lock;     ///< Mutex lock to protect buffer access
 };
 
 /// Create a semaphore.

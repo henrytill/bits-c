@@ -18,9 +18,11 @@ struct person_ops {
 
 struct person {
 	person_ops const *ops;
-	char             *name;
-	int               age;
-	person           *next;
+
+	char *name;
+	int   age;
+
+	person *next;
 };
 
 static void person_hello(person const *self)
