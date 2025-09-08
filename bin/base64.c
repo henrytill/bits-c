@@ -72,36 +72,36 @@ static size_t base64_decode(
 
 int main(void)
 {
-	char const *input               = NULL;
-	size_t      input_len           = 0;
-	char const *expected_base64     = NULL;
-	size_t      expected_base64_len = 0;
+	char const *input        = NULL;
+	size_t      input_len    = 0;
+	char const *expected     = NULL;
+	size_t      expected_len = 0;
 
 	size_t codec_len = 0;
 
-	char actual_base64[BASE64_LEN_MAX + 1];
+	char actual[BASE64_LEN_MAX + 1];
 	char output[INPUT_LEN_MAX + 1];
 
 	for (size_t i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i) {
-		ARRAY_CLEAR(actual_base64);
+		ARRAY_CLEAR(actual);
 		ARRAY_CLEAR(output);
 
-		input_len           = TEST_VECTORS[i].input_len;
-		expected_base64     = TEST_VECTORS[i].base64;
-		expected_base64_len = TEST_VECTORS[i].base64_len;
+		input_len    = TEST_VECTORS[i].input_len;
+		expected     = TEST_VECTORS[i].base64;
+		expected_len = TEST_VECTORS[i].base64_len;
 
 		printf("input: %s\n", input);
 		printf("input_len: %ld\n", input_len);
-		printf("expected_base64: %s\n", expected_base64);
-		printf("expected_base64_len: %ld\n", expected_base64_len);
+		printf("expected: %s\n", expected);
+		printf("expected_len: %ld\n", expected_len);
 
-		codec_len = base64_encode(input_len, input, actual_base64);
+		codec_len = base64_encode(input_len, input, actual);
 
-		TEST(codec_len == strlen(actual_base64));
-		TEST(codec_len == expected_base64_len);
-		TEST(strcmp(actual_base64, expected_base64) == 0);
+		TEST(codec_len == strlen(actual));
+		TEST(codec_len == expected_len);
+		TEST(strcmp(actual, expected) == 0);
 
-		codec_len = base64_decode(codec_len, actual_base64, output);
+		codec_len = base64_decode(codec_len, actual, output);
 
 		printf("codec_len: %ld\n", codec_len);
 		printf("\n");

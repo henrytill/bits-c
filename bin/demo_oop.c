@@ -7,20 +7,20 @@
 typedef struct person person;
 
 /// Base class methods.
-typedef struct person_operations person_operations;
+typedef struct person_ops person_ops;
 
 /// Derived class.
 typedef struct student student;
 
-struct person_operations {
+struct person_ops {
 	void (*hello)(person const *self);
 };
 
 struct person {
-	person_operations const *ops;
-	char                    *name;
-	int                      age;
-	person                  *next;
+	person_ops const *ops;
+	char             *name;
+	int               age;
+	person           *next;
 };
 
 static void person_hello(person const *self)
@@ -31,7 +31,7 @@ static void person_hello(person const *self)
 }
 
 /// Base class vtable.
-static person_operations const PERSON_OPS = {
+static person_ops const PERSON_OPS = {
 	.hello = person_hello,
 };
 
@@ -40,7 +40,7 @@ struct student {
 	char  *school;
 };
 
-/// Derived class override of person_operations::hello
+/// Derived class override of person_ops::hello
 static void student_hello(person const *self)
 {
 	student const *s = CONTAINER_OF(self, student, person);
@@ -51,7 +51,7 @@ static void student_hello(person const *self)
 }
 
 /// Derived class vtable.
-static person_operations const STUDENT_OPS = {
+static person_ops const STUDENT_OPS = {
 	.hello = student_hello,
 };
 

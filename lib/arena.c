@@ -12,12 +12,9 @@
 
 /// storage allocation arena
 struct arena {
-	/// link to next arena
-	struct arena *next;
-	/// address of one past end of arena
-	char *limit;
-	/// next available location
-	char *avail;
+	struct arena *next;  ///< link to next arena
+	char         *limit; ///< address of one past end of arena
+	char         *avail; ///< next available location
 };
 
 static struct arena first[] = {{0}, {0}, {0}}, *arena[] = {&first[0], &first[1], &first[2]};
@@ -69,8 +66,8 @@ void *arena_allocate(size_t const n, size_t const t)
 				exit(EXIT_FAILURE);
 			}
 			ap        = ap->next;
-			ap->limit = (char *)ap + m;
 			ap->avail = (char *)ap + sizeof(*ap);
+			ap->limit = (char *)ap + m;
 			ap->next  = NULL;
 		}
 	}

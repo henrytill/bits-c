@@ -16,7 +16,7 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
 
-#define UNUSED_PARAM __attribute__((unused))
+#define UNUSED __attribute__((unused))
 
 #define eprintf(...) (void)fprintf(stderr, __VA_ARGS__)
 
@@ -38,13 +38,13 @@ static void print_glew_version(void)
 }
 
 void GLAPIENTRY message_callback(
-	UNUSED_PARAM GLenum      source,
-	GLenum                   type,
-	UNUSED_PARAM GLuint      id,
-	GLenum                   severity,
-	UNUSED_PARAM GLsizei     length,
-	GLchar const            *message,
-	UNUSED_PARAM void const *user)
+	UNUSED GLenum      source,
+	GLenum             type,
+	UNUSED GLuint      id,
+	GLenum             severity,
+	UNUSED GLsizei     length,
+	GLchar const      *message,
+	UNUSED void const *user)
 {
 	eprintf("GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
 		(type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),

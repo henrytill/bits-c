@@ -135,20 +135,24 @@ ALLOCATOR_DEFINE(kont)
 
 kont *defunc_kont_k1(kont_allocator *alloc, node *n, kont *k)
 {
-	kont *k1   = kont_alloc(alloc);
+	kont *k1 = kont_alloc(alloc);
+
 	k1->tag    = K1;
 	k1->u.k1.n = n;
 	k1->u.k1.k = k;
+
 	return k1;
 }
 
 kont *defunc_kont_k2(kont_allocator *alloc, int s0, node *n, kont *k)
 {
-	kont *k2    = kont_alloc(alloc);
+	kont *k2 = kont_alloc(alloc);
+
 	k2->tag     = K2;
 	k2->u.k2.s0 = s0;
 	k2->u.k2.n  = n;
 	k2->u.k2.k  = k;
+
 	return k2;
 }
 
@@ -188,8 +192,10 @@ void defunc_apply(kont_allocator *alloc, kont *k, int s)
 void defunc_sum(node *n)
 {
 	kont_allocator *alloc = kont_allocator_create(KONT_POOL_SIZE);
-	kont           *k3    = defunc_kont_k3(alloc);
+
+	kont *k3 = defunc_kont_k3(alloc);
 	defunc_sum_impl(alloc, n, k3);
+
 	kont_allocator_destroy(alloc);
 }
 
@@ -228,8 +234,10 @@ void opt_sum_impl(kont_allocator *alloc, node *n, kont *k)
 void opt_sum(node *n)
 {
 	kont_allocator *alloc = kont_allocator_create(KONT_POOL_SIZE);
-	kont           *k3    = defunc_kont_k3(alloc);
+
+	kont *k3 = defunc_kont_k3(alloc);
 	opt_sum_impl(alloc, n, k3);
+
 	kont_allocator_destroy(alloc);
 }
 
@@ -297,12 +305,14 @@ bool vkont_stack_is_empty(vkont_stack *stack)
 
 void vkont_stack_resize(vkont_stack **stack_ptr)
 {
-	vkont_stack *stack        = *stack_ptr;
+	vkont_stack *stack = *stack_ptr;
+
 	size_t       new_capacity = stack->capacity * 2;
-	vkont_stack *new_stack    = realloc(stack, sizeof(vkont_stack) + new_capacity * sizeof(struct vkont));
+	vkont_stack *new_stack    = realloc(stack, sizeof(vkont_stack) + (new_capacity * sizeof(struct vkont)));
 	assert(new_stack != NULL);
 	new_stack->capacity = new_capacity;
-	*stack_ptr          = new_stack;
+
+	*stack_ptr = new_stack;
 }
 
 void vkont_stack_push(vkont_stack **stack_ptr, struct vkont vk)
@@ -382,17 +392,20 @@ void push(stack_node **top, node *n)
 	assert(new != NULL);
 	new->node = n;
 	new->next = *top;
-	*top      = new;
+
+	*top = new;
 }
 
 node *pop(stack_node **top)
 {
-	if (*top == NULL) {
+	stack_node *tmp = *top;
+	if (tmp == NULL) {
 		return NULL;
 	};
-	stack_node *tmp = *top;
-	node       *ret = tmp->node;
-	*top            = (*top)->next;
+
+	node *ret = tmp->node;
+	*top      = (*top)->next;
+
 	free(tmp);
 	return ret;
 }
@@ -404,7 +417,8 @@ void iterative_sum(node *root)
 		return;
 	}
 
-	int         sum   = 0;
+	int sum = 0;
+
 	stack_node *stack = NULL;
 	push(&stack, root);
 
@@ -466,17 +480,20 @@ int main(void)
 #undef LEAF
 #undef BRANCH
 
-	algo  a   = {0};
-	node *n   = NULL;
-	int   ref = 0;
+	algo  a = {0};
+	node *n = NULL;
+
+	int expected = 0;
 
 	for (size_t i = 0; (a = algos[i]).name != NULL; ++i) {
 		printf("=== %s ===\n", a.name);
 		for (size_t j = 0; (n = ns[j]) != NULL; ++j) {
-			ref    = recursive_sum(n);
+			expected = recursive_sum(n);
+
 			answer = -1;
 			a.f(n);
-			assert(ref == answer);
+			assert(expected == answer);
+
 			printf("sum: %d\n", answer);
 		}
 	}

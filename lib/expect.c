@@ -7,7 +7,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#define BUFFER_LENGTH 4096
+#define BUF_LEN 4096
 
 int expect_getpromote(void)
 {
@@ -15,8 +15,10 @@ int expect_getpromote(void)
 	if (s == NULL) {
 		return 0;
 	}
+
 	char      *end = NULL;
 	long const p   = strtol(s, &end, 10);
+
 	if (s == end) {
 		return 0;
 	}
@@ -40,11 +42,11 @@ static int fcopy(char const *srcname, char const *dstname)
 
 	{
 		__label__ cleanup;
-		int    ret                = -1;
-		char   buf[BUFFER_LENGTH] = {0};
-		size_t nread              = 0;
+		int    ret          = -1;
+		char   buf[BUF_LEN] = {0};
+		size_t nread        = 0;
 
-		while ((nread = fread(buf, 1, BUFFER_LENGTH, src)) > 0) {
+		while ((nread = fread(buf, 1, BUF_LEN, src)) > 0) {
 			if (fwrite(buf, 1, nread, dst) != nread) {
 				perror("Error writing to destination file");
 				goto cleanup;
@@ -92,9 +94,9 @@ int expect_insert(char const *filename, int lineno, char const *toinsert, int pr
 		}
 
 		{
-			char   *line = NULL;
-			size_t  len  = 0;
-			ssize_t nchar;
+			char   *line  = NULL;
+			size_t  len   = 0;
+			ssize_t nchar = 0;
 
 			for (int i = 1; (nchar = getline(&line, &len, input)) != -1; ++i) {
 				if (i == lineno) {

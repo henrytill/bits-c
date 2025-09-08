@@ -37,39 +37,43 @@ TEST_ENTRIES
 #undef TEST_ENTRIES
 #undef STATIC_ASSERT
 
+typedef struct entry entry;
+
 struct entry {
-	struct entry *next;
-	char const   *key;
-	void         *value;
+	entry      *next;
+	char const *key;
+	void       *value;
 };
+
+typedef struct table table;
 
 struct table {
-	size_t       columns_len;
-	struct entry columns[];
+	size_t len;
+	entry  columns[];
 };
 
-struct table *table_create(size_t const columns_len)
+table *table_create(size_t const len)
 {
-	if (!ISPOW2(columns_len)) {
-		debug_fprintf(stderr, "%s: columns_len must be a power of 2\n", __func__);
+	if (!ISPOW2(len)) {
+		debug_fprintf(stderr, "%s: len must be a power of 2\n", __func__);
 		return NULL;
 	}
-	struct table *ret = calloc(1, sizeof(*ret) + (columns_len * sizeof(struct entry)));
+	table *ret = calloc(1, sizeof(*ret) + (len * sizeof(entry)));
 	if (ret == NULL) {
 		return NULL;
 	}
-	ret->columns_len = columns_len;
+	ret->len = len;
 	return ret;
 }
 
-void table_destroy(struct table *t, void finalize(void *))
+void table_destroy(table *t, void finalize(void *))
 {
 	if (t == NULL) {
 		return;
 	}
-	struct entry *curr = NULL;
-	struct entry *next = NULL;
-	for (size_t i = 0; i < t->columns_len; ++i) {
+	entry *curr = NULL;
+	entry *next = NULL;
+	for (size_t i = 0; i < t->len; ++i) {
 		curr = t->columns[i].next;
 		while (curr != NULL) {
 			next = curr->next;
@@ -88,20 +92,20 @@ void table_destroy(struct table *t, void finalize(void *))
 
 /// Get the index of a key
 ///
-/// @param columns_len The number of columns in the table
+/// @param len The number of columns in the table
 /// @param key The key to hash
 /// @return The index of the key
 ///
 /// @note The number of columns must be a power of 2
-static uint64_t get_index(size_t const columns_len, char const *key)
+static uint64_t get_index(size_t const len, char const *key)
 {
-	assert(ISPOW2(columns_len));
+	assert(ISPOW2(len));
 	assert(key != NULL);
 	uint64_t const hash = fnv_hash(strlen(key) + 1, (unsigned char const *)key);
-	return hash & (uint64_t)(columns_len - 1);
+	return hash & (uint64_t)(len - 1);
 }
 
-int table_put(struct table *t, char const *key, void *value)
+int table_put(table *t, char const *key, void *value)
 {
 	if (t == NULL) {
 		return -1;
@@ -110,10 +114,10 @@ int table_put(struct table *t, char const *key, void *value)
 		return -1;
 	}
 
-	uint64_t const index = get_index(t->columns_len, key);
+	uint64_t const index = get_index(t->len, key);
 	debug_printf("%s: key: %s, index: %" PRIu64 "\n", __func__, key, index);
-	struct entry *curr = &t->columns[index];
-	struct entry *prev = NULL;
+	entry *curr = &t->columns[index];
+	entry *prev = NULL;
 
 	while (curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0) {
 		prev = curr;
@@ -138,12 +142,14 @@ int table_put(struct table *t, char const *key, void *value)
 	curr->next  = NULL;
 	curr->key   = key;
 	curr->value = value;
+
 	assert(prev != NULL);
 	prev->next = curr;
+
 	return 0;
 }
 
-void *table_get(struct table *t, char const *key)
+void *table_get(table *t, char const *key)
 {
 	if (t == NULL) {
 		return NULL;
@@ -152,9 +158,9 @@ void *table_get(struct table *t, char const *key)
 		return NULL;
 	}
 
-	uint64_t const index = get_index(t->columns_len, key);
+	uint64_t const index = get_index(t->len, key);
 	debug_printf("%s: key: %s, index: %" PRIu64 "\n", __func__, key, index);
-	struct entry *curr = &t->columns[index];
+	entry *curr = &t->columns[index];
 
 	while (curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0) {
 		curr = curr->next;
@@ -165,7 +171,7 @@ void *table_get(struct table *t, char const *key)
 	return curr->value;
 }
 
-int table_delete(struct table *t, char const *key, void finalize(void *))
+int table_delete(table *t, char const *key, void finalize(void *))
 {
 	if (t == NULL) {
 		return -1;
@@ -174,9 +180,9 @@ int table_delete(struct table *t, char const *key, void finalize(void *))
 		return -1;
 	}
 
-	uint64_t const index = get_index(t->columns_len, key);
-	struct entry  *curr  = &t->columns[index];
-	struct entry  *prev  = NULL;
+	uint64_t const index = get_index(t->len, key);
+	entry         *curr  = &t->columns[index];
+	entry         *prev  = NULL;
 
 	while (curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0) {
 		prev = curr;
@@ -195,10 +201,10 @@ int table_delete(struct table *t, char const *key, void finalize(void *))
 		// deleting from the first entry (embedded in the table)
 		if (curr->next != NULL) {
 			// move next entry to the current entry
-			struct entry *next = curr->next;
-			curr->key          = next->key;
-			curr->value        = next->value;
-			curr->next         = next->next;
+			entry *next = curr->next;
+			curr->key   = next->key;
+			curr->value = next->value;
+			curr->next  = next->next;
 			free(next);
 		} else {
 			// clear the entry

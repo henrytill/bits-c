@@ -38,14 +38,18 @@
 
 int main(int argc, char *argv[])
 {
-	NSAutoreleasePool *pool           = [[NSAutoreleasePool alloc] init];
-	Greeter           *defaultGreeter = [Greeter defaultGreeter];
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+	Greeter *defaultGreeter = [Greeter defaultGreeter];
 	[defaultGreeter greet];
+
 	Greeter *customGreeter = [[[Greeter alloc] initWithMessage:@"Welcome to Objective-C!"] autorelease];
 	[customGreeter greet];
+
 	NSLog(@"Property access: %@", customGreeter.message);
 	customGreeter.message = @"Foo!";
 	[customGreeter greet];
+
 	[pool drain];
 	return EXIT_SUCCESS;
 }

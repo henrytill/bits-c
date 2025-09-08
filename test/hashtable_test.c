@@ -16,10 +16,12 @@ static struct test_vector {
 
 int main(void)
 {
-	int           ret   = EXIT_FAILURE;
-	char const   *key   = NULL;
-	char         *value = NULL;
-	struct table *t     = table_create(8);
+	int ret = EXIT_FAILURE;
+
+	char const *key   = NULL;
+	char       *value = NULL;
+
+	struct table *t = table_create(8);
 
 	value = table_get(t, "not_in_table");
 	if (value != NULL) {

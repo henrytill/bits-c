@@ -43,14 +43,14 @@ static inline char const *message_queue_failure_str(enum message_queue_failure f
 	}
 }
 
-enum message_tag {
+enum tag {
 	MSG_TAG_NONE = 0,
 	MSG_TAG_SOME = 1,
 	MSG_TAG_QUIT = 2,
 	MSG_TAG_MAX  = 3,
 };
 
-static inline char const *message_tag_str(enum message_tag tag)
+static inline char const *message_tag_str(enum tag tag)
 {
 	switch (tag) {
 	case MSG_TAG_NONE:
@@ -65,8 +65,8 @@ static inline char const *message_tag_str(enum message_tag tag)
 }
 
 struct message {
-	enum message_tag tag;
-	intptr_t         value;
+	enum tag tag;
+	intptr_t value;
 };
 
 /// A thread-safe bounded message queue

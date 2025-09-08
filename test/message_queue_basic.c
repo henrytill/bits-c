@@ -29,22 +29,24 @@ static void *produce(void *data)
 {
 	assert(data != NULL);
 
-	struct message_queue *queue   = data;
-	struct message        msg     = {0};
-	char const           *tag_str = NULL;
-	int                   rc      = -1;
+	struct message_queue *queue = data;
+
+	struct message msg     = {0};
+	int            rc      = -1;
+	char const    *tag_str = NULL;
 
 	for (intptr_t value = 0; value <= COUNT;) {
 		msg.tag   = (value < COUNT) ? MSG_TAG_SOME : MSG_TAG_QUIT;
 		msg.value = value;
-		tag_str   = message_tag_str(msg.tag);
 
 		rc = message_queue_put(queue, &msg);
 		if (rc < 0) {
 			message_queue_fail(rc, "message_queue_put failed");
 		} else if (rc == 1) {
+			tag_str = message_tag_str(msg.tag);
 			printf("blocked: {%s, %" PRIdPTR "}\n", tag_str, value);
 		} else {
+			tag_str = message_tag_str(msg.tag);
 			printf("produced: {%s, %" PRIdPTR "}\n", tag_str, value);
 			value += 1;
 		}
