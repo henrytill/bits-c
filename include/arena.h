@@ -3,12 +3,6 @@
 
 #include <stddef.h>
 
-/// Initialize the arena allocator system
-///
-/// Must be called before any other arena functions.
-/// Sets up the page size for memory alignment.
-void arena_init(void);
-
 /// Allocate memory from an arena
 ///
 /// @param n The number of bytes to allocate

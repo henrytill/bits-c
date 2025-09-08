@@ -5,8 +5,6 @@
 
 int main(void)
 {
-	arena_init();
-
 	struct point {
 		int x;
 		int y;

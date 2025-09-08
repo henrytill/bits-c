@@ -23,8 +23,6 @@ static size_t const MIN_ARENA_SIZE = (size_t)64 * 1024; // 64KB minimum arena si
 static size_t const WORD_SIZE = sizeof(void *);
 static size_t const GROWTH_FACTOR = 2; // Double arena size when growing
 
-static size_t pagesize = 0;
-
 /// Get the system page size
 ///
 /// @return The system page size in bytes
@@ -40,11 +38,6 @@ size_t get_pagesize(void)
 	return (size_t)result;
 }
 
-void arena_init(void)
-{
-	pagesize = get_pagesize();
-}
-
 /// Round size up to the next page boundary
 ///
 /// @param size The size to round up
@@ -54,7 +47,11 @@ void arena_init(void)
 /// @note Asserts that size won't overflow when rounded up
 static inline size_t nextpage(size_t const size)
 {
-	assert(pagesize > 0);
+	static size_t pagesize = 0;
+	if (pagesize == 0) {
+		pagesize = get_pagesize();
+	}
+
 	assert(size <= (SIZE_MAX - pagesize - 1));
 	return (size + pagesize - 1) & ~(pagesize - 1);
 }

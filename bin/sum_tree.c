@@ -436,8 +436,6 @@ int main(void)
 		{NULL, NULL},
 	};
 
-	arena_init();
-
 #define BRANCH(value, left, right) node_create(value, left, right)
 #define LEAF(value)                node_create(value, NULL, NULL)
 
