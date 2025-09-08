@@ -19,6 +19,12 @@ glew_dep = dependency('glew', required: false)
 openmp_dep = dependency('openmp', required: false)
 threads_dep = dependency('threads')
 
+blocks_dep = []
+cc = meson.get_compiler('c')
+if cc.get_id() == 'clang'
+    blocks_dep = dependency('blocks', required: false)
+endif
+
 # Python dependencies for hashtable extension
 python = import('python').find_installation(required: false)
 python3_dep = python.dependency(required: false)
@@ -143,6 +149,7 @@ executable(
     'sum_tree',
     'bin/sum_tree.c',
     include_directories: inc_dir,
+    dependencies: blocks_dep,
     link_with: arena_lib,
     install: true,
     install_dir: 'bin',
