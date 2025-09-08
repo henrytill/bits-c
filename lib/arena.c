@@ -109,23 +109,24 @@ void *arena_allocate(size_t const n, size_t const t)
 			// move to next arena
 			ap = ap->next;
 			ap->avail = (char *)ap + sizeof(*ap);
-		} else {
-			// allocate a new arena
-			size_t const m = calc_size(n);
-			if (m == 0) {
-				eprintf("%s: allocation size too large", __func__);
-				exit(EXIT_FAILURE);
-			}
-			ap->next = calloc(1, m);
-			if (ap->next == NULL) {
-				eprintf("%s: calloc failed", __func__);
-				exit(EXIT_FAILURE);
-			}
-			ap = ap->next;
-			ap->avail = (char *)ap + sizeof(*ap);
-			ap->limit = (char *)ap + m;
-			ap->next = NULL;
+			continue;
 		}
+
+		// allocate a new arena
+		size_t const m = calc_size(n);
+		if (m == 0) {
+			eprintf("%s: allocation size too large", __func__);
+			exit(EXIT_FAILURE);
+		}
+		ap->next = calloc(1, m);
+		if (ap->next == NULL) {
+			eprintf("%s: calloc failed", __func__);
+			exit(EXIT_FAILURE);
+		}
+		ap = ap->next;
+		ap->avail = (char *)ap + sizeof(*ap);
+		ap->limit = (char *)ap + m;
+		ap->next = NULL;
 	}
 	ap->avail += n;
 	return ap->avail - n;
