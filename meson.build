@@ -154,6 +154,7 @@ executable(
     'sum_tree',
     'bin/sum_tree.c',
     include_directories: inc_dir,
+    link_with: arena_lib,
     install: true,
     install_dir: 'bin',
 )

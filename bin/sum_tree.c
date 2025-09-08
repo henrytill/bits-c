@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "allocator.h"
+#include "arena.h"
 #include "feature.h" // IWYU pragma: keep
 
 #ifdef HAS_BLOCKS
@@ -20,25 +20,13 @@ struct node {
 	node *right;
 };
 
-ALLOCATOR_DEFINE(node)
-
-node *node_create(node_allocator *alloc, int value, node *left, node *right)
+node *node_create(int value, node *left, node *right)
 {
-	node *ret  = node_alloc(alloc);
+	node *ret  = arena_allocate(sizeof(*ret), 0);
 	ret->value = value;
 	ret->left  = left;
 	ret->right = right;
 	return ret;
-}
-
-void node_destroy(node *n)
-{
-	if (n == NULL) {
-		return;
-	}
-	node_destroy(n->left);
-	node_destroy(n->right);
-	free(n);
 }
 
 /* recursive */
@@ -131,11 +119,9 @@ struct kont {
 	} u;
 };
 
-ALLOCATOR_DEFINE(kont)
-
-kont *defunc_kont_k1(kont_allocator *alloc, node *n, kont *k)
+kont *defunc_kont_k1(node *n, kont *k)
 {
-	kont *k1 = kont_alloc(alloc);
+	kont *k1 = arena_allocate(sizeof(*k1), 1);
 
 	k1->tag    = K1;
 	k1->u.k1.n = n;
@@ -144,9 +130,9 @@ kont *defunc_kont_k1(kont_allocator *alloc, node *n, kont *k)
 	return k1;
 }
 
-kont *defunc_kont_k2(kont_allocator *alloc, int s0, node *n, kont *k)
+kont *defunc_kont_k2(int s0, node *n, kont *k)
 {
-	kont *k2 = kont_alloc(alloc);
+	kont *k2 = arena_allocate(sizeof(*k2), 1);
 
 	k2->tag     = K2;
 	k2->u.k2.s0 = s0;
@@ -156,47 +142,41 @@ kont *defunc_kont_k2(kont_allocator *alloc, int s0, node *n, kont *k)
 	return k2;
 }
 
-kont *defunc_kont_k3(kont_allocator *alloc)
+kont *defunc_kont_k3(void)
 {
-	kont *k3 = kont_alloc(alloc);
+	kont *k3 = arena_allocate(sizeof(*k3), 1);
 	k3->tag  = K3;
 	return k3;
 }
 
-void defunc_apply(kont_allocator *alloc, kont *k, int s);
+void defunc_apply(kont *k, int s);
 
-void defunc_sum_impl(kont_allocator *alloc, node *n, kont *k)
+void defunc_sum_impl(node *n, kont *k)
 {
 	if (n == NULL) {
-		defunc_apply(alloc, k, 0);
+		defunc_apply(k, 0);
 	} else {
-		kont *k1 = defunc_kont_k1(alloc, n, k);
-		defunc_sum_impl(alloc, n->left, k1);
+		kont *k1 = defunc_kont_k1(n, k);
+		defunc_sum_impl(n->left, k1);
 	}
 }
 
-void defunc_apply(kont_allocator *alloc, kont *k, int s)
+void defunc_apply(kont *k, int s)
 {
 	if (k->tag == K1) {
-		kont *k2 = defunc_kont_k2(alloc, s, k->u.k1.n, k->u.k1.k);
-		defunc_sum_impl(alloc, k->u.k1.n->right, k2);
+		kont *k2 = defunc_kont_k2(s, k->u.k1.n, k->u.k1.k);
+		defunc_sum_impl(k->u.k1.n->right, k2);
 	} else if (k->tag == K2) {
-		defunc_apply(alloc, k->u.k2.k, k->u.k2.s0 + s + k->u.k2.n->value);
+		defunc_apply(k->u.k2.k, k->u.k2.s0 + s + k->u.k2.n->value);
 	} else if (k->tag == K3) {
 		answer = s;
 	}
 }
 
-#define KONT_POOL_SIZE 128
-
 void defunc_sum(node *n)
 {
-	kont_allocator *alloc = kont_allocator_create(KONT_POOL_SIZE);
-
-	kont *k3 = defunc_kont_k3(alloc);
-	defunc_sum_impl(alloc, n, k3);
-
-	kont_allocator_destroy(alloc);
+	kont *k3 = defunc_kont_k3();
+	defunc_sum_impl(n, k3);
 }
 
 /*
@@ -205,7 +185,7 @@ void defunc_sum(node *n)
  * + inlined apply
  * + tail-call elimination of sum
  */
-void opt_sum_impl(kont_allocator *alloc, node *n, kont *k)
+void opt_sum_impl(node *n, kont *k)
 {
 	while (true) {
 		if (n == NULL) {
@@ -213,7 +193,7 @@ void opt_sum_impl(kont_allocator *alloc, node *n, kont *k)
 			while (true) {
 				if (k->tag == K1) {
 					n = k->u.k1.n->right;
-					k = defunc_kont_k2(alloc, s, k->u.k1.n, k->u.k1.k);
+					k = defunc_kont_k2(s, k->u.k1.n, k->u.k1.k);
 					break;
 				}
 				if (k->tag == K2) {
@@ -225,7 +205,7 @@ void opt_sum_impl(kont_allocator *alloc, node *n, kont *k)
 				}
 			}
 		} else {
-			k = defunc_kont_k1(alloc, n, k);
+			k = defunc_kont_k1(n, k);
 			n = n->left;
 		}
 	}
@@ -233,12 +213,8 @@ void opt_sum_impl(kont_allocator *alloc, node *n, kont *k)
 
 void opt_sum(node *n)
 {
-	kont_allocator *alloc = kont_allocator_create(KONT_POOL_SIZE);
-
-	kont *k3 = defunc_kont_k3(alloc);
-	opt_sum_impl(alloc, n, k3);
-
-	kont_allocator_destroy(alloc);
+	kont *k3 = defunc_kont_k3();
+	opt_sum_impl(n, k3);
 }
 
 /* use stack */
@@ -460,12 +436,10 @@ int main(void)
 		{NULL, NULL},
 	};
 
-#define NODE_POOL_SIZE 128
+	arena_init();
 
-	node_allocator *alloc = node_allocator_create(NODE_POOL_SIZE);
-
-#define BRANCH(value, left, right) node_create(alloc, value, left, right)
-#define LEAF(value)                node_create(alloc, value, NULL, NULL)
+#define BRANCH(value, left, right) node_create(value, left, right)
+#define LEAF(value)                node_create(value, NULL, NULL)
 
 	node *ns[] = {
 		LEAF(123),
@@ -495,10 +469,16 @@ int main(void)
 			assert(expected == answer);
 
 			printf("sum: %d\n", answer);
+
+			arena_deallocate(1); // continuation objects
 		}
 	}
 
-	node_allocator_destroy(alloc);
+	arena_deallocate(0); // nodes
+
+	// Clean up all arena memory before exit
+	arena_free(0);
+	arena_free(1);
 
 	return EXIT_SUCCESS;
 }
