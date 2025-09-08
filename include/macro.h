@@ -3,7 +3,7 @@
 
 #include <assert.h>
 #include <stddef.h>
-#include <stdio.h>
+#include <stdio.h> // IWYU pragma: keep
 
 #ifndef NDEBUG
 #	define DEBUG
