@@ -135,9 +135,9 @@ void arena_deallocate(size_t const t)
 {
 	if ((arena[t] = first[t].next) != NULL) {
 		arena[t]->avail = (char *)arena[t] + sizeof(*arena[t]);
-	} else {
-		arena[t] = &first[t];
+		return;
 	}
+	arena[t] = &first[t];
 }
 
 void arena_free(size_t const t)
