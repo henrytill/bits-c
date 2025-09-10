@@ -3,7 +3,8 @@
 
 #include "arena.h"
 
-int main(void)
+int
+main(void)
 {
 	struct point {
 		int x;

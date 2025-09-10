@@ -18,7 +18,8 @@ static unsigned const DELAY = 1U;
 
 static uint32_t const QUEUE_CAP = 1U;
 
-static void *produce(void *data)
+static void *
+produce(void *data)
 {
 	assert(data != NULL);
 	struct message_queue *queue = data;
@@ -36,7 +37,8 @@ static void *produce(void *data)
 	return NULL;
 }
 
-static int consume(struct message_queue *queue)
+static int
+consume(struct message_queue *queue)
 {
 	struct message consumed[EXPECTED_LEN];
 
@@ -54,7 +56,8 @@ static int consume(struct message_queue *queue)
 	return 0;
 }
 
-int main(void)
+int
+main(void)
 {
 	int ret = EXIT_FAILURE;
 

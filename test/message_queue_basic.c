@@ -13,19 +13,22 @@ static int const COUNT = 100;
 
 static uint32_t const QUEUE_CAP = 4U;
 
-static void fail(char const *msg)
+static void
+fail(char const *msg)
 {
 	eprintf("%s\n", msg);
 	exit(EXIT_FAILURE);
 }
 
-static void message_queue_fail(int rc, char const *msg)
+static void
+message_queue_fail(int rc, char const *msg)
 {
 	eprintf("%s: %s\n", msg, message_queue_failure_str((enum message_queue_failure)(-rc)));
 	exit(EXIT_FAILURE);
 }
 
-static void *produce(void *data)
+static void *
+produce(void *data)
 {
 	assert(data != NULL);
 
@@ -55,7 +58,8 @@ static void *produce(void *data)
 	return NULL;
 }
 
-static int consume(struct message_queue *queue, struct message *out)
+static int
+consume(struct message_queue *queue, struct message *out)
 {
 	int const rc = message_queue_get(queue, out);
 	if (rc < 0) {
@@ -65,7 +69,8 @@ static int consume(struct message_queue *queue, struct message *out)
 	return out->tag != MSG_TAG_QUIT;
 }
 
-int main(void)
+int
+main(void)
 {
 	int ret = EXIT_FAILURE;
 

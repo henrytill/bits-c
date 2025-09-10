@@ -52,7 +52,8 @@ struct table {
 	entry columns[];
 };
 
-table *table_create(size_t const len)
+table *
+table_create(size_t const len)
 {
 	if (!ISPOW2(len)) {
 		debug_fprintf(stderr, "%s: len must be a power of 2\n", __func__);
@@ -66,7 +67,8 @@ table *table_create(size_t const len)
 	return ret;
 }
 
-void table_destroy(table *t, void finalize(void *))
+void
+table_destroy(table *t, void finalize(void *))
 {
 	if (t == NULL) {
 		return;
@@ -97,7 +99,8 @@ void table_destroy(table *t, void finalize(void *))
 /// @return The index of the key
 ///
 /// @note The number of columns must be a power of 2
-static uint64_t get_index(size_t const len, char const *key)
+static uint64_t
+get_index(size_t const len, char const *key)
 {
 	assert(ISPOW2(len));
 	assert(key != NULL);
@@ -105,7 +108,8 @@ static uint64_t get_index(size_t const len, char const *key)
 	return hash & (uint64_t)(len - 1);
 }
 
-int table_put(table *t, char const *key, void *value)
+int
+table_put(table *t, char const *key, void *value)
 {
 	if (t == NULL) {
 		return -1;
@@ -149,7 +153,8 @@ int table_put(table *t, char const *key, void *value)
 	return 0;
 }
 
-void *table_get(table *t, char const *key)
+void *
+table_get(table *t, char const *key)
 {
 	if (t == NULL) {
 		return NULL;
@@ -171,7 +176,8 @@ void *table_get(table *t, char const *key)
 	return curr->value;
 }
 
-int table_delete(table *t, char const *key, void finalize(void *))
+int
+table_delete(table *t, char const *key, void finalize(void *))
 {
 	if (t == NULL) {
 		return -1;

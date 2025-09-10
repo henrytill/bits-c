@@ -1,6 +1,7 @@
 #include "expect.h"
 
-int main(void)
+int
+main(void)
 {
 	char *a = "hello, world!";
 	EXPECT(a, {"hello, world!"});

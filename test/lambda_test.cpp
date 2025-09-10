@@ -2,7 +2,8 @@
 
 #include "lambda.h"
 
-auto main(void) -> int
+auto
+main(void) -> int
 {
 	auto show = expr_show(std::cout);
 

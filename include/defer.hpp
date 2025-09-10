@@ -13,7 +13,8 @@ struct deferred {
 };
 
 template <typename F>
-inline deferred<F> make_deferred(F f)
+inline deferred<F>
+make_deferred(F f)
 {
 	return deferred<F>(f);
 }

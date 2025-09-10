@@ -9,7 +9,8 @@
 
 #define BUF_LEN 4096
 
-int expect_getpromote(void)
+int
+expect_getpromote(void)
 {
 	char *s = getenv(EXPECT_PROMOTE_VAR);
 	if (s == NULL) {
@@ -25,7 +26,8 @@ int expect_getpromote(void)
 	return p > 0L;
 }
 
-static int fcopy(char const *srcname, char const *dstname)
+static int
+fcopy(char const *srcname, char const *dstname)
 {
 	FILE *src = fopen(srcname, "rb");
 	if (src == NULL) {
@@ -68,7 +70,8 @@ static int fcopy(char const *srcname, char const *dstname)
 	}
 }
 
-int expect_insert(char const *filename, int lineno, char const *toinsert, int promote)
+int
+expect_insert(char const *filename, int lineno, char const *toinsert, int promote)
 {
 	char tempfilename[] = "tempXXXXXX";
 

@@ -71,11 +71,23 @@ struct expr_visitor {
 	virtual void visit(app &e) = 0;
 };
 
-void var::accept(expr_visitor &v) { v.visit(*this); }
+void
+var::accept(expr_visitor &v)
+{
+	v.visit(*this);
+}
 
-void lam::accept(expr_visitor &v) { v.visit(*this); }
+void
+lam::accept(expr_visitor &v)
+{
+	v.visit(*this);
+}
 
-void app::accept(expr_visitor &v) { v.visit(*this); }
+void
+app::accept(expr_visitor &v)
+{
+	v.visit(*this);
+}
 
 class expr_show : public expr_visitor {
 	std::ostream &out;
@@ -86,9 +98,14 @@ public:
 	{
 	}
 
-	void visit(var &e) override { out << e.name; }
+	void
+	visit(var &e) override
+	{
+		out << e.name;
+	}
 
-	void visit(lam &e) override
+	void
+	visit(lam &e) override
 	{
 		out << "(\\" << e.param;
 		out << " . ";
@@ -96,7 +113,8 @@ public:
 		out << ")";
 	}
 
-	void visit(app &e) override
+	void
+	visit(app &e) override
 	{
 		out << "(";
 		e.fun->accept(*this);
@@ -105,7 +123,11 @@ public:
 		out << ")";
 	}
 
-	void operator()(expr &e) { e.accept(*this); }
+	void
+	operator()(expr &e)
+	{
+		e.accept(*this);
+	}
 };
 
 // Local Variables:

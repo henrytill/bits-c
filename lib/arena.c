@@ -23,7 +23,8 @@ static size_t const MIN_ARENA_SIZE = (size_t)64 * 1024; // 64KB minimum arena si
 static size_t const WORD_SIZE = sizeof(void *);
 static size_t const GROWTH_FACTOR = 2; // Double arena size when growing
 
-static size_t get_pagesize(void)
+static size_t
+get_pagesize(void)
 {
 	long const result = sysconf(_SC_PAGESIZE);
 	STATIC_ASSERT(SIZE_MAX >> 1 == LONG_MAX);
@@ -32,7 +33,8 @@ static size_t get_pagesize(void)
 	return (size_t)result;
 }
 
-static inline size_t nextpage(size_t const size)
+static inline size_t
+nextpage(size_t const size)
 {
 	static size_t pagesize = 0;
 	if (pagesize == 0) {
@@ -43,13 +45,15 @@ static inline size_t nextpage(size_t const size)
 	return (size + pagesize - 1) & ~(pagesize - 1);
 }
 
-static inline size_t align_up(size_t const size, size_t const alignment)
+static inline size_t
+align_up(size_t const size, size_t const alignment)
 {
 	assert(ISPOW2(alignment));
 	return (size + alignment - 1) & ~(alignment - 1);
 }
 
-static inline size_t calc_size(size_t const n)
+static inline size_t
+calc_size(size_t const n)
 {
 	if (n > SIZE_MAX - sizeof(struct arena) - MIN_ARENA_SIZE) {
 		return 0;
@@ -66,7 +70,8 @@ static inline size_t calc_size(size_t const n)
 	return nextpage(arena_size);
 }
 
-void *arena_allocate(size_t const n, size_t const t)
+void *
+arena_allocate(size_t const n, size_t const t)
 {
 	struct arena *ap = NULL;
 	for (ap = arena[t]; ap->avail + n > ap->limit; arena[t] = ap) {
@@ -97,7 +102,8 @@ void *arena_allocate(size_t const n, size_t const t)
 	return ap->avail - n;
 }
 
-void arena_deallocate(size_t const t)
+void
+arena_deallocate(size_t const t)
 {
 	if ((arena[t] = first[t].next) != NULL) {
 		arena[t]->avail = (char *)arena[t] + sizeof(*arena[t]);
@@ -106,7 +112,8 @@ void arena_deallocate(size_t const t)
 	arena[t] = &first[t];
 }
 
-void arena_free(size_t const t)
+void
+arena_free(size_t const t)
 {
 	struct arena *ap = first[t].next;
 	while (ap != NULL) {

@@ -14,7 +14,8 @@ static struct test_vector {
 	{NULL, NULL},
 };
 
-int main(void)
+int
+main(void)
 {
 	int ret = EXIT_FAILURE;
 

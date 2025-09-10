@@ -25,7 +25,8 @@ struct person {
 	person *next;
 };
 
-static void person_hello(person const *self)
+static void
+person_hello(person const *self)
 {
 	printf("Hello, my name is %s, I'm %d years old.\n",
 		self->name,
@@ -43,7 +44,8 @@ struct student {
 };
 
 /// Derived class override of person_ops::hello
-static void student_hello(person const *self)
+static void
+student_hello(person const *self)
 {
 	student const *s = CONTAINER_OF(self, student, person);
 	printf("Hello, my name is %s, I'm %d years old, I'm a student of %s.\n",
@@ -57,7 +59,8 @@ static person_ops const STUDENT_OPS = {
 	.hello = student_hello,
 };
 
-int main(void)
+int
+main(void)
 {
 	student carol = {
 		.person = {

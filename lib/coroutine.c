@@ -31,14 +31,16 @@ struct start_params {
 	void *old_frame_pointer;
 };
 
-void coroutine_yield(coroutine *c)
+void
+coroutine_yield(coroutine *c)
 {
 	if (setjmp(c->callee) == 0) {
 		longjmp(c->caller, WORKING);
 	}
 }
 
-int coroutine_next(coroutine *c)
+int
+coroutine_next(coroutine *c)
 {
 	int ret = setjmp(c->caller);
 	if (ret == 0) {
@@ -48,7 +50,8 @@ int coroutine_next(coroutine *c)
 	}
 }
 
-void coroutine_start(coroutine *c, func f, void *arg, void *stack_pointer)
+void
+coroutine_start(coroutine *c, func f, void *arg, void *stack_pointer)
 {
 	struct start_params *p = ((struct start_params *)stack_pointer) - 1;
 

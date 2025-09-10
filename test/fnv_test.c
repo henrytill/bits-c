@@ -18,7 +18,8 @@ static struct test_vector {
 	{NULL, 0},
 };
 
-static bool check(char const input[static 1], uint64_t const expected, uint64_t const actual)
+static bool
+check(char const input[static 1], uint64_t const expected, uint64_t const actual)
 {
 	if (expected == actual) {
 		return true;
@@ -27,7 +28,8 @@ static bool check(char const input[static 1], uint64_t const expected, uint64_t 
 	return false;
 }
 
-int main(void)
+int
+main(void)
 {
 	char const *input = NULL;
 	for (size_t i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i) {

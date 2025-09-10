@@ -20,7 +20,8 @@ struct node {
 	node *right;
 };
 
-node *node_create(int value, node *left, node *right)
+node *
+node_create(int value, node *left, node *right)
 {
 	node *ret = arena_allocate(sizeof(*ret), 0);
 	ret->value = value;
@@ -31,7 +32,8 @@ node *node_create(int value, node *left, node *right)
 
 /* recursive */
 
-int recursive_sum(node *n)
+int
+recursive_sum(node *n)
 {
 	if (n == NULL) {
 		return 0;
@@ -44,7 +46,8 @@ int recursive_sum(node *n)
 #ifdef HAS_NESTED_FUNCTIONS
 /* cps with gcc nested functions */
 
-void nested_sum_impl(node *n, void k(int))
+void
+nested_sum_impl(node *n, void k(int))
 {
 	if (n == NULL) {
 		k(0);
@@ -58,7 +61,8 @@ void nested_sum_impl(node *n, void k(int))
 	}
 }
 
-void nested_sum(node *n)
+void
+nested_sum(node *n)
 {
 	void k3(int s) { answer = s; }
 	nested_sum_impl(n, k3);
@@ -70,7 +74,8 @@ void nested_sum(node *n)
 
 typedef void (^kontb)(int);
 
-void blocks_sum_impl(node *n, kontb k)
+void
+blocks_sum_impl(node *n, kontb k)
 {
 	if (n == NULL) {
 		k(0);
@@ -85,7 +90,8 @@ void blocks_sum_impl(node *n, kontb k)
 	}
 }
 
-void blocks_sum(node *n)
+void
+blocks_sum(node *n)
 {
 	kontb k3 = ^(int s) { answer = s; };
 	blocks_sum_impl(n, k3);
@@ -119,7 +125,8 @@ struct kont {
 	} u;
 };
 
-kont *defunc_kont_k1(node *n, kont *k)
+kont *
+defunc_kont_k1(node *n, kont *k)
 {
 	kont *k1 = arena_allocate(sizeof(*k1), 1);
 
@@ -130,7 +137,8 @@ kont *defunc_kont_k1(node *n, kont *k)
 	return k1;
 }
 
-kont *defunc_kont_k2(int s0, node *n, kont *k)
+kont *
+defunc_kont_k2(int s0, node *n, kont *k)
 {
 	kont *k2 = arena_allocate(sizeof(*k2), 1);
 
@@ -142,7 +150,8 @@ kont *defunc_kont_k2(int s0, node *n, kont *k)
 	return k2;
 }
 
-kont *defunc_kont_k3(void)
+kont *
+defunc_kont_k3(void)
 {
 	kont *k3 = arena_allocate(sizeof(*k3), 1);
 	k3->tag = K3;
@@ -151,7 +160,8 @@ kont *defunc_kont_k3(void)
 
 void defunc_apply(kont *k, int s);
 
-void defunc_sum_impl(node *n, kont *k)
+void
+defunc_sum_impl(node *n, kont *k)
 {
 	if (n == NULL) {
 		defunc_apply(k, 0);
@@ -161,7 +171,8 @@ void defunc_sum_impl(node *n, kont *k)
 	}
 }
 
-void defunc_apply(kont *k, int s)
+void
+defunc_apply(kont *k, int s)
 {
 	if (k->tag == K1) {
 		kont *k2 = defunc_kont_k2(s, k->u.k1.n, k->u.k1.k);
@@ -173,7 +184,8 @@ void defunc_apply(kont *k, int s)
 	}
 }
 
-void defunc_sum(node *n)
+void
+defunc_sum(node *n)
 {
 	kont *k3 = defunc_kont_k3();
 	defunc_sum_impl(n, k3);
@@ -185,7 +197,8 @@ void defunc_sum(node *n)
  * + inlined apply
  * + tail-call elimination of sum
  */
-void opt_sum_impl(node *n, kont *k)
+void
+opt_sum_impl(node *n, kont *k)
 {
 	while (true) {
 		if (n == NULL) {
@@ -211,7 +224,8 @@ void opt_sum_impl(node *n, kont *k)
 	}
 }
 
-void opt_sum(node *n)
+void
+opt_sum(node *n)
 {
 	kont *k3 = defunc_kont_k3();
 	opt_sum_impl(n, k3);
@@ -234,19 +248,22 @@ struct vkont {
 	} u;
 };
 
-struct vkont vkont_k1(node *n)
+struct vkont
+vkont_k1(node *n)
 {
 	struct vkont ret = {.tag = K1, .u = {.k1 = {.n = n}}};
 	return ret;
 }
 
-struct vkont vkont_k2(int s0, node *n)
+struct vkont
+vkont_k2(int s0, node *n)
 {
 	struct vkont ret = {.tag = K2, .u = {.k2 = {.s0 = s0, .n = n}}};
 	return ret;
 }
 
-struct vkont vkont_k3(void)
+struct vkont
+vkont_k3(void)
 {
 	struct vkont ret = {.tag = K3};
 	return ret;
@@ -260,7 +277,8 @@ struct vkont_stack {
 	struct vkont konts[];
 };
 
-vkont_stack *vkont_stack_create(size_t initial_capacity)
+vkont_stack *
+vkont_stack_create(size_t initial_capacity)
 {
 	vkont_stack *stack = calloc(1, sizeof(vkont_stack) + (initial_capacity * sizeof(struct vkont)));
 	assert(stack != NULL);
@@ -269,17 +287,20 @@ vkont_stack *vkont_stack_create(size_t initial_capacity)
 	return stack;
 }
 
-void vkont_stack_destroy(vkont_stack *stack)
+void
+vkont_stack_destroy(vkont_stack *stack)
 {
 	free(stack);
 }
 
-bool vkont_stack_is_empty(vkont_stack *stack)
+bool
+vkont_stack_is_empty(vkont_stack *stack)
 {
 	return stack->top == 0;
 }
 
-void vkont_stack_resize(vkont_stack **stack_ptr)
+void
+vkont_stack_resize(vkont_stack **stack_ptr)
 {
 	vkont_stack *stack = *stack_ptr;
 
@@ -291,7 +312,8 @@ void vkont_stack_resize(vkont_stack **stack_ptr)
 	*stack_ptr = new_stack;
 }
 
-void vkont_stack_push(vkont_stack **stack_ptr, struct vkont vk)
+void
+vkont_stack_push(vkont_stack **stack_ptr, struct vkont vk)
 {
 	vkont_stack *stack = *stack_ptr;
 	if (stack->top == stack->capacity) {
@@ -301,13 +323,15 @@ void vkont_stack_push(vkont_stack **stack_ptr, struct vkont vk)
 	stack->konts[stack->top++] = vk;
 }
 
-struct vkont vkont_stack_pop(vkont_stack *stack)
+struct vkont
+vkont_stack_pop(vkont_stack *stack)
 {
 	assert(!vkont_stack_is_empty(stack));
 	return stack->konts[--stack->top];
 }
 
-struct vkont *vkont_stack_peek(vkont_stack *stack)
+struct vkont *
+vkont_stack_peek(vkont_stack *stack)
 {
 	if (vkont_stack_is_empty(stack)) {
 		return NULL; // Or handle error as appropriate
@@ -315,7 +339,8 @@ struct vkont *vkont_stack_peek(vkont_stack *stack)
 	return &stack->konts[stack->top - 1];
 }
 
-void stack_sum_impl(node *n, vkont_stack *ks)
+void
+stack_sum_impl(node *n, vkont_stack *ks)
 {
 	while (true) {
 		if (n == NULL) {
@@ -345,7 +370,8 @@ void stack_sum_impl(node *n, vkont_stack *ks)
 	}
 }
 
-void stack_sum(node *n)
+void
+stack_sum(node *n)
 {
 	vkont_stack *ks = vkont_stack_create(128);
 	vkont_stack_push(&ks, vkont_k3());
@@ -362,7 +388,8 @@ struct stack_node {
 	stack_node *next;
 };
 
-void push(stack_node **top, node *n)
+void
+push(stack_node **top, node *n)
 {
 	stack_node *new = calloc(1, sizeof(*new));
 	assert(new != NULL);
@@ -372,7 +399,8 @@ void push(stack_node **top, node *n)
 	*top = new;
 }
 
-node *pop(stack_node **top)
+node *
+pop(stack_node **top)
 {
 	stack_node *tmp = *top;
 	if (tmp == NULL) {
@@ -386,7 +414,8 @@ node *pop(stack_node **top)
 	return ret;
 }
 
-void iterative_sum(node *root)
+void
+iterative_sum(node *root)
 {
 	if (root == NULL) {
 		answer = 0;
@@ -420,7 +449,8 @@ struct algo {
 	void (*f)(node *n);
 };
 
-int main(void)
+int
+main(void)
 {
 	algo algos[] = {
 #ifdef HAS_NESTED_FUNCTIONS

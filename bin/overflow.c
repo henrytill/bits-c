@@ -2,12 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static int add1(int const x)
+static int
+add1(int const x)
 {
 	return x + 1;
 }
 
-int main(void)
+int
+main(void)
 {
 	int ret = add1(INT_MAX);
 	printf("ret: %d", ret);

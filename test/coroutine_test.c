@@ -18,7 +18,8 @@ struct iter {
 	int y;
 };
 
-void iterate(void *p)
+void
+iterate(void *p)
 {
 	struct iter *it = p;
 
@@ -31,7 +32,8 @@ void iterate(void *p)
 	}
 }
 
-int main(void)
+int
+main(void)
 {
 	coroutine c;
 	intptr_t stack[STACK_SIZE];

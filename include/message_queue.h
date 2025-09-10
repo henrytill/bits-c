@@ -17,7 +17,8 @@ enum message_queue_failure {
 	MSGQ_FAILURE_MAX = 10,
 };
 
-static inline char const *message_queue_failure_str(enum message_queue_failure failure)
+static inline char const *
+message_queue_failure_str(enum message_queue_failure failure)
 {
 	switch (failure) {
 	case MSGQ_FAILURE_NULL_POINTER:
@@ -50,7 +51,8 @@ enum tag {
 	MSG_TAG_MAX = 3,
 };
 
-static inline char const *message_tag_str(enum tag tag)
+static inline char const *
+message_tag_str(enum tag tag)
 {
 	switch (tag) {
 	case MSG_TAG_NONE:

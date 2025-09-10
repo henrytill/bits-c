@@ -15,6 +15,7 @@ AllowShortLoopsOnASingleLine: false
 BasedOnStyle: LLVM
 BinPackArguments: false
 BinPackParameters: false
+BreakAfterReturnType: AllDefinitions
 BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeBraces: WebKit
 BreakBeforeTernaryOperators: true

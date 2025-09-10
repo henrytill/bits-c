@@ -22,7 +22,8 @@
 
 static GLint att[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None};
 
-static void print_gl_version(void)
+static void
+print_gl_version(void)
 {
 	int major = 0;
 	int minor = 0;
@@ -31,13 +32,15 @@ static void print_gl_version(void)
 	printf("OpenGL Version: %d.%d\n", major, minor);
 }
 
-static void print_glew_version(void)
+static void
+print_glew_version(void)
 {
 	GLubyte const *version = glewGetString(GLEW_VERSION);
 	printf("GLEW Version: %s\n", version);
 }
 
-void GLAPIENTRY message_callback(
+void GLAPIENTRY
+message_callback(
 	UNUSED GLenum source,
 	GLenum type,
 	UNUSED GLuint id,
@@ -53,7 +56,8 @@ void GLAPIENTRY message_callback(
 		message);
 }
 
-static void draw_quad(void)
+static void
+draw_quad(void)
 {
 	glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -78,7 +82,8 @@ static void draw_quad(void)
 	glEnd();
 }
 
-int main(void)
+int
+main(void)
 {
 	int ret = EXIT_FAILURE;
 
