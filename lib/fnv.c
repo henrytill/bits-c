@@ -15,7 +15,7 @@ fnv_hash(size_t const data_len, unsigned char const data[data_len])
 {
 	uint64_t hash = FNV_OFFSET_BASIS;
 
-	for (size_t i = 0; i < data_len; ++i) {
+	for(size_t i = 0; i < data_len; ++i) {
 		hash ^= data[i];
 		hash *= FNV_PRIME;
 	}

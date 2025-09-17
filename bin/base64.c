@@ -8,7 +8,7 @@
 #include "macro.h"
 
 #define TEST(e)                                                 \
-	if (!(e)) {                                             \
+	if(!(e)) {                                              \
 		eprintf("%s:%d: %s\n", __FILE__, __LINE__, #e); \
 		exit(EXIT_FAILURE);                             \
 	}
@@ -85,7 +85,7 @@ main(void)
 	char actual[BASE64_LEN_MAX + 1];
 	char output[INPUT_LEN_MAX + 1];
 
-	for (size_t i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i) {
+	for(size_t i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i) {
 		ARRAY_CLEAR(actual);
 		ARRAY_CLEAR(output);
 

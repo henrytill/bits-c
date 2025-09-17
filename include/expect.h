@@ -19,11 +19,11 @@ int expect_insert(char const *filename, int lineno, char const *toinsert, int pr
 #define EXPECT(expected_, actual_)                                                 \
 	do {                                                                       \
 		char const *a_[1] = actual_;                                       \
-		if (strcmp(expected_, a_[0]) == 0) {                               \
+		if(strcmp(expected_, a_[0]) == 0) {                                \
 			break;                                                     \
 		}                                                                  \
 		expect_insert(__FILE__, __LINE__, expected_, expect_getpromote()); \
 		exit(EXIT_FAILURE);                                                \
-	} while (0)
+	} while(0)
 
 #endif // C_BITS_EXPECT_H

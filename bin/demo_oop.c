@@ -84,7 +84,7 @@ main(void)
 		.next = &bob,
 	};
 
-	for (person const *p = &alice; p != NULL; p = p->next) {
+	for(person const *p = &alice; p != NULL; p = p->next) {
 		SEND(p, ops->hello);
 	}
 

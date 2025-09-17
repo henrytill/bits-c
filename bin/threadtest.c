@@ -33,7 +33,7 @@ start(void *data)
 		info->thread_num,
 		(void *)&info,
 		info->arg);
-	for (char *p = info->arg; *p != '\0'; ++p) {
+	for(char *p = info->arg; *p != '\0'; ++p) {
 		*p = (char)toupper(*p);
 	}
 	return info->arg;
@@ -43,7 +43,7 @@ static void
 run_threads(size_t stack_size, int num_threads, char *args[])
 {
 	printf("num_threads: %d\n", num_threads);
-	if (num_threads < 1) {
+	if(num_threads < 1) {
 		return;
 	}
 
@@ -51,35 +51,35 @@ run_threads(size_t stack_size, int num_threads, char *args[])
 
 	pthread_attr_t attr;
 	rc = pthread_attr_init(&attr);
-	if (rc != 0) {
+	if(rc != 0) {
 		handle_errno(rc, "pthread_attr_init");
 	}
 
-	if (stack_size > 0) {
+	if(stack_size > 0) {
 		rc = pthread_attr_setstacksize(&attr, stack_size);
-		if (rc != 0) {
+		if(rc != 0) {
 			handle_errno(rc, "pthread_attr_setstacksize");
 		}
 	}
 
-	for (int i = 0; i < num_threads; ++i) {
+	for(int i = 0; i < num_threads; ++i) {
 		info[i].thread_num = i + 1;
 		info[i].arg = args[i];
 		rc = pthread_create(&info[i].thread_id, &attr, &start, &info[i]);
-		if (rc != 0) {
+		if(rc != 0) {
 			handle_errno(rc, "pthread_create");
 		}
 	}
 
 	rc = pthread_attr_destroy(&attr);
-	if (rc != 0) {
+	if(rc != 0) {
 		handle_errno(rc, "pthread_attr_destroy");
 	}
 
 	void *res = NULL;
-	for (int i = 0; i < num_threads; ++i) {
+	for(int i = 0; i < num_threads; ++i) {
 		rc = pthread_join(info[i].thread_id, &res);
-		if (rc != 0) {
+		if(rc != 0) {
 			handle_errno(rc, "pthread_join");
 		}
 		printf("Joined with thread %d; returned value was %s\n",
@@ -95,8 +95,8 @@ main(int argc, char *argv[])
 
 	size_t stack_size = 0;
 
-	while ((opt = getopt(argc, argv, "s:")) != -1) {
-		switch (opt) {
+	while((opt = getopt(argc, argv, "s:")) != -1) {
+		switch(opt) {
 		case 's':
 			stack_size = strtoul(optarg, NULL, 0);
 			break;
@@ -108,7 +108,7 @@ main(int argc, char *argv[])
 
 	int const num_threads = argc - optind;
 
-	if (num_threads > MAX_THREADS) {
+	if(num_threads > MAX_THREADS) {
 		eprintf("Too many threads; max is %d\n", MAX_THREADS);
 		return EXIT_FAILURE;
 	}

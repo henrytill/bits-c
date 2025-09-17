@@ -25,37 +25,37 @@ main(void)
 	struct table *t = table_create(8);
 
 	value = table_get(t, "not_in_table");
-	if (value != NULL) {
+	if(value != NULL) {
 		goto out_table_destroy;
 	}
 
-	for (size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
+	for(size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
 		table_put(t, key, TEST_VECTORS[i].value);
 	}
 
-	for (size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
+	for(size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
 		value = table_get(t, key);
-		if (strcmp(TEST_VECTORS[i].value, value) != 0) {
+		if(strcmp(TEST_VECTORS[i].value, value) != 0) {
 			goto out_table_destroy;
 		}
 	}
 
 	value = table_get(t, "not_in_table");
-	if (value != NULL) {
+	if(value != NULL) {
 		goto out_table_destroy;
 	}
 
 	int rc = -1;
-	for (size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
+	for(size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
 		rc = table_delete(t, key, NULL);
-		if (rc != 0) {
+		if(rc != 0) {
 			goto out_table_destroy;
 		}
 	}
 
-	for (size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
+	for(size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
 		value = table_get(t, key);
-		if (value != NULL) {
+		if(value != NULL) {
 			goto out_table_destroy;
 		}
 	}

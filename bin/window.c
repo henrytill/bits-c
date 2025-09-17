@@ -88,7 +88,7 @@ main(void)
 	int ret = EXIT_FAILURE;
 
 	Display *dpy = XOpenDisplay(NULL);
-	if (dpy == NULL) {
+	if(dpy == NULL) {
 		eprintf("Failed to connect to X server\n");
 		return EXIT_FAILURE;
 	}
@@ -96,7 +96,7 @@ main(void)
 	Window root = DefaultRootWindow(dpy);
 
 	XVisualInfo *vi = glXChooseVisual(dpy, 0, att);
-	if (vi == NULL) {
+	if(vi == NULL) {
 		eprintf("No visual found\n");
 		goto out_close_display;
 	}
@@ -124,7 +124,7 @@ main(void)
 	);
 
 	XClassHint *class_hint = XAllocClassHint();
-	if (class_hint == NULL) {
+	if(class_hint == NULL) {
 		eprintf("Failed to allocate class hint\n");
 		goto out_destroy_window;
 	}
@@ -134,7 +134,7 @@ main(void)
 
 	Atom wm_delete_window = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
 	int rc = XSetWMProtocols(dpy, win, &wm_delete_window, 1);
-	if (rc != 1) {
+	if(rc != 1) {
 		eprintf("Failed to XSetWMProtocols\n");
 		goto out_free_class_hint;
 	}
@@ -143,7 +143,7 @@ main(void)
 	XStoreName(dpy, win, "c_bits_window");
 
 	GLXContext glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
-	if (glc == NULL) {
+	if(glc == NULL) {
 		eprintf("Failed to create OpenGL context\n");
 		goto out_free_class_hint;
 	}
@@ -151,7 +151,7 @@ main(void)
 	glXMakeCurrent(dpy, win, glc);
 
 	GLenum err = glewInit();
-	if (err != GLEW_OK) {
+	if(err != GLEW_OK) {
 		eprintf("Failed to initialize GLEW: %s\n", glewGetErrorString(err));
 		goto out_destroy_context;
 	}
@@ -161,7 +161,7 @@ main(void)
 
 	glEnable(GL_DEPTH_TEST);
 
-	if (GLEW_ARB_debug_output) {
+	if(GLEW_ARB_debug_output) {
 		glEnable(GL_DEBUG_OUTPUT);
 		glDebugMessageCallback(message_callback, NULL);
 		printf("Enabled debug output\n");
@@ -171,9 +171,9 @@ main(void)
 	XWindowAttributes gwa;
 
 	int loop_stat = 1;
-	while (loop_stat == 1) {
+	while(loop_stat == 1) {
 		XNextEvent(dpy, &xev);
-		switch (xev.type) {
+		switch(xev.type) {
 		case Expose:
 			XGetWindowAttributes(dpy, win, &gwa);
 			glViewport(0, 0, gwa.width, gwa.height);
@@ -181,7 +181,7 @@ main(void)
 			glXSwapBuffers(dpy, win);
 			break;
 		case ClientMessage:
-			if (xev.xclient.data.l[0] == (long)wm_delete_window) {
+			if(xev.xclient.data.l[0] == (long)wm_delete_window) {
 				printf("Received WM_DELETE_WINDOW\n");
 				loop_stat = 0;
 			}

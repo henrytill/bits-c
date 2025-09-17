@@ -13,14 +13,14 @@ int
 expect_getpromote(void)
 {
 	char *s = getenv(EXPECT_PROMOTE_VAR);
-	if (s == NULL) {
+	if(s == NULL) {
 		return 0;
 	}
 
 	char *end = NULL;
 	long const p = strtol(s, &end, 10);
 
-	if (s == end) {
+	if(s == end) {
 		return 0;
 	}
 	return p > 0L;
@@ -30,13 +30,13 @@ static int
 fcopy(char const *srcname, char const *dstname)
 {
 	FILE *src = fopen(srcname, "rb");
-	if (src == NULL) {
+	if(src == NULL) {
 		perror("Error opening source file");
 		return -1;
 	}
 
 	FILE *dst = fopen(dstname, "wb");
-	if (dst == NULL) {
+	if(dst == NULL) {
 		perror("Error opening destination file");
 		(void)fclose(src);
 		return -1;
@@ -48,14 +48,14 @@ fcopy(char const *srcname, char const *dstname)
 		char buf[BUF_LEN] = {0};
 		size_t nread = 0;
 
-		while (!feof(src)) {
+		while(!feof(src)) {
 			nread = fread(buf, 1, BUF_LEN, src);
-			if (ferror(src) != 0) {
+			if(ferror(src) != 0) {
 				perror("Error reading from source file");
 				goto cleanup;
 			}
-			if (nread > 0) {
-				if (fwrite(buf, 1, nread, dst) != nread) {
+			if(nread > 0) {
+				if(fwrite(buf, 1, nread, dst) != nread) {
 					perror("Error writing to destination file");
 					goto cleanup;
 				}
@@ -77,20 +77,20 @@ expect_insert(char const *filename, int lineno, char const *toinsert, int promot
 
 	{
 		int tempfd = mkstemp(tempfilename);
-		if (tempfd == -1) {
+		if(tempfd == -1) {
 			perror("Error creating temporary file");
 			return -1;
 		}
 
 		FILE *input = fopen(filename, "r");
-		if (input == NULL) {
+		if(input == NULL) {
 			perror("Error opening input file");
 			close(tempfd);
 			return -1;
 		}
 
 		FILE *output = fdopen(tempfd, "w");
-		if (output == NULL) {
+		if(output == NULL) {
 			perror("Error opening temporary file");
 			close(tempfd);
 			(void)fclose(input);
@@ -102,11 +102,11 @@ expect_insert(char const *filename, int lineno, char const *toinsert, int promot
 			char *line = NULL;
 			size_t len = 0;
 
-			for (int i = 1; getline(&line, &len, input) != -1; ++i) {
-				if (i == lineno) {
+			for(int i = 1; getline(&line, &len, input) != -1; ++i) {
+				if(i == lineno) {
 					char *open = strchr(line, '{');
 					char *close = strrchr(line, '}');
-					if (open != NULL && close != NULL && open < close) {
+					if(open != NULL && close != NULL && open < close) {
 						(void)fwrite(line, 1, (size_t)(open - line + 1), output);
 						(void)fprintf(output, "\"%s\"", toinsert);
 						(void)fputs(close, output);
@@ -128,26 +128,26 @@ expect_insert(char const *filename, int lineno, char const *toinsert, int promot
 
 	{
 		pid_t pid = fork();
-		if (pid == -1) {
+		if(pid == -1) {
 			perror("fork");
 			exit(EXIT_FAILURE);
-		} else if (pid == 0) {
+		} else if(pid == 0) {
 			char *argv[] = {"diff", "-u", (char *)filename, tempfilename, NULL};
 			return execv(EXPECT_DIFF_PROGRAM, argv);
 		} else {
 			int rc = -1;
 			wait(NULL);
-			if (promote) {
+			if(promote) {
 				printf("Promoting %s to %s\n", tempfilename, filename);
 				rc = fcopy(tempfilename, filename);
-				if (rc != 0) {
+				if(rc != 0) {
 					perror("Error copying temporary file to original");
 					unlink(tempfilename);
 					return -1;
 				}
 			}
 			rc = unlink(tempfilename);
-			if (rc != 0) {
+			if(rc != 0) {
 				perror("Warning: Could not delete temporary file");
 			}
 			return 0;

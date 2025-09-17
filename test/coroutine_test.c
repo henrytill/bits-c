@@ -23,8 +23,8 @@ iterate(void *p)
 {
 	struct iter *it = p;
 
-	for (int x = 0; x < it->xmax; ++x) {
-		for (int y = 0; y < it->ymax; ++y) {
+	for(int x = 0; x < it->xmax; ++x) {
+		for(int y = 0; y < it->ymax; ++y) {
 			it->x = x;
 			it->y = y;
 			coroutine_yield(it->c);
@@ -49,7 +49,7 @@ main(void)
 
 	stack_pointer = stack + STACK_SIZE; /* stacks typically grow downward (arch-dependent) */
 	coroutine_start(it.c, &iterate, &it, stack_pointer);
-	while (coroutine_next(it.c)) {
+	while(coroutine_next(it.c)) {
 		printf("%d %d\n", it.x, it.y);
 	}
 	return EXIT_SUCCESS;

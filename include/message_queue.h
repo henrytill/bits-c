@@ -20,7 +20,7 @@ enum message_queue_failure {
 static inline char const *
 message_queue_failure_str(enum message_queue_failure failure)
 {
-	switch (failure) {
+	switch(failure) {
 	case MSGQ_FAILURE_NULL_POINTER:
 		return "NULL pointer";
 	case MSGQ_FAILURE_MALLOC:
@@ -54,7 +54,7 @@ enum tag {
 static inline char const *
 message_tag_str(enum tag tag)
 {
-	switch (tag) {
+	switch(tag) {
 	case MSG_TAG_NONE:
 		return "NONE";
 	case MSG_TAG_SOME:

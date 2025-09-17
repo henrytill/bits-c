@@ -34,7 +34,7 @@ struct start_params {
 void
 coroutine_yield(coroutine *c)
 {
-	if (setjmp(c->callee) == 0) {
+	if(setjmp(c->callee) == 0) {
 		longjmp(c->caller, WORKING);
 	}
 }
@@ -43,7 +43,7 @@ int
 coroutine_next(coroutine *c)
 {
 	int ret = setjmp(c->caller);
-	if (ret == 0) {
+	if(ret == 0) {
 		longjmp(c->callee, WORKING);
 	} else {
 		return ret == WORKING;
@@ -66,7 +66,7 @@ coroutine_start(coroutine *c, func f, void *arg, void *stack_pointer)
 	/* ...so we read p back from $fp */
 	get_frame_pointer(p);
 	/* and now we read our params from p */
-	if (setjmp(p->c->callee) == 0) {
+	if(setjmp(p->c->callee) == 0) {
 		set_stack_pointer(p->old_stack_pointer);
 		set_frame_pointer(p->old_frame_pointer);
 		return;

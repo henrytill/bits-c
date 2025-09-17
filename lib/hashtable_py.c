@@ -10,12 +10,12 @@ py_table_create(__attribute__((unused)) PyObject *self, PyObject *args)
 	size_t columns_len = 0;
 
 	int const rc = PyArg_ParseTuple(args, "n", &columns_len);
-	if (rc == 0) {
+	if(rc == 0) {
 		return NULL;
 	}
 
 	struct table *const t = table_create(columns_len);
-	if (t == NULL) {
+	if(t == NULL) {
 		PyErr_SetString(PyExc_RuntimeError, "Failed to create table");
 		return NULL;
 	}
@@ -35,12 +35,12 @@ py_table_destroy(__attribute__((unused)) PyObject *self, PyObject *args)
 	PyObject *py_table = NULL;
 
 	int const rc = PyArg_ParseTuple(args, "O", &py_table);
-	if (rc == 0) {
+	if(rc == 0) {
 		return NULL;
 	}
 
 	struct table *const t = PyCapsule_GetPointer(py_table, "hashtable.table");
-	if (t == NULL) {
+	if(t == NULL) {
 		PyErr_SetString(PyExc_RuntimeError, "Invalid table capsule");
 		return NULL;
 	}
@@ -57,19 +57,19 @@ py_table_put(__attribute__((unused)) PyObject *self, PyObject *args)
 	PyObject *value = NULL;
 
 	int const rc = PyArg_ParseTuple(args, "OsO", &py_table, &key, &value);
-	if (rc == 0) {
+	if(rc == 0) {
 		return NULL;
 	}
 
 	struct table *const t = PyCapsule_GetPointer(py_table, "hashtable.table");
-	if (t == NULL) {
+	if(t == NULL) {
 		PyErr_SetString(PyExc_RuntimeError, "Invalid table capsule");
 		return NULL;
 	}
 
 	Py_XINCREF(value); // optimistically increment reference count
 	int const result = table_put(t, key, value);
-	if (result != 0) {
+	if(result != 0) {
 		Py_XDECREF(value); // decrement reference count if put failed
 		PyErr_SetString(PyExc_RuntimeError, "put failed");
 		return NULL;
@@ -85,18 +85,18 @@ py_table_get(__attribute__((unused)) PyObject *self, PyObject *args)
 	char const *key = NULL;
 
 	int const rc = PyArg_ParseTuple(args, "Os", &py_table, &key);
-	if (rc == 0) {
+	if(rc == 0) {
 		return NULL;
 	}
 
 	struct table *const t = PyCapsule_GetPointer(py_table, "hashtable.table");
-	if (t == NULL) {
+	if(t == NULL) {
 		PyErr_SetString(PyExc_RuntimeError, "Invalid table capsule");
 		return NULL;
 	}
 
 	PyObject *result = table_get(t, key);
-	if (result == NULL) {
+	if(result == NULL) {
 		Py_RETURN_NONE;
 	}
 

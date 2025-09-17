@@ -55,12 +55,12 @@ struct table {
 table *
 table_create(size_t const len)
 {
-	if (!ISPOW2(len)) {
+	if(!ISPOW2(len)) {
 		debug_fprintf(stderr, "%s: len must be a power of 2\n", __func__);
 		return NULL;
 	}
 	table *ret = calloc(1, sizeof(*ret) + (len * sizeof(entry)));
-	if (ret == NULL) {
+	if(ret == NULL) {
 		return NULL;
 	}
 	ret->len = len;
@@ -70,22 +70,22 @@ table_create(size_t const len)
 void
 table_destroy(table *t, void finalize(void *))
 {
-	if (t == NULL) {
+	if(t == NULL) {
 		return;
 	}
 	entry *curr = NULL;
 	entry *next = NULL;
-	for (size_t i = 0; i < t->len; ++i) {
+	for(size_t i = 0; i < t->len; ++i) {
 		curr = t->columns[i].next;
-		while (curr != NULL) {
+		while(curr != NULL) {
 			next = curr->next;
-			if (finalize != NULL && curr->value != NULL) {
+			if(finalize != NULL && curr->value != NULL) {
 				finalize(curr->value);
 			}
 			free(curr);
 			curr = next;
 		}
-		if (finalize != NULL && t->columns[i].value != NULL) {
+		if(finalize != NULL && t->columns[i].value != NULL) {
 			finalize(t->columns[i].value);
 		}
 	}
@@ -111,10 +111,10 @@ get_index(size_t const len, char const *key)
 int
 table_put(table *t, char const *key, void *value)
 {
-	if (t == NULL) {
+	if(t == NULL) {
 		return -1;
 	}
-	if (key == NULL || value == NULL) {
+	if(key == NULL || value == NULL) {
 		return -1;
 	}
 
@@ -123,24 +123,24 @@ table_put(table *t, char const *key, void *value)
 	entry *curr = &t->columns[index];
 	entry *prev = NULL;
 
-	while (curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0) {
+	while(curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0) {
 		prev = curr;
 		curr = curr->next;
 	}
 	// existing node
-	if (curr != NULL && curr->key != NULL) {
+	if(curr != NULL && curr->key != NULL) {
 		curr->value = value;
 		return 0;
 	}
 	// uninitialized key (first or deleted node)
-	if (curr != NULL) {
+	if(curr != NULL) {
 		curr->key = key;
 		curr->value = value;
 		return 0;
 	}
 	// new node
 	curr = calloc(1, sizeof(*curr));
-	if (curr == NULL) {
+	if(curr == NULL) {
 		return -1;
 	}
 	curr->next = NULL;
@@ -156,10 +156,10 @@ table_put(table *t, char const *key, void *value)
 void *
 table_get(table *t, char const *key)
 {
-	if (t == NULL) {
+	if(t == NULL) {
 		return NULL;
 	}
-	if (key == NULL) {
+	if(key == NULL) {
 		return NULL;
 	}
 
@@ -167,10 +167,10 @@ table_get(table *t, char const *key)
 	debug_printf("%s: key: %s, index: %" PRIu64 "\n", __func__, key, index);
 	entry *curr = &t->columns[index];
 
-	while (curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0) {
+	while(curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0) {
 		curr = curr->next;
 	}
-	if (curr == NULL) {
+	if(curr == NULL) {
 		return NULL;
 	}
 	return curr->value;
@@ -179,10 +179,10 @@ table_get(table *t, char const *key)
 int
 table_delete(table *t, char const *key, void finalize(void *))
 {
-	if (t == NULL) {
+	if(t == NULL) {
 		return -1;
 	}
-	if (key == NULL) {
+	if(key == NULL) {
 		return -1;
 	}
 
@@ -190,22 +190,22 @@ table_delete(table *t, char const *key, void finalize(void *))
 	entry *curr = &t->columns[index];
 	entry *prev = NULL;
 
-	while (curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0) {
+	while(curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0) {
 		prev = curr;
 		curr = curr->next;
 	}
 	// not found
-	if (curr == NULL || curr->key == NULL) {
+	if(curr == NULL || curr->key == NULL) {
 		assert(curr->value == NULL);
 		return -1;
 	}
 	// found
-	if (curr->value != NULL && finalize != NULL) {
+	if(curr->value != NULL && finalize != NULL) {
 		finalize(curr->value);
 	}
-	if (prev == NULL) {
+	if(prev == NULL) {
 		// deleting from the first entry (embedded in the table)
-		if (curr->next != NULL) {
+		if(curr->next != NULL) {
 			// move next entry to the current entry
 			entry *next = curr->next;
 			curr->key = next->key;

@@ -37,7 +37,7 @@ static inline size_t
 nextpage(size_t const size)
 {
 	static size_t pagesize = 0;
-	if (pagesize == 0) {
+	if(pagesize == 0) {
 		pagesize = get_pagesize();
 	}
 
@@ -55,7 +55,7 @@ align_up(size_t const size, size_t const alignment)
 static inline size_t
 calc_size(size_t const n)
 {
-	if (n > SIZE_MAX - sizeof(struct arena) - MIN_ARENA_SIZE) {
+	if(n > SIZE_MAX - sizeof(struct arena) - MIN_ARENA_SIZE) {
 		return 0;
 	}
 
@@ -74,8 +74,8 @@ void *
 arena_allocate(size_t const n, size_t const t)
 {
 	struct arena *ap = NULL;
-	for (ap = arena[t]; ap->avail + n > ap->limit; arena[t] = ap) {
-		if (ap->next != NULL) {
+	for(ap = arena[t]; ap->avail + n > ap->limit; arena[t] = ap) {
+		if(ap->next != NULL) {
 			// move to next arena
 			ap = ap->next;
 			ap->avail = (char *)ap + sizeof(*ap);
@@ -84,12 +84,12 @@ arena_allocate(size_t const n, size_t const t)
 
 		// allocate a new arena
 		size_t const m = calc_size(n);
-		if (m == 0) {
+		if(m == 0) {
 			eprintf("%s: allocation size too large", __func__);
 			exit(EXIT_FAILURE);
 		}
 		ap->next = calloc(1, m);
-		if (ap->next == NULL) {
+		if(ap->next == NULL) {
 			eprintf("%s: calloc failed", __func__);
 			exit(EXIT_FAILURE);
 		}
@@ -105,7 +105,7 @@ arena_allocate(size_t const n, size_t const t)
 void
 arena_deallocate(size_t const t)
 {
-	if ((arena[t] = first[t].next) != NULL) {
+	if((arena[t] = first[t].next) != NULL) {
 		arena[t]->avail = (char *)arena[t] + sizeof(*arena[t]);
 		return;
 	}
@@ -116,7 +116,7 @@ void
 arena_free(size_t const t)
 {
 	struct arena *ap = first[t].next;
-	while (ap != NULL) {
+	while(ap != NULL) {
 		struct arena *next = ap->next;
 		free(ap);
 		ap = next;

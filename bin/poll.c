@@ -19,8 +19,8 @@ handle_events(nfds_t nfds_open, nfds_t nfds, struct pollfd *pfds)
 	char buf[10];
 	ssize_t num_bytes = 0;
 
-	for (nfds_t i = 0; i < nfds; ++i) {
-		if (pfds[i].revents == 0) {
+	for(nfds_t i = 0; i < nfds; ++i) {
+		if(pfds[i].revents == 0) {
 			continue;
 		}
 
@@ -30,9 +30,9 @@ handle_events(nfds_t nfds_open, nfds_t nfds, struct pollfd *pfds)
 			(pfds[i].revents & POLLHUP) ? "POLLHUP " : "",
 			(pfds[i].revents & POLLERR) ? "POLLERR " : "");
 
-		if (pfds[i].revents & POLLHUP || pfds[i].revents & POLLERR) {
+		if(pfds[i].revents & POLLHUP || pfds[i].revents & POLLERR) {
 			printf("closing fd %d\n", pfds[i].fd);
-			if (close(pfds[i].fd) == -1) {
+			if(close(pfds[i].fd) == -1) {
 				handle_error("close");
 			}
 			nfds_open -= 1;
@@ -40,7 +40,7 @@ handle_events(nfds_t nfds_open, nfds_t nfds, struct pollfd *pfds)
 		}
 
 		num_bytes = read(pfds[i].fd, buf, sizeof(buf));
-		if (num_bytes == -1) {
+		if(num_bytes == -1) {
 			handle_error("read");
 		}
 		printf("read %zd bytes: %.*s\n", num_bytes, (int)num_bytes, buf);
@@ -57,7 +57,7 @@ main(int argc, char *argv[])
 	nfds_t nfds = 0;
 	struct pollfd *pfds = NULL;
 
-	if (argc < 2) {
+	if(argc < 2) {
 		eprintf("Usage: %s file...\n", argv[0]);
 		return EXIT_FAILURE;
 	}
@@ -65,13 +65,13 @@ main(int argc, char *argv[])
 	nfds_open = nfds = (nfds_t)argc - 1;
 
 	pfds = calloc(nfds, sizeof(*pfds));
-	if (pfds == NULL) {
+	if(pfds == NULL) {
 		handle_error("calloc");
 	}
 
-	for (nfds_t i = 0; i < nfds; ++i) {
+	for(nfds_t i = 0; i < nfds; ++i) {
 		pfds[i].fd = open(argv[i + 1], O_RDONLY);
-		if (pfds[i].fd == -1) {
+		if(pfds[i].fd == -1) {
 			free(pfds);
 			handle_error("open");
 		}
@@ -79,10 +79,10 @@ main(int argc, char *argv[])
 		pfds[i].events = POLLIN;
 	}
 
-	while (nfds_open > 0) {
+	while(nfds_open > 0) {
 		printf("About to poll()\n");
 		ready = poll(pfds, nfds, -1);
-		if (ready == -1) {
+		if(ready == -1) {
 			free(pfds);
 			handle_error("poll");
 		}

@@ -49,7 +49,7 @@
 // Cleanup
 
 #define AT_EXIT(func)                                  \
-	if (atexit(func) != 0) {                       \
+	if(atexit(func) != 0) {                        \
 		eprintf("atexit(%s) failed\n", #func); \
 		exit(EXIT_FAILURE);                    \
 	}
@@ -57,7 +57,7 @@
 #define DEFINE_TRIVIAL_CLEANUP_FUNC(type, func)                                      \
 	static inline void func##p(type *p) /* NOLINT(bugprone-macro-parentheses) */ \
 	{                                                                            \
-		if (*p) {                                                            \
+		if(*p) {                                                             \
 			func(*p);                                                    \
 			debug_printf("%s(*%p)\n", #func, (void *)p);                 \
 		}                                                                    \
