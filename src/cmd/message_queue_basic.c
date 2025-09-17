@@ -2,12 +2,11 @@
 #include <errno.h>
 #include <inttypes.h>
 #include <pthread.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "bits.h"
 #include "macro.h"
-#include "message_queue.h"
 
 static int const COUNT = 100;
 

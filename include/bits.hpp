@@ -1,6 +1,8 @@
-// -*- mode: c++; -*-
-
 #pragma once
+
+extern "C" {
+#include "bits.h"
+}
 
 template <typename F>
 struct deferred {

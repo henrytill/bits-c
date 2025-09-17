@@ -1,7 +1,6 @@
-#include "fnv.h"
-
 #include <limits.h>
 
+#include "bits.h"
 #include "macro.h"
 
 static uint64_t const FNV_OFFSET_BASIS = 0xcbf29ce484222325;

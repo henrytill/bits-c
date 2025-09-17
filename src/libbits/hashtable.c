@@ -1,11 +1,9 @@
-#include "hashtable.h"
-
 #include <assert.h>
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "fnv.h"
+#include "bits.h"
 #include "macro.h"
 
 #define TEST_ENTRIES \

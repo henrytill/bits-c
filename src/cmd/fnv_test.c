@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "fnv.h"
+#include "bits.h"
 #include "macro.h"
 
 // https://datatracker.ietf.org/doc/html/draft-eastlake-fnv-03#page-15

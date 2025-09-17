@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "arena.h"
+#include "bits.h"
 
 int
 main(void)

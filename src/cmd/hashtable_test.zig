@@ -1,4 +1,4 @@
-const c = @cImport(@cInclude("hashtable.h"));
+const c = @cImport(@cInclude("bits.h"));
 const std = @import("std");
 const testing = std.testing;
 

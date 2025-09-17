@@ -4,11 +4,18 @@ const Build = std.Build;
 
 const Params = struct {
     name: []const u8,
-    file: Build.LazyPath,
+    files: []const Build.LazyPath,
     target: Build.ResolvedTarget,
     optimize: std.builtin.OptimizeMode,
     includePath: Build.LazyPath,
-    flags: []const []const u8 = &.{ "-std=gnu11", "-Wall", "-Wextra", "-Wconversion", "-Wsign-conversion" },
+    flags: []const []const u8 = &.{
+        "-std=gnu11",
+        "-Wall",
+        "-Wextra",
+        "-Wconversion",
+        "-Wsign-conversion",
+        "-fno-sanitize=undefined", // TODO fix UB in arena
+    },
 };
 
 fn createCObj(
@@ -16,7 +23,9 @@ fn createCObj(
     ps: Params,
 ) *Build.Step.Compile {
     const root_module = b.createModule(.{ .target = ps.target, .optimize = ps.optimize, .link_libc = true });
-    root_module.addCSourceFile(.{ .file = ps.file, .flags = ps.flags });
+    for (ps.files) |file| {
+        root_module.addCSourceFile(.{ .file = file, .flags = ps.flags });
+    }
     root_module.addIncludePath(ps.includePath);
 
     const ret = b.addObject(.{
@@ -33,7 +42,9 @@ fn createCExecutable(
     os: []const *Build.Step.Compile,
 ) *Build.Step.Compile {
     const root_module = b.createModule(.{ .target = ps.target, .optimize = ps.optimize, .link_libc = true });
-    root_module.addCSourceFile(.{ .file = ps.file, .flags = ps.flags });
+    for (ps.files) |file| {
+        root_module.addCSourceFile(.{ .file = file, .flags = ps.flags });
+    }
     root_module.addIncludePath(ps.includePath);
 
     for (os) |o| {
@@ -53,95 +64,116 @@ pub fn build(b: *Build) void {
     const optimize = b.standardOptimizeOption(.{});
     const includePath = b.path("include");
 
-    const fnvObj = createCObj(b, .{
-        .name = "fnv",
-        .file = b.path("lib/fnv.c"),
+    const bitsLibObj = createCObj(b, .{
+        .name = "bits",
+        .files = &.{
+            b.path("src/libbits/arena.c"),
+            b.path("src/libbits/fnv.c"),
+            b.path("src/libbits/hashtable.c"),
+            b.path("src/libbits/message_queue.c"),
+        },
         .target = target,
         .optimize = optimize,
         .includePath = includePath,
     });
+
+    const arenaTestExe = createCExecutable(b, .{
+        .name = "arena_test",
+        .files = &.{b.path("src/cmd/arena_test.c")},
+        .target = target,
+        .optimize = optimize,
+        .includePath = includePath,
+    }, &.{bitsLibObj});
+
+    const base64Exe = blk: {
+        const exe = createCExecutable(b, .{
+            .name = "base64",
+            .files = &.{b.path("src/cmd/base64.c")},
+            .target = target,
+            .optimize = optimize,
+            .includePath = includePath,
+        }, &.{});
+        exe.linkSystemLibrary("ssl");
+        exe.linkSystemLibrary("crypto");
+
+        break :blk exe;
+    };
+
+    const demoOopExe = createCExecutable(b, .{
+        .name = "demo_oop",
+        .files = &.{b.path("src/cmd/demo_oop.c")},
+        .target = target,
+        .optimize = optimize,
+        .includePath = includePath,
+    }, &.{});
 
     const fnvTestExe = createCExecutable(b, .{
         .name = "fnv_test",
-        .file = b.path("test/fnv_test.c"),
+        .files = &.{b.path("src/cmd/fnv_test.c")},
         .target = target,
         .optimize = optimize,
         .includePath = includePath,
-    }, &.{fnvObj});
-
-    b.installArtifact(fnvTestExe);
-
-    const hashtableObj = createCObj(b, .{
-        .name = "hashtable",
-        .file = b.path("lib/hashtable.c"),
-        .target = target,
-        .optimize = optimize,
-        .includePath = includePath,
-    });
+    }, &.{bitsLibObj});
 
     const hashtableTestExe = createCExecutable(b, .{
         .name = "hashtable_test",
-        .file = b.path("test/hashtable_test.c"),
+        .files = &.{b.path("src/cmd/hashtable_test.c")},
         .target = target,
         .optimize = optimize,
         .includePath = includePath,
-    }, &.{ fnvObj, hashtableObj });
+    }, &.{bitsLibObj});
 
-    b.installArtifact(hashtableTestExe);
+    const hashtableZigTests = blk: {
+        const root = b.createModule(.{
+            .root_source_file = b.path("src/cmd/hashtable_test.zig"),
+            .target = target,
+            .optimize = optimize,
+        });
+        root.addIncludePath(includePath);
+        root.addObject(bitsLibObj);
 
-    const messageQueueObj = createCObj(b, .{
-        .name = "message_queue",
-        .file = b.path("lib/message_queue.c"),
+        break :blk b.addTest(.{
+            .root_module = root,
+        });
+    };
+
+    const messageQueueBasicTestExe = createCExecutable(b, .{
+        .name = "message_queue_basic_test",
+        .files = &.{b.path("src/cmd/message_queue_basic.c")},
         .target = target,
         .optimize = optimize,
         .includePath = includePath,
-    });
+    }, &.{bitsLibObj});
 
-    const messageQueueBasicExe = createCExecutable(b, .{
-        .name = "message_queue_basic",
-        .file = b.path("test/message_queue_basic.c"),
+    const messageQueueBlockTestExe = createCExecutable(b, .{
+        .name = "message_queue_block_test",
+        .files = &.{
+            b.path("src/cmd/message_queue_block.c"),
+            b.path("src/cmd/message_queue_expected.c"),
+        },
         .target = target,
         .optimize = optimize,
         .includePath = includePath,
-    }, &.{messageQueueObj});
+    }, &.{bitsLibObj});
 
-    b.installArtifact(messageQueueBasicExe);
+    const executables = [_]struct { exe: *Build.Step.Compile, run: bool }{
+        .{ .exe = arenaTestExe, .run = true },
+        .{ .exe = base64Exe, .run = true },
+        .{ .exe = demoOopExe, .run = false },
+        .{ .exe = fnvTestExe, .run = true },
+        .{ .exe = hashtableTestExe, .run = true },
+        .{ .exe = hashtableZigTests, .run = true },
+        .{ .exe = messageQueueBasicTestExe, .run = true },
+        .{ .exe = messageQueueBlockTestExe, .run = true },
+    };
 
-    const messageQueueExpectedObj = createCObj(b, .{
-        .name = "message_queue_expected",
-        .file = b.path("test/message_queue_expected.c"),
-        .target = target,
-        .optimize = optimize,
-        .includePath = includePath,
-    });
+    const testStep = b.step("test", "Run tests");
 
-    const messageQueueBlockExe = createCExecutable(b, .{
-        .name = "message_queue_block",
-        .file = b.path("test/message_queue_block.c"),
-        .target = target,
-        .optimize = optimize,
-        .includePath = includePath,
-    }, &.{ messageQueueObj, messageQueueExpectedObj });
-
-    b.installArtifact(messageQueueBlockExe);
-
-    const hashtableTestRoot = b.createModule(.{
-        .root_source_file = b.path("test/hashtable_test.zig"),
-        .target = target,
-        .optimize = optimize,
-    });
-    hashtableTestRoot.addIncludePath(includePath);
-    hashtableTestRoot.addObject(fnvObj);
-    hashtableTestRoot.addObject(hashtableObj);
-
-    const hashtableTests = b.addTest(.{
-        .root_module = hashtableTestRoot,
-    });
-
-    b.installArtifact(hashtableTests);
-
-    const runHashtableTests = b.addRunArtifact(hashtableTests);
-
-    const testStep = b.step("test", "Run library tests");
-    testStep.dependOn(&runHashtableTests.step);
+    for (executables) |item| {
+        b.installArtifact(item.exe);
+        if (item.run) {
+            const run = b.addRunArtifact(item.exe);
+            testStep.dependOn(&run.step);
+        }
+    }
 }

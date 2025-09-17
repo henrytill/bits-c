@@ -1,8 +1,6 @@
-#include <stdlib.h>
-
 #include <Python.h>
 
-#include "hashtable.h"
+#include "bits.h"
 
 static PyObject *
 py_table_create(__attribute__((unused)) PyObject *self, PyObject *args)
