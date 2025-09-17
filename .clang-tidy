@@ -6,6 +6,7 @@ Checks: >
   -bugprone-assignment-in-if-condition,
   -bugprone-easily-swappable-parameters,
   -readability-identifier-length,
+  -readability-isolate-declaration,
   -readability-magic-numbers,
   -readability-redundant-declaration,
   -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,

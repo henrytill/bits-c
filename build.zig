@@ -9,9 +9,10 @@ const Params = struct {
     optimize: std.builtin.OptimizeMode,
     includePath: Build.LazyPath,
     flags: []const []const u8 = &.{
-        "-std=gnu11",
+        "-std=c89",
         "-Wall",
         "-Wextra",
+        "-Wpedantic",
         "-Wconversion",
         "-Wsign-conversion",
         "-fno-sanitize=undefined", // TODO fix UB in arena
@@ -71,6 +72,7 @@ pub fn build(b: *Build) void {
             b.path("src/libbits/fnv.c"),
             b.path("src/libbits/hashtable.c"),
             b.path("src/libbits/message_queue.c"),
+            b.path("src/libbits/printf.c"),
         },
         .target = target,
         .optimize = optimize,
@@ -92,7 +94,7 @@ pub fn build(b: *Build) void {
             .target = target,
             .optimize = optimize,
             .includePath = includePath,
-        }, &.{});
+        }, &.{bitsLibObj});
         exe.linkSystemLibrary("ssl");
         exe.linkSystemLibrary("crypto");
 

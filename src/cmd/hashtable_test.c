@@ -1,6 +1,5 @@
 #include <stdbool.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "bits.h"
 
@@ -18,22 +17,24 @@ int
 main(void)
 {
 	int ret = EXIT_FAILURE;
-
 	char const *key = NULL;
 	char *value = NULL;
+	struct table *t;
+	int rc = -1;
+	size_t i;
 
-	struct table *t = table_create(8);
+	t = table_create(8);
 
 	value = table_get(t, "not_in_table");
 	if(value != NULL) {
 		goto out_table_destroy;
 	}
 
-	for(size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
+	for(i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
 		table_put(t, key, TEST_VECTORS[i].value);
 	}
 
-	for(size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
+	for(i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
 		value = table_get(t, key);
 		if(strcmp(TEST_VECTORS[i].value, value) != 0) {
 			goto out_table_destroy;
@@ -45,15 +46,14 @@ main(void)
 		goto out_table_destroy;
 	}
 
-	int rc = -1;
-	for(size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
+	for(i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
 		rc = table_delete(t, key, NULL);
 		if(rc != 0) {
 			goto out_table_destroy;
 		}
 	}
 
-	for(size_t i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
+	for(i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
 		value = table_get(t, key);
 		if(value != NULL) {
 			goto out_table_destroy;

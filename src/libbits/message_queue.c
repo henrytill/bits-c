@@ -6,28 +6,26 @@
 #include "bits.h"
 
 struct message_queue {
-	struct message *buffer; ///< Buffer to hold messages
-	uint32_t capacity;      ///< Maximum size of the buffer
-	size_t front;           ///< Index of the front message in the buffer
-	size_t rear;            ///< Index of the rear message in the buffer
-	sem_t *empty;           ///< Semaphore to track empty slots in the buffer
-	sem_t *full;            ///< Semaphore to track filled slots in the buffer
-	pthread_mutex_t *lock;  ///< Mutex lock to protect buffer access
+	struct message *buffer; /* Buffer to hold messages */
+	uint32_t capacity;      /* Maximum size of the buffer */
+	size_t front;           /* Index of the front message in the buffer */
+	size_t rear;            /* Index of the rear message in the buffer */
+	sem_t *empty;           /* Semaphore to track empty slots in the buffer */
+	sem_t *full;            /* Semaphore to track filled slots in the buffer */
+	pthread_mutex_t *lock;  /* Mutex lock to protect buffer access */
 };
 
-/// Create a semaphore.
-///
-/// @param value The initial value of the semaphore.
-/// @return The semaphore, or NULL on failure.
 static sem_t *
 create_semaphore(uint32_t value)
 {
 	sem_t *sem = calloc(1, sizeof(*sem));
+	int rc;
+
 	if(sem == NULL) {
 		return NULL;
 	}
 
-	int const rc = sem_init(sem, 0, value);
+	rc = sem_init(sem, 0, value);
 	if(rc == -1) {
 		free(sem);
 		return NULL;
@@ -36,9 +34,6 @@ create_semaphore(uint32_t value)
 	return sem;
 }
 
-/// Destroy a semaphore.
-///
-/// @param sem The semaphore to destroy.
 static void
 destroy_semaphore(sem_t *sem)
 {
@@ -50,18 +45,18 @@ destroy_semaphore(sem_t *sem)
 	free(sem);
 }
 
-/// Create a mutex.
-///
-/// @return The mutex, or NULL on failure.
 static pthread_mutex_t *
 create_mutex(void)
 {
-	pthread_mutex_t *mutex = calloc(1, sizeof(pthread_mutex_t));
+	int rc;
+	pthread_mutex_t *mutex;
+
+	mutex = calloc(1, sizeof(pthread_mutex_t));
 	if(mutex == NULL) {
 		return NULL;
 	}
 
-	int const rc = pthread_mutex_init(mutex, NULL);
+	rc = pthread_mutex_init(mutex, NULL);
 	if(rc != 0) {
 		free(mutex);
 		return NULL;
@@ -70,9 +65,6 @@ create_mutex(void)
 	return mutex;
 }
 
-/// Destroy a mutex.
-///
-/// @param mutex The mutex to destroy.
 static void
 destroy_mutex(pthread_mutex_t *mutex)
 {
@@ -156,12 +148,15 @@ message_queue_finish(struct message_queue *queue)
 struct message_queue *
 message_queue_create(uint32_t capacity)
 {
-	struct message_queue *queue = calloc(1, sizeof(*queue));
+	int rc;
+	struct message_queue *queue;
+
+	queue = calloc(1, sizeof(*queue));
 	if(queue == NULL) {
 		return NULL;
 	}
 
-	int rc = message_queue_init(queue, capacity);
+	rc = message_queue_init(queue, capacity);
 	if(rc < 0) {
 		free(queue);
 		return NULL;
@@ -184,7 +179,9 @@ message_queue_destroy(struct message_queue *queue)
 int
 message_queue_put(struct message_queue *queue, struct message *in)
 {
-	int rc = sem_trywait(queue->empty);
+	int rc;
+
+	rc = sem_trywait(queue->empty);
 	if(rc == -1 && errno == EAGAIN) {
 		return 1;
 	}
@@ -216,7 +213,9 @@ message_queue_put(struct message_queue *queue, struct message *in)
 int
 message_queue_get(struct message_queue *queue, struct message *out)
 {
-	int rc = sem_wait(queue->full);
+	int rc;
+
+	rc = sem_wait(queue->full);
 	if(rc == -1) {
 		return -MSGQ_FAILURE_SEM_WAIT;
 	}
@@ -245,11 +244,54 @@ message_queue_get(struct message_queue *queue, struct message *out)
 int
 message_queue_size(struct message_queue *queue)
 {
+	int ret;
+
 	if(queue == NULL) {
 		return 0;
 	}
 
-	int ret = 0;
 	sem_getvalue(queue->full, &ret);
 	return ret;
+}
+
+char const *
+message_queue_failure_str(enum message_queue_failure failure)
+{
+	switch(failure) {
+	case MSGQ_FAILURE_NULL_POINTER:
+		return "NULL pointer";
+	case MSGQ_FAILURE_MALLOC:
+		return "malloc failed";
+	case MSGQ_FAILURE_SEM_CREATE:
+		return "create semaphore failed";
+	case MSGQ_FAILURE_SEM_POST:
+		return "post sempahore failed";
+	case MSGQ_FAILURE_SEM_TRY_WAIT:
+		return "try-wait sempahore failed";
+	case MSGQ_FAILURE_SEM_WAIT:
+		return "wait semaphore failed";
+	case MSGQ_FAILURE_MUTEX_CREATE:
+		return "create mutex failed";
+	case MSGQ_FAILURE_MUTEX_LOCK:
+		return "lock mutex failed";
+	case MSGQ_FAILURE_MUTEX_UNLOCK:
+		return "unlock mutex failed";
+	default:
+		return NULL;
+	}
+}
+
+char const *
+message_tag_str(enum tag tag)
+{
+	switch(tag) {
+	case MSG_TAG_NONE:
+		return "NONE";
+	case MSG_TAG_SOME:
+		return "SOME";
+	case MSG_TAG_QUIT:
+		return "QUIT";
+	default:
+		return NULL;
+	}
 }

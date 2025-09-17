@@ -6,7 +6,6 @@
 #include <stdlib.h>
 
 #include "bits.h"
-#include "macro.h"
 
 static int const COUNT = 100;
 
@@ -29,15 +28,17 @@ message_queue_fail(int rc, char const *msg)
 static void *
 produce(void *data)
 {
-	assert(data != NULL);
-
-	struct message_queue *queue = data;
-
+	struct message_queue *queue;
 	struct message msg = {0};
 	int rc = -1;
 	char const *tag_str = NULL;
+	intptr_t value;
 
-	for(intptr_t value = 0; value <= COUNT;) {
+	assert(data != NULL);
+
+	queue = data;
+
+	for(value = 0; value <= COUNT;) {
 		msg.tag = (value < COUNT) ? MSG_TAG_SOME : MSG_TAG_QUIT;
 		msg.value = value;
 
@@ -72,21 +73,25 @@ int
 main(void)
 {
 	int ret = EXIT_FAILURE;
+	struct message_queue *queue;
+	pthread_attr_t thread_attr;
+	int rc;
+	pthread_t thread_id;
+	struct message msg;
+	void *thread_ret = NULL;
 
-	struct message_queue *queue = message_queue_create(QUEUE_CAP);
+	queue = message_queue_create(QUEUE_CAP);
 	if(queue == NULL) {
 		fail("message_queue_create failed");
 	}
 
-	pthread_attr_t thread_attr;
-	int rc = pthread_attr_init(&thread_attr);
+	rc = pthread_attr_init(&thread_attr);
 	if(rc != 0) {
 		errno = rc;
 		perror("pthread_attr_init");
 		goto out_destroy_queue;
 	}
 
-	pthread_t thread_id;
 	rc = pthread_create(&thread_id, &thread_attr, produce, queue);
 	if(rc != 0) {
 		errno = rc;
@@ -94,7 +99,6 @@ main(void)
 		goto out_destroy_attr;
 	}
 
-	struct message msg;
 	for(;;) {
 		rc = consume(queue, &msg);
 		if(rc == 0) {
@@ -105,7 +109,6 @@ main(void)
 		}
 	}
 
-	void *thread_ret = NULL;
 	rc = pthread_join(thread_id, &thread_ret);
 	if(rc != 0) {
 		errno = rc;

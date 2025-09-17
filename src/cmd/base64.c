@@ -1,11 +1,10 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include <openssl/evp.h>
 
-#include "macro.h"
+#include "bits.h"
 
 #define TEST(e)                                                 \
 	if(!(e)) {                                              \
@@ -13,21 +12,7 @@
 		exit(EXIT_FAILURE);                             \
 	}
 
-// https://boringssl.googlesource.com/boringssl/+/master/crypto/base64/base64_test.cc#49
-#define TEST_VECTORS_ENTRIES   \
-	X("", "")              \
-	X("f", "Zg==")         \
-	X("fo", "Zm8=")        \
-	X("foo", "Zm9v")       \
-	X("foob", "Zm9vYg==")  \
-	X("fooba", "Zm9vYmE=") \
-	X("foobar", "Zm9vYmFy")
-
 #define BASE64_STRLEN(s) (((strlen((s)) + 2) / 3) * 4)
-
-#define X(s, b) STATIC_ASSERT(BASE64_STRLEN(s) == strlen(b));
-TEST_VECTORS_ENTRIES
-#undef X
 
 static struct test_vector {
 	char const *input;
@@ -35,59 +20,43 @@ static struct test_vector {
 	char const *base64;
 	size_t const base64_len;
 } const TEST_VECTORS[] = {
-#define X(s, b) {(s), strlen((s)), (b), strlen((b))},
-	TEST_VECTORS_ENTRIES
-#undef X
+	{"", 0, "", 0},
+	{"f", 1, "Zg==", 4},
+	{"fo", 2, "Zm8=", 4},
+	{"foo", 3, "Zm9v", 4},
+	{"foob", 4, "Zm9vYg==", 8},
+	{"fooba", 5, "Zm9vYmE=", 8},
+	{"foobar", 6, "Zm9vYmFy", 8},
 	{NULL, 0, NULL, 0},
 };
 
-#define ARRAY_SIZE(arr) (sizeof((arr)) / sizeof((arr)[0]))
-#define LAST_ENTRY      (ARRAY_SIZE(TEST_VECTORS) - 2)
-#define INPUT_LEN_MAX   (TEST_VECTORS[LAST_ENTRY].input_len)
-#define BASE64_LEN_MAX  (TEST_VECTORS[LAST_ENTRY].base64_len)
-
-#define ARRAY_CLEAR(arr) memset((arr), 0, sizeof((arr))) // NOLINT(clang-analyzer-security.*)
+#define INPUT_LEN_MAX  6 /* longest input is "foobar" */
+#define BASE64_LEN_MAX 8 /* longest base64 is "Zm9vYmFy" */
 
 static size_t
-base64_encode(
-	size_t const in_strlen,
-	char const in[in_strlen + 1],
-	char *out)
+base64_encode(size_t const in_strlen, char const *in, char *out)
 {
-	return (size_t)EVP_EncodeBlock(
-		(unsigned char *)out,
-		(unsigned char const *)in,
-		(int)in_strlen);
+	return (size_t)EVP_EncodeBlock((unsigned char *)out, (unsigned char const *)in, (int)in_strlen);
 }
 
 static size_t
-base64_decode(
-	size_t const in_strlen,
-	char const in[in_strlen + 1],
-	char *out)
+base64_decode(size_t const in_strlen, char const *in, char *out)
 {
-	return (size_t)EVP_DecodeBlock(
-		(unsigned char *)out,
-		(unsigned char const *)in,
-		(int)in_strlen);
+	return (size_t)EVP_DecodeBlock((unsigned char *)out, (unsigned char const *)in, (int)in_strlen);
 }
 
 int
 main(void)
 {
-	char const *input = NULL;
-	size_t input_len = 0;
-	char const *expected = NULL;
-	size_t expected_len = 0;
-
-	size_t codec_len = 0;
-
+	size_t i;
+	char const *input, *expected;
+	size_t input_len, expected_len, codec_len;
 	char actual[BASE64_LEN_MAX + 1];
 	char output[INPUT_LEN_MAX + 1];
 
-	for(size_t i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i) {
-		ARRAY_CLEAR(actual);
-		ARRAY_CLEAR(output);
+	for(i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i) {
+		CLEAR(actual);
+		CLEAR(output);
 
 		input_len = TEST_VECTORS[i].input_len;
 		expected = TEST_VECTORS[i].base64;

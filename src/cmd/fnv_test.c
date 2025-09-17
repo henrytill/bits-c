@@ -2,12 +2,10 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "bits.h"
-#include "macro.h"
 
-// https://datatracker.ietf.org/doc/html/draft-eastlake-fnv-03#page-15
+/* https://datatracker.ietf.org/doc/html/draft-eastlake-fnv-03#page-15 */
 static struct test_vector {
 	char const *input;
 	uint64_t expected;
@@ -19,7 +17,7 @@ static struct test_vector {
 };
 
 static bool
-check(char const input[static 1], uint64_t const expected, uint64_t const actual)
+check(char const *input, uint64_t const expected, uint64_t const actual)
 {
 	if(expected == actual) {
 		return true;
@@ -31,13 +29,16 @@ check(char const input[static 1], uint64_t const expected, uint64_t const actual
 int
 main(void)
 {
-	char const *input = NULL;
-	for(size_t i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i) {
+	size_t i;
+	char const *input;
+	uint64_t expected, actual;
+
+	for(i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i) {
 		if(input == NULL) {
 			return EXIT_FAILURE;
 		}
-		uint64_t const expected = TEST_VECTORS[i].expected;
-		uint64_t const actual = fnv_hash(strlen(input) + 1, (unsigned char const *)input);
+		expected = TEST_VECTORS[i].expected;
+		actual = fnv_hash(strlen(input) + 1, (unsigned char const *)input);
 		if(!check(input, expected, actual)) {
 			return EXIT_FAILURE;
 		}

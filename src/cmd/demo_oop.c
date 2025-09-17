@@ -3,13 +3,13 @@
 
 #include "macro.h"
 
-/// Base class.
+/* Base class. */
 typedef struct person person;
 
-/// Base class methods.
+/* Base class methods. */
 typedef struct person_ops person_ops;
 
-/// Derived class.
+/* Derived class. */
 typedef struct student student;
 
 struct person_ops {
@@ -18,10 +18,8 @@ struct person_ops {
 
 struct person {
 	person_ops const *ops;
-
 	char *name;
 	int age;
-
 	person *next;
 };
 
@@ -33,17 +31,16 @@ person_hello(person const *self)
 		self->age);
 }
 
-/// Base class vtable.
+/* Base class vtable. */
 static person_ops const PERSON_OPS = {
-	.hello = person_hello,
-};
+	person_hello};
 
 struct student {
 	person person;
 	char *school;
 };
 
-/// Derived class override of person_ops::hello
+/* Derived class override of person_ops::hello */
 static void
 student_hello(person const *self)
 {
@@ -54,37 +51,37 @@ student_hello(person const *self)
 		s->school);
 }
 
-/// Derived class vtable.
+/* Derived class vtable. */
 static person_ops const STUDENT_OPS = {
-	.hello = student_hello,
-};
+	student_hello};
 
 int
 main(void)
 {
-	student carol = {
-		.person = {
-			.ops = &STUDENT_OPS,
-			.name = "Carol",
-			.age = 22,
-			.next = NULL,
-		},
-		.school = "MIT",
-	};
-	person bob = {
-		.ops = &PERSON_OPS,
-		.name = "Bob",
-		.age = 21,
-		.next = &carol.person,
-	};
-	person alice = {
-		.ops = &PERSON_OPS,
-		.name = "Alice",
-		.age = 20,
-		.next = &bob,
-	};
+	student carol;
+	person bob, alice;
+	person const *p;
 
-	for(person const *p = &alice; p != NULL; p = p->next) {
+	/* Initialize carol */
+	carol.person.ops = &STUDENT_OPS;
+	carol.person.name = "Carol";
+	carol.person.age = 22;
+	carol.person.next = NULL;
+	carol.school = "MIT";
+
+	/* Initialize bob */
+	bob.ops = &PERSON_OPS;
+	bob.name = "Bob";
+	bob.age = 21;
+	bob.next = &carol.person;
+
+	/* Initialize alice */
+	alice.ops = &PERSON_OPS;
+	alice.name = "Alice";
+	alice.age = 20;
+	alice.next = &bob;
+
+	for(p = &alice; p != NULL; p = p->next) {
 		SEND(p, ops->hello);
 	}
 
