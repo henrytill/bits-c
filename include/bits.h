@@ -31,6 +31,7 @@ void tabledestroy(Table *t, void finalize(void *));
 int tableput(Table *t, char const *key, void *value);
 void *tableget(Table *t, char const *key);
 int tabledel(Table *t, char const *key, void finalize(void *));
+void tablecompact(Table *t);
 
 void *aalloc(int n, int t);
 void areset(int t);

@@ -9,6 +9,7 @@ struct Entry {
 	Entry *next;
 	char const *key;
 	void *value;
+	int deleted;
 };
 
 struct Table {
@@ -89,21 +90,24 @@ tableput(Table *t, char const *key, void *value)
 	debug_printf("key: %s index: %d\n", key, i);
 	curr = &t->columns[i];
 
-	while(curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0) {
+	while(curr != NULL && curr->key != NULL && !curr->deleted && strcmp(key, curr->key) != 0) {
 		prev = curr;
 		curr = curr->next;
 	}
-	/* existing node */
-	if(curr != NULL && curr->key != NULL) {
+	/* existing active node */
+	if(curr != NULL && curr->key != NULL && !curr->deleted) {
 		curr->value = value;
 		return 0;
 	}
-	/* uninitialized key (first or deleted node) */
+	/* uninitialized or deleted node - reuse it */
 	if(curr != NULL) {
+		if(curr->deleted && curr->key != NULL)
+			free((char *)curr->key);
 		curr->key = strdup(key);
 		if(curr->key == NULL)
 			return -1;
 		curr->value = value;
+		curr->deleted = 0;
 		return 0;
 	}
 	/* new node */
@@ -141,7 +145,7 @@ tableget(Table *t, char const *key)
 	debug_printf("key: %s index: %d\n", key, i);
 	curr = &t->columns[i];
 
-	while(curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0)
+	while(curr != NULL && (curr->key == NULL || curr->deleted || strcmp(key, curr->key) != 0))
 		curr = curr->next;
 
 	if(curr == NULL)
@@ -154,8 +158,7 @@ int
 tabledel(Table *t, char const *key, void finalize(void *))
 {
 	uint64_t i;
-	Entry *curr = NULL;
-	Entry *prev = NULL;
+	Entry *curr;
 
 	if(t == NULL)
 		return -1;
@@ -166,47 +169,66 @@ tabledel(Table *t, char const *key, void finalize(void *))
 	i = getindex(t->len, key);
 	curr = &t->columns[i];
 
-	while(curr != NULL && curr->key != NULL && strcmp(key, curr->key) != 0) {
-		prev = curr;
+	while(curr != NULL && (curr->key == NULL || curr->deleted || strcmp(key, curr->key) != 0))
 		curr = curr->next;
-	}
 
 	/* not found */
-	if(curr == NULL) {
+	if(curr == NULL)
 		return -1;
-	}
 
-	if(curr->key == NULL) {
-		assert(curr->value == NULL);
-		return -1;
-	}
-
-	/* found */
+	/* found - mark as deleted */
 	if(curr->value != NULL && finalize != NULL)
 		finalize(curr->value);
 
-	if(prev == NULL) {
-		/* deleting from the first entry (embedded in the table) */
-		if(curr->next != NULL) {
-			/* move next entry to the current entry */
-			Entry *next = curr->next;
-			free((char *)curr->key);
-			curr->key = next->key;
-			curr->value = next->value;
-			curr->next = next->next;
-			free(next);
-		} else {
-			/* clear the entry */
-			free((char *)curr->key);
-			curr->key = NULL;
-			curr->value = NULL;
-		}
-		return 0;
-	}
-
-	/* deleting from the chain */
-	prev->next = curr->next;
 	free((char *)curr->key);
-	free(curr);
+	curr->key = NULL;
+	curr->value = NULL;
+	curr->deleted = 1;
+
 	return 0;
+}
+
+void
+tablecompact(Table *t)
+{
+	size_t i;
+	Entry *curr, *prev, *next, *replacement;
+
+	if(t == NULL)
+		return;
+
+	for(i = 0; i < t->len; ++i) {
+		curr = &t->columns[i];
+
+		/* handle embedded entry */
+		if(curr->deleted && curr->next != NULL) {
+			/* move first non-deleted chained entry to embedded slot */
+			replacement = curr->next;
+			while(replacement != NULL && replacement->deleted)
+				replacement = replacement->next;
+
+			if(replacement != NULL) {
+				/* copy replacement data to embedded entry */
+				curr->key = replacement->key;
+				curr->value = replacement->value;
+				curr->deleted = 0;
+				/* mark replacement as deleted for chain cleanup */
+				replacement->deleted = 1;
+			}
+		}
+
+		/* clean up deleted entries in chain */
+		prev = curr;
+		curr = curr->next;
+		while(curr != NULL) {
+			next = curr->next;
+			if(curr->deleted) {
+				prev->next = next;
+				free(curr);
+			} else {
+				prev = curr;
+			}
+			curr = next;
+		}
+	}
 }
