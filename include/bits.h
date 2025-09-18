@@ -32,9 +32,9 @@ int tableput(Table *t, char const *key, void *value);
 void *tableget(Table *t, char const *key);
 int tabledel(Table *t, char const *key, void finalize(void *));
 
-void *aalloc(size_t n, size_t t);
-void areset(size_t t);
-void afree(size_t t);
+void *aalloc(int n, int t);
+void areset(int t);
+void afree(int t);
 
 void eprintf(char const *fmt, ...);
 

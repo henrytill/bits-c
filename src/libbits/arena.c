@@ -13,51 +13,54 @@ struct Arena {
 	char *avail;        /* next available location */
 };
 
+static int const arenasize = sizeof(struct Arena);
+static int const wordsize = sizeof(void *);
+static int const minsize = 64 * 1024;
+static int const factor = 2;
+
 static struct Arena first[] = {{0}, {0}, {0}}, *arena[] = {&first[0], &first[1], &first[2]};
 
-static size_t const minsize = (size_t)64 * 1024; /* 64KB minimum arena size */
-static size_t const wordsize = sizeof(void *);
-static size_t const growby = 2; /* Double arena size when growing */
+static int const narena = NELEM(arena);
 
-static size_t
-nextpage(size_t const size)
+static int
+nextpage(int const size)
 {
-	static size_t pagesize = 0;
+	static int pagesize = 0;
 	if(pagesize == 0)
 		pagesize = getpagesize();
 
-	assert(size <= (SIZE_MAX - pagesize - 1));
+	assert(size <= (INT_MAX - pagesize - 1));
 	return (size + pagesize - 1) & ~(pagesize - 1);
 }
 
-static size_t
-align(size_t const size, size_t const alignment)
+static int
+align(int const size, int const alignment)
 {
 	assert(ISPOW2(alignment));
 	return (size + alignment - 1) & ~(alignment - 1);
 }
 
-static size_t
-calcsize(size_t const n)
+static int
+calcsize(int const n)
 {
-	size_t req, size;
+	int req, size;
 
-	if(n > SIZE_MAX - sizeof(struct Arena) - minsize)
-		return 0;
+	if(n > INT_MAX - arenasize - minsize)
+		return -1;
 
-	req = align(n, wordsize) + sizeof(struct Arena);
-	size = (req > minsize)
-		       ? req * growby
-		       : minsize;
+	req = align(n, wordsize) + arenasize;
+	size = (req > minsize) ? req * factor : minsize;
 
 	return nextpage(size);
 }
 
 void *
-aalloc(size_t const n, size_t const t)
+aalloc(int const n, int const t)
 {
 	struct Arena *ap;
-	size_t m;
+	int s;
+
+	assert(t >= 0 && t < narena);
 
 	for(ap = arena[t]; ap->avail + n > ap->limit; arena[t] = ap) {
 		if(ap->next != NULL) {
@@ -68,19 +71,19 @@ aalloc(size_t const n, size_t const t)
 		}
 
 		/* allocate a new arena */
-		m = calcsize(n);
-		if(m == 0) {
+		s = calcsize(n);
+		if(s == -1) {
 			eprintf("allocation size too large");
 			exit(EXIT_FAILURE);
 		}
-		ap->next = calloc(1, m);
+		ap->next = calloc(1, s);
 		if(ap->next == NULL) {
 			eprintf("calloc failed");
 			exit(EXIT_FAILURE);
 		}
 		ap = ap->next;
 		ap->avail = (char *)ap + sizeof(*ap);
-		ap->limit = (char *)ap + m;
+		ap->limit = (char *)ap + s;
 		ap->next = NULL;
 	}
 	ap->avail += n;
@@ -88,8 +91,10 @@ aalloc(size_t const n, size_t const t)
 }
 
 void
-areset(size_t const t)
+areset(int const t)
 {
+	assert(t >= 0 && t < narena);
+
 	if((arena[t] = first[t].next) != NULL) {
 		arena[t]->avail = (char *)arena[t] + sizeof(*arena[t]);
 		return;
@@ -98,9 +103,11 @@ areset(size_t const t)
 }
 
 void
-afree(size_t const t)
+afree(int const t)
 {
 	struct Arena *ap;
+
+	assert(t >= 0 && t < narena);
 
 	ap = first[t].next;
 	while(ap != NULL) {
