@@ -6,6 +6,7 @@ project(
         'warning_level=3',
         'c_std=c89',
         'cpp_std=c++17',
+        'default_library=static',
     ],
 )
 
