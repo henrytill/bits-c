@@ -28,7 +28,6 @@ bits = library(
     ],
     include_directories: inc_dir,
     dependencies: threads_dep,
-    c_args: ['-DNDEBUG'],
 )
 
 arena_test = executable(
