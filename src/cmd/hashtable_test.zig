@@ -2,16 +2,16 @@ const c = @cImport(@cInclude("bits.h"));
 const std = @import("std");
 const testing = std.testing;
 
-fn roundtrip(comptime T: type, t: *c.struct_table, key: [*c]const u8, value: T) !T {
-    const rc = c.table_put(t, key, @as(*anyopaque, @constCast(value)));
+fn roundtrip(comptime T: type, t: *c.struct_Table, key: [*c]const u8, value: T) !T {
+    const rc = c.tableput(t, key, @as(*anyopaque, @constCast(value)));
     try testing.expectEqual(rc, 0);
-    const retPtr = c.table_get(t, key) orelse return error.Failure;
+    const retPtr = c.tableget(t, key) orelse return error.Failure;
     return @ptrCast(@alignCast(retPtr));
 }
 
 test "roundtrip i32" {
-    const t = c.table_create(8) orelse return error.Failure;
-    defer c.table_destroy(t, null);
+    const t = c.tablecreate(8) orelse return error.Failure;
+    defer c.tabledestroy(t, null);
 
     const key = "key";
     const expected: i32 = 42;
@@ -22,8 +22,8 @@ test "roundtrip i32" {
 }
 
 test "roundtrip string" {
-    const t = c.table_create(8) orelse return error.Failure;
-    defer c.table_destroy(t, null);
+    const t = c.tablecreate(8) orelse return error.Failure;
+    defer c.tabledestroy(t, null);
 
     const key = "key";
     const expected = "value";

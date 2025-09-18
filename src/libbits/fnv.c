@@ -2,18 +2,18 @@
 
 #include "bits.h"
 
-static uint64_t const FNV_OFFSET_BASIS = 0xcbf29ce484222325;
-static uint64_t const FNV_PRIME = 0x100000001b3;
+static uint64_t const offsetbasis = 0xcbf29ce484222325;
+static uint64_t const prime = 0x100000001b3;
 
 uint64_t
-fnv_hash(size_t const data_len, unsigned char const *data)
+fnv(size_t const datalen, unsigned char const *data)
 {
-	uint64_t hash = FNV_OFFSET_BASIS;
+	uint64_t hash = offsetbasis;
 	size_t i;
 
-	for(i = 0; i < data_len; ++i) {
+	for(i = 0; i < datalen; ++i) {
 		hash ^= data[i];
-		hash *= FNV_PRIME;
+		hash *= prime;
 	}
 
 	return hash;

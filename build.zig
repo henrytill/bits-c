@@ -69,9 +69,9 @@ pub fn build(b: *Build) void {
         .name = "bits",
         .files = &.{
             b.path("src/libbits/arena.c"),
+            b.path("src/libbits/channel.c"),
             b.path("src/libbits/fnv.c"),
             b.path("src/libbits/hashtable.c"),
-            b.path("src/libbits/message_queue.c"),
             b.path("src/libbits/printf.c"),
         },
         .target = target,
@@ -140,18 +140,18 @@ pub fn build(b: *Build) void {
     };
 
     const messageQueueBasicTestExe = createCExecutable(b, .{
-        .name = "message_queue_basic_test",
-        .files = &.{b.path("src/cmd/message_queue_basic.c")},
+        .name = "channel_basic_test",
+        .files = &.{b.path("src/cmd/channel_basic.c")},
         .target = target,
         .optimize = optimize,
         .includePath = includePath,
     }, &.{bitsLibObj});
 
     const messageQueueBlockTestExe = createCExecutable(b, .{
-        .name = "message_queue_block_test",
+        .name = "channel_block_test",
         .files = &.{
-            b.path("src/cmd/message_queue_block.c"),
-            b.path("src/cmd/message_queue_expected.c"),
+            b.path("src/cmd/channel_block.c"),
+            b.path("src/cmd/channel_expected.c"),
         },
         .target = target,
         .optimize = optimize,

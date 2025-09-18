@@ -3,10 +3,10 @@
 
 #include "bits.h"
 
-static struct test_vector {
+static struct {
 	char const *key;
 	char *value;
-} const TEST_VECTORS[] = {
+} const vectors[] = {
 #define X(prefix) {#prefix "_key", #prefix "_value"},
 #include "hashtable_vectors.def"
 #undef X
@@ -19,49 +19,43 @@ main(void)
 	int ret = EXIT_FAILURE;
 	char const *key = NULL;
 	char *value = NULL;
-	struct table *t;
+	struct Table *t;
 	int rc = -1;
 	size_t i;
 
-	t = table_create(8);
+	t = tablecreate(8);
 
-	value = table_get(t, "not_in_table");
-	if(value != NULL) {
+	value = tableget(t, "not_in_table");
+	if(value != NULL)
 		goto out_table_destroy;
-	}
 
-	for(i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
-		table_put(t, key, TEST_VECTORS[i].value);
-	}
+	for(i = 0; (key = vectors[i].key) != NULL; ++i)
+		tableput(t, key, vectors[i].value);
 
-	for(i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
-		value = table_get(t, key);
-		if(strcmp(TEST_VECTORS[i].value, value) != 0) {
+	for(i = 0; (key = vectors[i].key) != NULL; ++i) {
+		value = tableget(t, key);
+		if(strcmp(vectors[i].value, value) != 0)
 			goto out_table_destroy;
-		}
 	}
 
-	value = table_get(t, "not_in_table");
-	if(value != NULL) {
+	value = tableget(t, "not_in_table");
+	if(value != NULL)
 		goto out_table_destroy;
+
+	for(i = 0; (key = vectors[i].key) != NULL; ++i) {
+		rc = tabledel(t, key, NULL);
+		if(rc != 0)
+			goto out_table_destroy;
 	}
 
-	for(i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
-		rc = table_delete(t, key, NULL);
-		if(rc != 0) {
+	for(i = 0; (key = vectors[i].key) != NULL; ++i) {
+		value = tableget(t, key);
+		if(value != NULL)
 			goto out_table_destroy;
-		}
-	}
-
-	for(i = 0; (key = TEST_VECTORS[i].key) != NULL; ++i) {
-		value = table_get(t, key);
-		if(value != NULL) {
-			goto out_table_destroy;
-		}
 	}
 
 	ret = EXIT_SUCCESS;
 out_table_destroy:
-	table_destroy(t, NULL);
+	tabledestroy(t, NULL);
 	return ret;
 }

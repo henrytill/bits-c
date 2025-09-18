@@ -2,108 +2,108 @@
 #include <memory>
 #include <string>
 
-struct expr_visitor;
+struct Exprvisitor;
 
-struct expr {
-	virtual ~expr() = default;
-	virtual void accept(expr_visitor &v) = 0;
+struct Expr {
+	virtual ~Expr() = default;
+	virtual void accept(Exprvisitor &v) = 0;
 };
 
-using expr_ptr = std::unique_ptr<expr>;
+using Exprptr = std::unique_ptr<Expr>;
 
-struct var : expr {
+struct Var : Expr {
 	std::string name;
 
-	explicit var(std::string n)
+	explicit Var(std::string n)
 		: name{std::move(n)}
 	{
 	}
 
-	operator expr_ptr() &&
+	operator Exprptr() &&
 	{
-		return std::make_unique<var>(std::move(name));
+		return std::make_unique<Var>(std::move(name));
 	}
 
-	void accept(expr_visitor &v) override;
+	void accept(Exprvisitor &v) override;
 };
 
-struct lam : expr {
+struct Lam : Expr {
 	std::string param;
-	expr_ptr body;
+	Exprptr body;
 
-	lam(std::string p, expr_ptr b)
+	Lam(std::string p, Exprptr b)
 		: param{std::move(p)}
 		, body{std::move(b)}
 	{
 	}
 
-	operator expr_ptr() &&
+	operator Exprptr() &&
 	{
-		return std::make_unique<lam>(std::move(param), std::move(body));
+		return std::make_unique<Lam>(std::move(param), std::move(body));
 	}
 
-	void accept(expr_visitor &v) override;
+	void accept(Exprvisitor &v) override;
 };
 
-struct app : expr {
-	expr_ptr fun;
-	expr_ptr arg;
+struct App : Expr {
+	Exprptr fun;
+	Exprptr arg;
 
-	app(expr_ptr f, expr_ptr a)
+	App(Exprptr f, Exprptr a)
 		: fun{std::move(f)}
 		, arg{std::move(a)}
 	{
 	}
 
-	operator expr_ptr() &&
+	operator Exprptr() &&
 	{
-		return std::make_unique<app>(std::move(fun), std::move(arg));
+		return std::make_unique<App>(std::move(fun), std::move(arg));
 	}
 
-	void accept(expr_visitor &v) override;
+	void accept(Exprvisitor &v) override;
 };
 
-struct expr_visitor {
-	virtual void visit(var &e) = 0;
-	virtual void visit(lam &e) = 0;
-	virtual void visit(app &e) = 0;
+struct Exprvisitor {
+	virtual void visit(Var &e) = 0;
+	virtual void visit(Lam &e) = 0;
+	virtual void visit(App &e) = 0;
 };
 
 void
-var::accept(expr_visitor &v)
+Var::accept(Exprvisitor &v)
 {
 	v.visit(*this);
 }
 
 void
-lam::accept(expr_visitor &v)
+Lam::accept(Exprvisitor &v)
 {
 	v.visit(*this);
 }
 
 void
-app::accept(expr_visitor &v)
+App::accept(Exprvisitor &v)
 {
 	v.visit(*this);
 }
 
-class expr_show : public expr_visitor {
+class Exprshow : public Exprvisitor {
 	std::ostream &out;
 
 public:
-	explicit expr_show(std::ostream &out)
+	explicit Exprshow(std::ostream &out)
 		: out{out}
 	{
 	}
 
 	void
-	visit(var &e) override
+	visit(Var &e) override
 	{
 		out << e.name;
 	}
 
 	void
-	visit(lam &e) override
+	visit(Lam &e) override
 	{
 		out << "(\\" << e.param;
 		out << " . ";
@@ -112,7 +112,7 @@ public:
 	}
 
 	void
-	visit(app &e) override
+	visit(App &e) override
 	{
 		out << "(";
 		e.fun->accept(*this);
@@ -122,7 +122,7 @@ public:
 	}
 
 	void
-	operator()(expr &e)
+	operator()(Expr &e)
 	{
 		e.accept(*this);
 	}
@@ -131,22 +131,22 @@ public:
 auto
 main(void) -> int
 {
-	auto show = expr_show(std::cout);
+	auto show = Exprshow(std::cout);
 
 	// (\x . x)
-	auto id = lam("x", var("x"));
+	auto id = Lam("x", Var("x"));
 
 	show(id);
 	std::cout << std::endl;
 
 	// (\t . (\f . t))
-	auto k = lam("t", lam("f", var("t")));
+	auto k = Lam("t", Lam("f", Var("t")));
 
 	show(k);
 	std::cout << std::endl;
 
 	// ((\x . x) y)
-	auto app1 = app(std::move(id), var("y"));
+	auto app1 = App(std::move(id), Var("y"));
 
 	show(app1);
 	std::cout << std::endl;

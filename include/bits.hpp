@@ -5,20 +5,20 @@ extern "C" {
 }
 
 template <typename F>
-struct deferred {
+struct Deferred {
 	F f;
-	deferred(F f)
+	Deferred(F f)
 		: f(f)
 	{
 	}
-	~deferred() { f(); }
+	~Deferred() { f(); }
 };
 
 template <typename F>
-inline deferred<F>
+inline Deferred<F>
 make_deferred(F f)
 {
-	return deferred<F>(f);
+	return Deferred<F>(f);
 }
 
 #define DO_JOINSTRING2(x, y) x##y

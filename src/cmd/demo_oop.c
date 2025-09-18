@@ -4,27 +4,27 @@
 #include "macro.h"
 
 /* Base class. */
-typedef struct person person;
+typedef struct Person Person;
 
 /* Base class methods. */
-typedef struct person_ops person_ops;
+typedef struct Personops Personops;
 
 /* Derived class. */
-typedef struct student student;
+typedef struct Student Student;
 
-struct person_ops {
-	void (*hello)(person const *self);
+struct Personops {
+	void (*hello)(Person const *self);
 };
 
-struct person {
-	person_ops const *ops;
+struct Person {
+	Personops const *ops;
 	char *name;
 	int age;
-	person *next;
+	Person *next;
 };
 
 static void
-person_hello(person const *self)
+phello(Person const *self)
 {
 	printf("Hello, my name is %s, I'm %d years old.\n",
 		self->name,
@@ -32,19 +32,20 @@ person_hello(person const *self)
 }
 
 /* Base class vtable. */
-static person_ops const PERSON_OPS = {
-	person_hello};
+static Personops const pops = {
+	phello,
+};
 
-struct student {
-	person person;
+struct Student {
+	Person person;
 	char *school;
 };
 
-/* Derived class override of person_ops::hello */
+/* Derived class override of Personops::hello */
 static void
-student_hello(person const *self)
+shello(Person const *self)
 {
-	student const *s = CONTAINER_OF(self, student, person);
+	Student const *s = CONTAINER_OF(self, Student, person);
 	printf("Hello, my name is %s, I'm %d years old, I'm a student of %s.\n",
 		s->person.name,
 		s->person.age,
@@ -52,38 +53,38 @@ student_hello(person const *self)
 }
 
 /* Derived class vtable. */
-static person_ops const STUDENT_OPS = {
-	student_hello};
+static Personops const sops = {
+	shello,
+};
 
 int
 main(void)
 {
-	student carol;
-	person bob, alice;
-	person const *p;
+	Student carol;
+	Person bob, alice;
+	Person const *p;
 
 	/* Initialize carol */
-	carol.person.ops = &STUDENT_OPS;
+	carol.person.ops = &sops;
 	carol.person.name = "Carol";
 	carol.person.age = 22;
 	carol.person.next = NULL;
 	carol.school = "MIT";
 
 	/* Initialize bob */
-	bob.ops = &PERSON_OPS;
+	bob.ops = &pops;
 	bob.name = "Bob";
 	bob.age = 21;
 	bob.next = &carol.person;
 
 	/* Initialize alice */
-	alice.ops = &PERSON_OPS;
+	alice.ops = &pops;
 	alice.name = "Alice";
 	alice.age = 20;
 	alice.next = &bob;
 
-	for(p = &alice; p != NULL; p = p->next) {
+	for(p = &alice; p != NULL; p = p->next)
 		SEND(p, ops->hello);
-	}
 
 	return EXIT_SUCCESS;
 }

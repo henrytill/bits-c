@@ -14,12 +14,12 @@
 
 #define BASE64_STRLEN(s) (((strlen((s)) + 2) / 3) * 4)
 
-static struct test_vector {
+static struct {
 	char const *input;
-	size_t const input_len;
+	size_t const inputlen;
 	char const *base64;
-	size_t const base64_len;
-} const TEST_VECTORS[] = {
+	size_t const base64len;
+} const vectors[] = {
 	{"", 0, "", 0},
 	{"f", 1, "Zg==", 4},
 	{"fo", 2, "Zm8=", 4},
@@ -34,15 +34,15 @@ static struct test_vector {
 #define BASE64_LEN_MAX 8 /* longest base64 is "Zm9vYmFy" */
 
 static size_t
-base64_encode(size_t const in_strlen, char const *in, char *out)
+base64_encode(size_t const inlen, char const *in, char *out)
 {
-	return (size_t)EVP_EncodeBlock((unsigned char *)out, (unsigned char const *)in, (int)in_strlen);
+	return (size_t)EVP_EncodeBlock((unsigned char *)out, (unsigned char const *)in, (int)inlen);
 }
 
 static size_t
-base64_decode(size_t const in_strlen, char const *in, char *out)
+base64_decode(size_t const inlen, char const *in, char *out)
 {
-	return (size_t)EVP_DecodeBlock((unsigned char *)out, (unsigned char const *)in, (int)in_strlen);
+	return (size_t)EVP_DecodeBlock((unsigned char *)out, (unsigned char const *)in, (int)inlen);
 }
 
 int
@@ -50,35 +50,35 @@ main(void)
 {
 	size_t i;
 	char const *input, *expected;
-	size_t input_len, expected_len, codec_len;
+	size_t inputlen, expectedlen, codeclen;
 	char actual[BASE64_LEN_MAX + 1];
 	char output[INPUT_LEN_MAX + 1];
 
-	for(i = 0; (input = TEST_VECTORS[i].input) != NULL; ++i) {
+	for(i = 0; (input = vectors[i].input) != NULL; ++i) {
 		CLEAR(actual);
 		CLEAR(output);
 
-		input_len = TEST_VECTORS[i].input_len;
-		expected = TEST_VECTORS[i].base64;
-		expected_len = TEST_VECTORS[i].base64_len;
+		inputlen = vectors[i].inputlen;
+		expected = vectors[i].base64;
+		expectedlen = vectors[i].base64len;
 
 		printf("input: %s\n", input);
-		printf("input_len: %ld\n", input_len);
+		printf("input_len: %ld\n", inputlen);
 		printf("expected: %s\n", expected);
-		printf("expected_len: %ld\n", expected_len);
+		printf("expected_len: %ld\n", expectedlen);
 
-		codec_len = base64_encode(input_len, input, actual);
+		codeclen = base64_encode(inputlen, input, actual);
 
-		TEST(codec_len == strlen(actual));
-		TEST(codec_len == expected_len);
+		TEST(codeclen == strlen(actual));
+		TEST(codeclen == expectedlen);
 		TEST(strcmp(actual, expected) == 0);
 
-		codec_len = base64_decode(codec_len, actual, output);
+		codeclen = base64_decode(codeclen, actual, output);
 
-		printf("codec_len: %ld\n", codec_len);
+		printf("codec_len: %ld\n", codeclen);
 		printf("\n");
 
-		TEST(input_len == strlen(output));
+		TEST(inputlen == strlen(output));
 		TEST(strcmp(output, input) == 0);
 	}
 

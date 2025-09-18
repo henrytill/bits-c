@@ -9,6 +9,8 @@ project(
     ],
 )
 
+add_project_arguments('-D_DEFAULT_SOURCE', language: 'c')
+
 openssl_dep = dependency('openssl', required: false)
 threads_dep = dependency('threads')
 
@@ -20,7 +22,7 @@ bits = library(
         'src/libbits/arena.c',
         'src/libbits/fnv.c',
         'src/libbits/hashtable.c',
-        'src/libbits/message_queue.c',
+        'src/libbits/channel.c',
         'src/libbits/printf.c',
     ],
     include_directories: inc_dir,
@@ -81,17 +83,17 @@ lambda = executable(
     include_directories: inc_dir,
 )
 
-message_queue_basic_test = executable(
-    'message_queue_basic_test',
-    'src/cmd/message_queue_basic.c',
+channel_basic_test = executable(
+    'channel_basic_test',
+    'src/cmd/channel_basic.c',
     include_directories: inc_dir,
     link_with: bits,
     dependencies: threads_dep,
 )
 
-message_queue_block_test = executable(
-    'message_queue_block_test',
-    sources: ['src/cmd/message_queue_block.c', 'src/cmd/message_queue_expected.c'],
+channel_block_test = executable(
+    'channel_block_test',
+    sources: ['src/cmd/channel_block.c', 'src/cmd/channel_expected.c'],
     include_directories: inc_dir,
     link_with: bits,
     dependencies: threads_dep,
@@ -101,5 +103,5 @@ test('arena_test', arena_test)
 test('fnv_test', fnv_test)
 test('hashtable_test', hashtable_test)
 test('lambda', lambda)
-test('message_queue_basic_test', message_queue_basic_test)
-test('message_queue_block_test', message_queue_block_test)
+test('channel_basic_test', channel_basic_test)
+test('channel_block_test', channel_block_test)

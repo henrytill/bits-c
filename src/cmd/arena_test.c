@@ -6,7 +6,7 @@
 int
 main(void)
 {
-	struct point {
+	struct Point {
 		int x;
 		int y;
 	};
@@ -14,7 +14,7 @@ main(void)
 #define PRINT_POINT(_pt) printf(#_pt " = {x = %d, y = %d}\n", (_pt)->x, (_pt)->y)
 
 	{
-		struct point *p = arena_allocate(sizeof(*p), 0);
+		struct Point *p = aalloc(sizeof(*p), 0);
 
 		p->x = 0;
 		p->y = 1;
@@ -22,17 +22,17 @@ main(void)
 	}
 
 	{
-		struct point *q = arena_allocate(sizeof(*q), 0);
+		struct Point *q = aalloc(sizeof(*q), 0);
 
 		q->x = 2;
 		q->y = 3;
 		PRINT_POINT(q);
 	}
 
-	arena_deallocate(0);
+	areset(0);
 
 	{
-		struct point *r = arena_allocate(sizeof(*r), 0);
+		struct Point *r = aalloc(sizeof(*r), 0);
 
 		r->x = 4;
 		r->y = 5;
@@ -40,7 +40,7 @@ main(void)
 	}
 
 	{
-		struct point *s = arena_allocate(sizeof(*s), 0);
+		struct Point *s = aalloc(sizeof(*s), 0);
 
 		s->x = 6;
 		s->y = 7;
@@ -49,7 +49,7 @@ main(void)
 
 #undef PRINT_POINT
 
-	arena_free(0);
+	afree(0);
 
 	return EXIT_SUCCESS;
 }
