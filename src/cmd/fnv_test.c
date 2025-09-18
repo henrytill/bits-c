@@ -1,5 +1,4 @@
 #include <inttypes.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -16,14 +15,14 @@ static struct {
 	{NULL, 0},
 };
 
-static bool
+static int
 check(char const *input, uint64_t const expected, uint64_t const actual)
 {
 	if(expected == actual)
-		return true;
+		return 1;
 
 	eprintf("input: \"%s\", expected: %" PRIu64 ", actual: %" PRIu64 "\n", input, expected, actual);
-	return false;
+	return 0;
 }
 
 int

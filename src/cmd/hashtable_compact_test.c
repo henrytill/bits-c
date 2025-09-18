@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #include <stdlib.h>
 
 #include "bits.h"
@@ -48,7 +47,7 @@ static struct {
 	{NULL, {NULL}, {NULL}, {NULL}, {NULL}},
 };
 
-static bool
+static int
 run(struct Table *t, int test)
 {
 	char const *testname = testcases[test].name;
@@ -60,7 +59,7 @@ run(struct Table *t, int test)
 		int value = (int)(i + 1);
 		if(tableput(t, key, (void *)(intptr_t)value) != 0) {
 			eprintf("FAIL %s: tableput failed for key '%s'\n", testname, key);
-			return false;
+			return 0;
 		}
 	}
 
@@ -69,7 +68,7 @@ run(struct Table *t, int test)
 		char const *key = testcases[test].todelete[i];
 		if(tabledel(t, key, NULL) != 0) {
 			eprintf("FAIL %s: tabledel failed for key '%s'\n", testname, key);
-			return false;
+			return 0;
 		}
 	}
 
@@ -78,7 +77,7 @@ run(struct Table *t, int test)
 		char const *key = testcases[test].shouldnotexist[i];
 		if(tableget(t, key) != NULL) {
 			eprintf("FAIL %s: key '%s' should not exist before compaction\n", testname, key);
-			return false;
+			return 0;
 		}
 	}
 
@@ -87,7 +86,7 @@ run(struct Table *t, int test)
 		char const *key = testcases[test].shouldexist[i];
 		if(tableget(t, key) == NULL) {
 			eprintf("FAIL %s: key '%s' should exist before compaction\n", testname, key);
-			return false;
+			return 0;
 		}
 	}
 
@@ -99,7 +98,7 @@ run(struct Table *t, int test)
 		char const *key = testcases[test].shouldnotexist[i];
 		if(tableget(t, key) != NULL) {
 			eprintf("FAIL %s: key '%s' should not exist after compaction\n", testname, key);
-			return false;
+			return 0;
 		}
 	}
 
@@ -108,22 +107,22 @@ run(struct Table *t, int test)
 		char const *key = testcases[test].shouldexist[i];
 		if(tableget(t, key) == NULL) {
 			eprintf("FAIL %s: key '%s' should exist after compaction\n", testname, key);
-			return false;
+			return 0;
 		}
 	}
 
 	/* Test that we can still add new entries after compaction */
 	if(tableput(t, "post_compact_key", (void *)999) != 0) {
 		eprintf("FAIL %s: tableput failed after compaction\n", testname);
-		return false;
+		return 0;
 	}
 
 	if(tableget(t, "post_compact_key") != (void *)999) {
 		eprintf("FAIL %s: tableget failed for post-compaction key\n", testname);
-		return false;
+		return 0;
 	}
 
-	return true;
+	return 1;
 }
 
 int
