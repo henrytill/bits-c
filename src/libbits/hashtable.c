@@ -189,10 +189,11 @@ table_delete(table *t, char const *key, void finalize(void *))
 			curr->key = NULL;
 			curr->value = NULL;
 		}
-	} else {
-		/* deleting from the chain */
-		prev->next = curr->next;
-		free(curr);
+		return 0;
 	}
+
+	/* deleting from the chain */
+	prev->next = curr->next;
+	free(curr);
 	return 0;
 }
