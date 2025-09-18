@@ -163,7 +163,11 @@ tabledel(Table *t, char const *key, void finalize(void *))
 	}
 
 	/* not found */
-	if(curr == NULL || curr->key == NULL) {
+	if(curr == NULL) {
+		return -1;
+	}
+
+	if(curr->key == NULL) {
 		assert(curr->value == NULL);
 		return -1;
 	}
