@@ -16,7 +16,7 @@ struct Message {
 	intptr_t value;
 };
 
-Channel *channelcreate(uint32_t capacity);
+Channel *channelcreate(uint8_t capacity);
 void channeldestroy(Channel *c);
 int channelput(Channel *c, Message *in);
 int channelget(Channel *c, Message *out);

@@ -9,7 +9,7 @@
 
 static int const count = 100;
 
-static uint32_t const channelcap = 4U;
+static uint8_t const cap = 4U;
 
 static void
 fail(char const *msg)
@@ -77,7 +77,7 @@ main(void)
 	pthread_t tid;
 	void *tret = NULL;
 
-	c = channelcreate(channelcap);
+	c = channelcreate(cap);
 	if(c == NULL)
 		fail("channelcreate failed");
 
@@ -85,14 +85,14 @@ main(void)
 	if(rc != 0) {
 		errno = rc;
 		perror("pthread_attr_init");
-		goto out_channeldestroy_c;
+		goto destroyc;
 	}
 
 	rc = pthread_create(&tid, &tattr, produce, c);
 	if(rc != 0) {
 		errno = rc;
 		perror("pthread_create");
-		goto out_destroy_tattr;
+		goto destroytattr;
 	}
 
 	for(;;) {
@@ -101,22 +101,22 @@ main(void)
 			break;
 
 		if(rc < 0)
-			goto out_channeldestroy_c;
+			goto destroyc;
 	}
 
 	rc = pthread_join(tid, &tret);
 	if(rc != 0) {
 		errno = rc;
 		perror("pthread_join");
-		goto out_destroy_tattr;
+		goto destroytattr;
 	}
 
 	assert(tret == NULL);
 
 	ret = EXIT_SUCCESS;
-out_destroy_tattr:
+destroytattr:
 	(void)pthread_attr_destroy(&tattr);
-out_channeldestroy_c:
+destroyc:
 	channeldestroy(c);
 	return ret;
 }
