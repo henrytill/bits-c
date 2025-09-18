@@ -69,6 +69,13 @@ hashtable_test = executable(
     link_with: bits,
 )
 
+hashtable_compact_test = executable(
+    'hashtable_compact_test',
+    'src/cmd/hashtable_compact_test.c',
+    include_directories: inc_dir,
+    link_with: bits,
+)
+
 executable(
     'hello',
     'src/cmd/hello.cpp',
@@ -102,6 +109,7 @@ channel_block_test = executable(
 test('arena_test', arena_test)
 test('fnv_test', fnv_test)
 test('hashtable_test', hashtable_test)
+test('hashtable_compact_test', hashtable_compact_test)
 test('lambda', lambda)
 test('channel_basic_test', channel_basic_test)
 test('channel_block_test', channel_block_test)

@@ -126,6 +126,14 @@ pub fn build(b: *Build) void {
         .includePath = includePath,
     }, &.{bitsLibObj});
 
+    const hashtableCompactTestExe = createCExecutable(b, .{
+        .name = "hashtable_compact_test",
+        .files = &.{b.path("src/cmd/hashtable_compact_test.c")},
+        .target = target,
+        .optimize = optimize,
+        .includePath = includePath,
+    }, &.{bitsLibObj});
+
     const hashtableZigTests = blk: {
         const root = b.createModule(.{
             .root_source_file = b.path("src/cmd/hashtable_test.zig"),
@@ -165,6 +173,7 @@ pub fn build(b: *Build) void {
         .{ .exe = demoOopExe, .run = false },
         .{ .exe = fnvTestExe, .run = true },
         .{ .exe = hashtableTestExe, .run = true },
+        .{ .exe = hashtableCompactTestExe, .run = true },
         .{ .exe = hashtableZigTests, .run = true },
         .{ .exe = messageQueueBasicTestExe, .run = true },
         .{ .exe = messageQueueBlockTestExe, .run = true },
