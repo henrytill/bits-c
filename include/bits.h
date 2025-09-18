@@ -16,13 +16,13 @@ void arena_free(size_t t);
 
 uint64_t fnv_hash(size_t data_len, unsigned char const *data);
 
-struct table;
+typedef struct table table;
 
-struct table *table_create(size_t columns_len);
-void table_destroy(struct table *t, void finalize(void *));
-int table_put(struct table *t, char const *key, void *value);
-void *table_get(struct table *t, char const *key);
-int table_delete(struct table *t, char const *key, void finalize(void *));
+table *table_create(size_t columns_len);
+void table_destroy(table *t, void finalize(void *));
+int table_put(table *t, char const *key, void *value);
+void *table_get(table *t, char const *key);
+int table_delete(table *t, char const *key, void finalize(void *));
 
 enum message_queue_failure {
 	MSGQ_FAILURE_NULL_POINTER = 1,

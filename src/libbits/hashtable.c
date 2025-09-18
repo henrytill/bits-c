@@ -5,7 +5,6 @@
 #include "bits.h"
 
 typedef struct entry entry;
-typedef struct table table;
 
 struct entry {
 	entry *next;
