@@ -49,12 +49,15 @@ tabledestroy(Table *t, void finalize(void *))
 			if(finalize != NULL && curr->value != NULL)
 				finalize(curr->value);
 
+			free((char *)curr->key);
 			free(curr);
 			curr = next;
 		}
 
 		if(finalize != NULL && t->columns[i].value != NULL)
 			finalize(t->columns[i].value);
+		if(t->columns[i].key != NULL)
+			free((char *)t->columns[i].key);
 	}
 	free(t);
 }
@@ -97,7 +100,9 @@ tableput(Table *t, char const *key, void *value)
 	}
 	/* uninitialized key (first or deleted node) */
 	if(curr != NULL) {
-		curr->key = key;
+		curr->key = strdup(key);
+		if(curr->key == NULL)
+			return -1;
 		curr->value = value;
 		return 0;
 	}
@@ -107,7 +112,11 @@ tableput(Table *t, char const *key, void *value)
 		return -1;
 
 	curr->next = NULL;
-	curr->key = key;
+	curr->key = strdup(key);
+	if(curr->key == NULL) {
+		free(curr);
+		return -1;
+	}
 	curr->value = value;
 
 	assert(prev != NULL);
@@ -181,12 +190,14 @@ tabledel(Table *t, char const *key, void finalize(void *))
 		if(curr->next != NULL) {
 			/* move next entry to the current entry */
 			Entry *next = curr->next;
+			free((char *)curr->key);
 			curr->key = next->key;
 			curr->value = next->value;
 			curr->next = next->next;
 			free(next);
 		} else {
 			/* clear the entry */
+			free((char *)curr->key);
 			curr->key = NULL;
 			curr->value = NULL;
 		}
@@ -195,6 +206,7 @@ tabledel(Table *t, char const *key, void finalize(void *))
 
 	/* deleting from the chain */
 	prev->next = curr->next;
+	free((char *)curr->key);
 	free(curr);
 	return 0;
 }

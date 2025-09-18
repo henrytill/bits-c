@@ -15,6 +15,7 @@ const Params = struct {
         "-Wpedantic",
         "-Wconversion",
         "-Wsign-conversion",
+        "-D_DEFAULT_SOURCE",
         "-fno-sanitize=undefined", // TODO fix UB in arena
     },
 };
