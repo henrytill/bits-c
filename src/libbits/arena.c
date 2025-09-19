@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <limits.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -13,7 +14,7 @@ struct Arena {
 };
 
 static int const arenasize = sizeof(struct Arena);
-static int const wordsize = sizeof(void *);
+static int const maxalign = sizeof(long double);
 static int const minsize = 64 * 1024;
 
 static struct Arena first[] = {{0}, {0}, {0}}, *arena[] = {&first[0], &first[1], &first[2]};
@@ -66,30 +67,26 @@ align(int const size, int const alignment)
 static int
 calcsize(int const n)
 {
-	int a, b, c;
+	int a, b;
 
-	a = align(n, wordsize);
-	if(a == -1)
+	if(n > INT_MAX - arenasize)
 		return -1;
 
-	if(a > INT_MAX - arenasize)
-		return -1;
-
-	b = a + arenasize;
-	if(b > minsize) {
+	a = n + arenasize;
+	if(a > minsize) {
 		/* Check if left shift by 1 would overflow */
-		if(b & (INT_MAX ^ (INT_MAX >> 1)))
+		if(a & (INT_MAX ^ (INT_MAX >> 1)))
 			return -1;
-		c = b << 1;
+		b = a << 1;
 	} else {
-		c = minsize;
+		b = minsize;
 	}
 
-	return nextpage(c);
+	return nextpage(b);
 }
 
 void *
-aalloc(int const n, int const t)
+aalloc(int n, int const t)
 {
 	struct Arena *ap;
 	int s;
@@ -101,6 +98,12 @@ aalloc(int const n, int const t)
 		return NULL;
 
 	init();
+
+	n = align(n, maxalign);
+	if(n == -1) {
+		eprintf("allocation size too large");
+		return NULL;
+	}
 
 	for(ap = arena[t]; ap->avail + n > ap->limit; arena[t] = ap) {
 		if(ap->next != NULL) {
