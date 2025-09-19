@@ -65,24 +65,22 @@ align(int const size, int const alignment)
 }
 
 static int
-calcsize(int const n)
+calcsize(int n)
 {
-	int a, b;
-
 	if(n > INT_MAX - arenasize)
 		return -1;
 
-	a = n + arenasize;
-	if(a > minsize) {
+	n += arenasize;
+	if(n > minsize) {
 		/* Check if left shift by 1 would overflow */
-		if(a & (INT_MAX ^ (INT_MAX >> 1)))
+		if(n & (INT_MAX ^ (INT_MAX >> 1)))
 			return -1;
-		b = a << 1;
+		n <<= 1;
 	} else {
-		b = minsize;
+		n = minsize;
 	}
 
-	return nextpage(b);
+	return nextpage(n);
 }
 
 void *
