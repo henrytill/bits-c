@@ -19,10 +19,10 @@ getmessage()
 	return Message::Hello;
 }
 #else
-constexpr message_kind
+constexpr Message
 getmessage()
 {
-	return message_kind::GOODBYE;
+	return Message::Goodbye;
 }
 #endif
 
