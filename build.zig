@@ -73,7 +73,6 @@ pub fn build(b: *Build) void {
             b.path("src/libbits/channel.c"),
             b.path("src/libbits/fnv.c"),
             b.path("src/libbits/hashtable.c"),
-            b.path("src/libbits/printf.c"),
         },
         .target = target,
         .optimize = optimize,

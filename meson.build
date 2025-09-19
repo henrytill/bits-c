@@ -24,7 +24,6 @@ bits = library(
         'src/libbits/fnv.c',
         'src/libbits/hashtable.c',
         'src/libbits/channel.c',
-        'src/libbits/printf.c',
     ],
     include_directories: inc_dir,
     dependencies: threads_dep,

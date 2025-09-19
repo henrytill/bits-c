@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "macro.h"
+#include "printf.h"
 
 typedef struct Message Message;
 typedef struct Channel Channel;
@@ -36,8 +37,3 @@ void tablecompact(Table *t);
 void *aalloc(int n, int t);
 void areset(int t);
 void afree(int t);
-
-void eprintf(char const *fmt, ...);
-
-void debug_printf(char const *fmt, ...);
-void debug_eprintf(char const *fmt, ...);
