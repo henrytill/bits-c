@@ -2,7 +2,7 @@ const c = @cImport(@cInclude("bits.h"));
 const std = @import("std");
 const testing = std.testing;
 
-fn roundtrip(comptime T: type, t: *c.struct_Table, key: [*c]const u8, value: T) !T {
+fn roundtrip(comptime T: type, t: *c.Table, key: [*c]const u8, value: T) !T {
     const rc = c.tableput(t, key, @as(*anyopaque, @constCast(value)));
     try testing.expectEqual(rc, 0);
     const retPtr = c.tableget(t, key) orelse return error.Failure;
