@@ -41,8 +41,16 @@ static int
 nextpage(int const size)
 {
 	static int pagesize = 0;
-	if(pagesize == 0)
-		pagesize = getpagesize();
+	long ps;
+
+	if(pagesize == 0) {
+		ps = sysconf(_SC_PAGESIZE);
+		if(ps <= 0) {
+			perror("failed to get page size");
+			exit(EXIT_FAILURE);
+		}
+		pagesize = (assert(ps <= INT_MAX), (int)ps);
+	}
 
 	if(size > INT_MAX - pagesize - 1)
 		return -1;
