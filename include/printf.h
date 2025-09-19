@@ -1,9 +1,7 @@
 #pragma once
 
-#ifndef NDEBUG
-#	include <stdarg.h>
-#	include <stdio.h>
-#endif
+#include <stdarg.h>
+#include <stdio.h>
 
 static __inline__ void debugprintf(char const *fmt, ...);
 static __inline__ void eprintf(char const *fmt, ...);
