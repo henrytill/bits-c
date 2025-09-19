@@ -1,13 +1,7 @@
 #pragma once
 
-/* IWYU pragma: always_keep */
-
 #include <stddef.h>
 #include <string.h> /* IWYU pragma: keep */
-
-#ifndef NDEBUG
-#	define DEBUG
-#endif
 
 #define CONTAINER_OF(ptr, type, member) ((type *)((char *)(ptr) - offsetof(type, member)))
 

@@ -2,8 +2,8 @@
 
 #include <stdint.h>
 
-#include "macro.h"
-#include "printf.h"
+#include "macro.h"  /* IWYU pragma: keep */
+#include "printf.h" /* IWYU pragma: keep */
 
 typedef struct Message Message;
 typedef struct Channel Channel;

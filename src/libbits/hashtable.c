@@ -23,7 +23,7 @@ tablecreate(size_t const len)
 	Table *ret;
 
 	if(!ISPOW2(len)) {
-		debug_eprintf("len must be a power of 2\n");
+		eprintf("len must be a power of 2\n");
 		return NULL;
 	}
 	ret = calloc(1, sizeof(*ret) + ((len - 1) * sizeof(Entry)));
@@ -87,7 +87,7 @@ tableput(Table *t, char const *key, void *value)
 		return -1;
 
 	i = getindex(t->len, key);
-	debug_printf("key: %s index: %d\n", key, i);
+	debugprintf("key: %s index: %d\n", key, i);
 	curr = &t->columns[i];
 
 	while(curr != NULL && curr->key != NULL && !curr->deleted && strcmp(key, curr->key) != 0) {
@@ -142,7 +142,7 @@ tableget(Table *t, char const *key)
 		return NULL;
 
 	i = getindex(t->len, key);
-	debug_printf("key: %s index: %d\n", key, i);
+	debugprintf("key: %s index: %d\n", key, i);
 	curr = &t->columns[i];
 
 	while(curr != NULL && (curr->key == NULL || curr->deleted || strcmp(key, curr->key) != 0))
