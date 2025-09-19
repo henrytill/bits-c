@@ -85,8 +85,9 @@ executable(
 
 lambda = executable(
     'lambda',
-    'src/cmd/lambda.cpp',
+    'src/cmd/lambda.c',
     include_directories: inc_dir,
+    link_with: bits,
 )
 
 channel_basic_test = executable(

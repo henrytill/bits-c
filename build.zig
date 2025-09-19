@@ -154,6 +154,14 @@ pub fn build(b: *Build) void {
         });
     };
 
+    const lambdaExe = createCExecutable(b, .{
+        .name = "lambda",
+        .files = &.{b.path("src/cmd/lambda.c")},
+        .target = target,
+        .optimize = optimize,
+        .includePath = includePath,
+    }, &.{bitsLibObj});
+
     const messageQueueBasicTestExe = createCExecutable(b, .{
         .name = "channel_basic_test",
         .files = &.{b.path("src/cmd/channel_basic.c")},
@@ -181,6 +189,7 @@ pub fn build(b: *Build) void {
         .{ .exe = hashtableTestExe, .run = true },
         .{ .exe = hashtableCompactTestExe, .run = true },
         .{ .exe = hashtableZigTests, .run = true },
+        .{ .exe = lambdaExe, .run = true },
         .{ .exe = messageQueueBasicTestExe, .run = true },
         .{ .exe = messageQueueBlockTestExe, .run = true },
     };
