@@ -1,9 +1,11 @@
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <openssl/evp.h>
 
-#include "bits.h"
+#include "macro.h"
+#include "printf.h"
 
 #define TEST(e)                                                 \
 	if(!(e)) {                                              \
