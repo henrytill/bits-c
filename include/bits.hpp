@@ -16,11 +16,11 @@ struct Deferred {
 
 template <typename F>
 inline Deferred<F>
-make_deferred(F f)
+mkdeferred(F f)
 {
 	return Deferred<F>(f);
 }
 
 #define DO_JOINSTRING2(x, y) x##y
 #define JOINSTRING2(x, y)    DO_JOINSTRING2(x, y)
-#define defer(stmt)          auto JOINSTRING2(defer_, __LINE__) = make_deferred([&]() { stmt; })
+#define defer(stmt)          auto JOINSTRING2(defer_, __LINE__) = mkdeferred([&]() { stmt; })
