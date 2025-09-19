@@ -23,7 +23,11 @@ fn createCObj(
     b: *Build,
     ps: Params,
 ) *Build.Step.Compile {
-    const root_module = b.createModule(.{ .target = ps.target, .optimize = ps.optimize, .link_libc = true });
+    const root_module = b.createModule(.{
+        .target = ps.target,
+        .optimize = ps.optimize,
+        .link_libc = true,
+    });
     for (ps.files) |file| {
         root_module.addCSourceFile(.{ .file = file, .flags = ps.flags });
     }
@@ -42,7 +46,11 @@ fn createCExecutable(
     ps: Params,
     os: []const *Build.Step.Compile,
 ) *Build.Step.Compile {
-    const root_module = b.createModule(.{ .target = ps.target, .optimize = ps.optimize, .link_libc = true });
+    const root_module = b.createModule(.{
+        .target = ps.target,
+        .optimize = ps.optimize,
+        .link_libc = true,
+    });
     for (ps.files) |file| {
         root_module.addCSourceFile(.{ .file = file, .flags = ps.flags });
     }
