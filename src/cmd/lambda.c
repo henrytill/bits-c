@@ -89,10 +89,10 @@ appcreate(struct Expr *fun, struct Expr *arg)
 
 struct Stackitem {
 	enum {
-		Sexpr,
-		Slamclose,
-		Sappspace,
-		Sappclose
+		Aexpr,
+		Alamclose,
+		Aappspace,
+		Aappclose
 	} action;
 	struct Expr *expr;
 	struct Stackitem *next;
@@ -122,7 +122,7 @@ show(struct Expr *e, FILE *out) /* NOLINT(readability-function-cognitive-complex
 	struct Stackitem *item;
 	int rc;
 
-	rc = push(&stack, Sexpr, e);
+	rc = push(&stack, Aexpr, e);
 	if(rc < 0)
 		return;
 
@@ -131,7 +131,7 @@ show(struct Expr *e, FILE *out) /* NOLINT(readability-function-cognitive-complex
 		stack = stack->next;
 
 		switch(item->action) {
-		case Sexpr:
+		case Aexpr:
 			switch(item->expr->tag) {
 			case Tvar:
 				(void)fprintf(out, "%s", item->expr->u.var.name);
@@ -139,11 +139,11 @@ show(struct Expr *e, FILE *out) /* NOLINT(readability-function-cognitive-complex
 			case Tlam:
 				(void)fprintf(out, "(\\%s . ", item->expr->u.lam.param);
 
-				rc = push(&stack, Slamclose, NULL);
+				rc = push(&stack, Alamclose, NULL);
 				if(rc < 0)
 					return;
 
-				rc = push(&stack, Sexpr, item->expr->u.lam.body);
+				rc = push(&stack, Aexpr, item->expr->u.lam.body);
 				if(rc < 0)
 					return;
 
@@ -151,32 +151,32 @@ show(struct Expr *e, FILE *out) /* NOLINT(readability-function-cognitive-complex
 			case Tapp:
 				(void)fprintf(out, "(");
 
-				rc = push(&stack, Sappclose, NULL);
+				rc = push(&stack, Aappclose, NULL);
 				if(rc < 0)
 					return;
 
-				rc = push(&stack, Sexpr, item->expr->u.app.arg);
+				rc = push(&stack, Aexpr, item->expr->u.app.arg);
 				if(rc < 0)
 					return;
 
-				rc = push(&stack, Sappspace, NULL);
+				rc = push(&stack, Aappspace, NULL);
 				if(rc < 0)
 					return;
 
-				rc = push(&stack, Sexpr, item->expr->u.app.fun);
+				rc = push(&stack, Aexpr, item->expr->u.app.fun);
 				if(rc < 0)
 					return;
 
 				break;
 			}
 			break;
-		case Slamclose:
+		case Alamclose:
 			(void)fprintf(out, ")");
 			break;
-		case Sappspace:
+		case Aappspace:
 			(void)fprintf(out, " ");
 			break;
-		case Sappclose:
+		case Aappclose:
 			(void)fprintf(out, ")");
 			break;
 		}
