@@ -1,8 +1,5 @@
 image: openbsd/latest
 packages:
-  - curl
-  - glew
-  - py3-hypothesis
   - meson
   - ninja
 secrets:
@@ -10,8 +7,6 @@ secrets:
 sources:
   - git@git.sr.ht:~henrytill/bits-c
 tasks:
-  - print-versions: |
-      python3 --version
   - configure: |
       cd bits-c
       meson setup builddir

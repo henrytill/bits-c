@@ -1,10 +1,5 @@
 image: netbsd/latest
 packages:
-  - curl
-  - glew
-  - python312
-  - py312-setuptools
-  - py312-hypothesis
   - meson
   - ninja-build
 secrets:
@@ -12,8 +7,6 @@ secrets:
 sources:
   - git@git.sr.ht:~henrytill/bits-c
 tasks:
-  - print-versions: |
-      python3.12 --version
   - configure: |
       cd bits-c
       meson setup builddir
