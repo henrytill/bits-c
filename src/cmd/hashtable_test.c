@@ -26,7 +26,7 @@ main(void)
 
 	value = tableget(t, "not_in_table");
 	if(value != NULL)
-		goto out_table_destroy;
+		goto destroyt;
 
 	for(i = 0; (key = vectors[i].key) != NULL; ++i)
 		tableput(t, key, vectors[i].value);
@@ -34,27 +34,27 @@ main(void)
 	for(i = 0; (key = vectors[i].key) != NULL; ++i) {
 		value = tableget(t, key);
 		if(strcmp(vectors[i].value, value) != 0)
-			goto out_table_destroy;
+			goto destroyt;
 	}
 
 	value = tableget(t, "not_in_table");
 	if(value != NULL)
-		goto out_table_destroy;
+		goto destroyt;
 
 	for(i = 0; (key = vectors[i].key) != NULL; ++i) {
 		rc = tabledel(t, key, NULL);
 		if(rc != 0)
-			goto out_table_destroy;
+			goto destroyt;
 	}
 
 	for(i = 0; (key = vectors[i].key) != NULL; ++i) {
 		value = tableget(t, key);
 		if(value != NULL)
-			goto out_table_destroy;
+			goto destroyt;
 	}
 
 	ret = EXIT_SUCCESS;
-out_table_destroy:
+destroyt:
 	tabledestroy(t, NULL);
 	return ret;
 }
