@@ -48,76 +48,80 @@ static struct {
 };
 
 static int
-run(struct Table *t, int test)
+run(Table *t, int test)
 {
 	char const *testname = testcases[test].name;
-	size_t i;
+	int i;
+	intptr_t value;
+	int rc;
+	void *result;
 
-	/* Add entries */
 	for(i = 0; testcases[test].toadd[i] != NULL; ++i) {
 		char const *key = testcases[test].toadd[i];
-		int value = (int)(i + 1);
-		if(tableput(t, key, (void *)(intptr_t)value) != 0) {
+		value = i + 1;
+		rc = tableput(t, key, (void *)value);
+		if(rc != 0) {
 			eprintf("FAIL %s: tableput failed for key '%s'\n", testname, key);
 			return 0;
 		}
 	}
 
-	/* Delete entries */
 	for(i = 0; testcases[test].todelete[i] != NULL; ++i) {
 		char const *key = testcases[test].todelete[i];
-		if(tabledel(t, key, NULL) != 0) {
+		rc = tabledel(t, key, NULL);
+		if(rc != 0) {
 			eprintf("FAIL %s: tabledel failed for key '%s'\n", testname, key);
 			return 0;
 		}
 	}
 
-	/* Verify deleted entries are gone before compaction */
 	for(i = 0; testcases[test].shouldnotexist[i] != NULL; ++i) {
 		char const *key = testcases[test].shouldnotexist[i];
-		if(tableget(t, key) != NULL) {
+		result = tableget(t, key);
+		if(result != NULL) {
 			eprintf("FAIL %s: key '%s' should not exist before compaction\n", testname, key);
 			return 0;
 		}
 	}
 
-	/* Verify remaining entries exist before compaction */
 	for(i = 0; testcases[test].shouldexist[i] != NULL; ++i) {
 		char const *key = testcases[test].shouldexist[i];
-		if(tableget(t, key) == NULL) {
+		result = tableget(t, key);
+		if(result == NULL) {
 			eprintf("FAIL %s: key '%s' should exist before compaction\n", testname, key);
 			return 0;
 		}
 	}
 
-	/* Compact the table */
 	tablecompact(t);
 
-	/* Verify deleted entries are still gone after compaction */
 	for(i = 0; testcases[test].shouldnotexist[i] != NULL; ++i) {
 		char const *key = testcases[test].shouldnotexist[i];
-		if(tableget(t, key) != NULL) {
+		result = tableget(t, key);
+		if(result != NULL) {
 			eprintf("FAIL %s: key '%s' should not exist after compaction\n", testname, key);
 			return 0;
 		}
 	}
 
-	/* Verify remaining entries still exist after compaction */
 	for(i = 0; testcases[test].shouldexist[i] != NULL; ++i) {
 		char const *key = testcases[test].shouldexist[i];
-		if(tableget(t, key) == NULL) {
+		result = tableget(t, key);
+		if(result == NULL) {
 			eprintf("FAIL %s: key '%s' should exist after compaction\n", testname, key);
 			return 0;
 		}
 	}
 
-	/* Test that we can still add new entries after compaction */
-	if(tableput(t, "post_compact_key", (void *)999) != 0) {
+	value = 999;
+	rc = tableput(t, "post_compact_key", (void *)value);
+	if(rc != 0) {
 		eprintf("FAIL %s: tableput failed after compaction\n", testname);
 		return 0;
 	}
 
-	if(tableget(t, "post_compact_key") != (void *)999) {
+	result = tableget(t, "post_compact_key");
+	if(result != (void *)value) {
 		eprintf("FAIL %s: tableget failed for post-compaction key\n", testname);
 		return 0;
 	}
@@ -129,8 +133,9 @@ int
 main(void)
 {
 	int ret = EXIT_FAILURE;
-	struct Table *t;
+	Table *t;
 	int test;
+	int rc;
 
 	t = tablecreate(8);
 	if(t == NULL) {
@@ -139,10 +144,10 @@ main(void)
 	}
 
 	for(test = 0; testcases[test].name != NULL; ++test) {
-		if(!run(t, test))
+		rc = run(t, test);
+		if(!rc)
 			goto destroyt;
 
-		/* Clear table for next test */
 		tabledestroy(t, NULL);
 		t = tablecreate(8);
 		if(t == NULL) {
