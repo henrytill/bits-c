@@ -3,7 +3,7 @@
 #include <stddef.h>
 #include <string.h> /* IWYU pragma: keep */
 
-#define CONTAINER_OF(ptr, type, member) ((type *)((char *)(ptr) - offsetof(type, member)))
+#define CONTAINEROF(ptr, type, member) ((type *)((char *)(ptr) - offsetof(type, member)))
 
 #define SEND(obj, method) ((obj)->method(obj))
 

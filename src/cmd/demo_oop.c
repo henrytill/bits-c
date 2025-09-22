@@ -45,7 +45,7 @@ struct Student {
 static void
 shello(Person const *self)
 {
-	Student const *s = CONTAINER_OF(self, Student, person);
+	Student const *s = CONTAINEROF(self, Student, person);
 	printf("Hello, my name is %s, I'm %d years old, I'm a student of %s.\n",
 		s->person.name,
 		s->person.age,
