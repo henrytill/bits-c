@@ -12,7 +12,7 @@ struct Message {
 	enum {
 		Tnone = 0,
 		Tsome = 1,
-		Tquit = 2
+		Tclose = 2
 	} tag;
 	intptr_t value;
 };

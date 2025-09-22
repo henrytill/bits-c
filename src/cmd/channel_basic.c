@@ -37,7 +37,7 @@ produce(void *data)
 	c = data;
 
 	for(v = 0; v <= count;) {
-		m.tag = (v < count) ? Tsome : Tquit;
+		m.tag = (v < count) ? Tsome : Tclose;
 		m.value = v;
 
 		rc = channelput(c, &m);
@@ -62,7 +62,7 @@ consume(Channel *c, Message *out)
 		channelfail(rc, "channelget failed");
 
 	printf("consumed: {%d, %" PRIdPTR "}\n", out->tag, out->value);
-	return out->tag != Tquit;
+	return out->tag != Tclose;
 }
 
 int
