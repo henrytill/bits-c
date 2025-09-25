@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "bits.h"
+#include "printf.h"
 
 static int const count = 100;
 

@@ -2,6 +2,8 @@
 #include <stdlib.h>
 
 #include "bits.h"
+#include "macro.h"
+#include "printf.h"
 
 typedef struct Entry Entry;
 

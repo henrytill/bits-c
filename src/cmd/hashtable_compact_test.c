@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "bits.h"
+#include "printf.h"
 
 static struct {
 	char const *name;

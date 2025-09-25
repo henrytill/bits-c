@@ -1,8 +1,11 @@
 #include <assert.h>
 #include <limits.h>
+#include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "bits.h"
+#include "printf.h"
 
 struct Expr {
 	enum {

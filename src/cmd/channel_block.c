@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "bits.h"
+#include "printf.h"
 
 extern size_t const expectedlen;
 extern Message const expected[];

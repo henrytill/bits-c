@@ -1,4 +1,5 @@
 #include "bits.h"
+#include "macro.h"
 
 struct Message const expected[] = {
 	{Tsome, 42},

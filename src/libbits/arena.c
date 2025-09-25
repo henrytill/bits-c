@@ -5,6 +5,8 @@
 #include <unistd.h>
 
 #include "bits.h"
+#include "macro.h"
+#include "printf.h"
 
 /* storage allocation arena */
 struct Arena {
