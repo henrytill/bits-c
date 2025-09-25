@@ -8,12 +8,6 @@
 #include "printf.h"
 
 struct Expr {
-	enum {
-		Tvar,
-		Tlam,
-		Tapp
-	} tag;
-
 	union {
 		struct {
 			char *name;
@@ -29,6 +23,12 @@ struct Expr {
 			struct Expr *arg;
 		} app;
 	} u;
+
+	enum {
+		Tvar,
+		Tlam,
+		Tapp
+	} tag;
 };
 
 static struct Expr *
