@@ -23,19 +23,21 @@ fn createCObj(
     b: *Build,
     ps: Params,
 ) *Build.Step.Compile {
-    const root_module = b.createModule(.{
+    const root = b.createModule(.{
         .target = ps.target,
         .optimize = ps.optimize,
         .link_libc = true,
     });
+
+    root.addIncludePath(ps.includePath);
+
     for (ps.files) |file| {
-        root_module.addCSourceFile(.{ .file = file, .flags = ps.flags });
+        root.addCSourceFile(.{ .file = file, .flags = ps.flags });
     }
-    root_module.addIncludePath(ps.includePath);
 
     const ret = b.addObject(.{
         .name = ps.name,
-        .root_module = root_module,
+        .root_module = root,
     });
 
     return ret;
@@ -46,23 +48,25 @@ fn createCExecutable(
     ps: Params,
     os: []const *Build.Step.Compile,
 ) *Build.Step.Compile {
-    const root_module = b.createModule(.{
+    const root = b.createModule(.{
         .target = ps.target,
         .optimize = ps.optimize,
         .link_libc = true,
     });
+
+    root.addIncludePath(ps.includePath);
+
     for (ps.files) |file| {
-        root_module.addCSourceFile(.{ .file = file, .flags = ps.flags });
+        root.addCSourceFile(.{ .file = file, .flags = ps.flags });
     }
-    root_module.addIncludePath(ps.includePath);
 
     for (os) |o| {
-        root_module.addObject(o);
+        root.addObject(o);
     }
 
     const ret = b.addExecutable(.{
         .name = ps.name,
-        .root_module = root_module,
+        .root_module = root,
     });
 
     return ret;
@@ -104,7 +108,6 @@ pub fn build(b: *Build) void {
         }, &.{bitsLibObj});
         exe.linkSystemLibrary("ssl");
         exe.linkSystemLibrary("crypto");
-
         break :blk exe;
     };
 
@@ -148,10 +151,8 @@ pub fn build(b: *Build) void {
         });
         root.addIncludePath(includePath);
         root.addObject(bitsLibObj);
-
-        break :blk b.addTest(.{
-            .root_module = root,
-        });
+        const exe = b.addTest(.{ .root_module = root });
+        break :blk exe;
     };
 
     const lambdaExe = createCExecutable(b, .{
