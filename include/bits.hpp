@@ -6,19 +6,15 @@ extern "C" {
 
 template <typename F>
 struct Deferred {
-	F f;
-	Deferred(F f)
-		: f(f)
-	{
-	}
-	~Deferred() { f(); }
+  F f;
+  Deferred(F f) : f(f) {}
+  ~Deferred() { f(); }
 };
 
 template <typename F>
 inline Deferred<F>
-mkdeferred(F f)
-{
-	return Deferred<F>(f);
+mkdeferred(F f) {
+  return Deferred<F>(f);
 }
 
 #define DO_JOINSTRING2(x, y) x##y

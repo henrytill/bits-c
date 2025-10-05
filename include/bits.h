@@ -7,12 +7,12 @@ typedef struct Message Message;
 typedef struct Channel Channel;
 
 struct Message {
-	enum {
-		Tnone = 0,
-		Tsome = 1,
-		Tclose = 2
-	} tag;
-	intptr_t value;
+  enum {
+    Tnone = 0,
+    Tsome = 1,
+    Tclose = 2
+  } tag;
+  intptr_t value;
 };
 
 Channel *channelcreate(uint8_t capacity);
