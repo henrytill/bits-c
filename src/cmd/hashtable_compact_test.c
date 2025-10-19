@@ -49,11 +49,11 @@ static struct {
 };
 
 static int run(Table *t, int test) {
-  char const *testname = testcases[test].name;
-  int i;
+  int i, rc;
   intptr_t value;
-  int rc;
   void *result;
+
+  char const *testname = testcases[test].name;
 
   for (i = 0; testcases[test].toadd[i] != NULL; ++i) {
     char const *key = testcases[test].toadd[i];

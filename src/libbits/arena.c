@@ -34,6 +34,7 @@ static void init(void) {
     first[i].avail = first[i].limit = (char *)&first[i];
     first[i].next = NULL;
   }
+
   inited = 1;
 }
 

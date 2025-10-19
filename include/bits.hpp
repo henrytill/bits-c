@@ -19,4 +19,4 @@ mkdeferred(F f) {
 
 #define DO_JOINSTRING2(x, y) x##y
 #define JOINSTRING2(x, y)    DO_JOINSTRING2(x, y)
-#define defer(stmt)          auto JOINSTRING2(defer_, __LINE__) = mkdeferred([&]() { stmt; })
+#define defer(stmt)          auto JOINSTRING2(defer_, __LINE__) = mkdeferred([&]() { stmt })
