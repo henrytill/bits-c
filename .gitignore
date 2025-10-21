@@ -3,3 +3,4 @@ __pycache__/
 /.zig-cache
 /zig-out
 /build*/
+/result*
