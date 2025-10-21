@@ -8,24 +8,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  linux-flake:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Install Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -yqq --no-install-recommends \
-          meson ninja-build
-    - run: meson setup builddir
-    - run: ninja -C builddir
-    - run: meson test -C builddir
-  zig:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: mlugg/setup-zig@v2
-      with:
-        version: 0.15.1
-    - run: zig build --summary all
-    - run: zig build test --summary all
+    - uses: actions/checkout@v5
+    - uses: DeterminateSystems/nix-installer-action@main
+    - uses: DeterminateSystems/magic-nix-cache-action@main
+    - run: nix build -L .#bits-meson -o result-bits-meson
+    - run: nix build -L .#bits-zig -o result-bits-zig
