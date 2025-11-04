@@ -55,6 +55,7 @@
                 clang-tools
               ]
               ++ packages;
+            hardeningDisable = [ "fortify" ];
             inherit shellHook;
           };
       in
