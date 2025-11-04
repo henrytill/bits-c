@@ -133,6 +133,7 @@ void *aalloc(int n, int const t)
         ap->limit = (char *)ap + s;
         ap->next = NULL;
     }
+
     ap->avail += n;
     return ap->avail - n;
 }
@@ -148,6 +149,7 @@ void areset(int const t)
         arena[t]->avail = (char *)arena[t] + sizeof(*arena[t]);
         return;
     }
+
     arena[t] = &first[t];
 }
 
@@ -166,5 +168,6 @@ void afree(int const t)
         free(ap);
         ap = next;
     }
+
     arena[t] = &first[t];
 }

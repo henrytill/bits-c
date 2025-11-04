@@ -15,8 +15,7 @@ struct Deferred {
 };
 
 template <typename F>
-inline Deferred<F>
-mkdeferred(F f)
+inline Deferred<F> mkdeferred(F f)
 {
     return Deferred<F>(f);
 }
