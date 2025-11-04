@@ -1,6 +1,6 @@
 project(
     'bits-c',
-    ['c', 'cpp'],
+    ['c', 'cpp', 'd'],
     version: '0.1.0',
     default_options: [
         'warning_level=3',
@@ -75,6 +75,14 @@ hashtable_compact_test = executable(
     link_with: bits,
 )
 
+hashtable_test_d = executable(
+    'hashtable_test_d',
+    'src/cmd/hashtable_test.d',
+    include_directories: inc_dir,
+    link_with: bits,
+    d_unittest: true,
+)
+
 executable(
     'hello',
     'src/cmd/hello.cpp',
@@ -110,6 +118,7 @@ test('arena_test', arena_test)
 test('fnv_test', fnv_test)
 test('hashtable_test', hashtable_test)
 test('hashtable_compact_test', hashtable_compact_test)
+test('hashtable_test_d', hashtable_test_d)
 test('lambda', lambda)
 test('channel_basic_test', channel_basic_test)
 test('channel_block_test', channel_block_test)
