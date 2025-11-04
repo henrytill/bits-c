@@ -3,7 +3,8 @@
 
 #include "bits.h"
 
-static struct {
+static struct
+{
     char const *key;
     char *value;
 } const vectors[] = {
@@ -31,7 +32,8 @@ int main(void)
     for (i = 0; (key = vectors[i].key) != NULL; ++i)
         tableput(t, key, vectors[i].value);
 
-    for (i = 0; (key = vectors[i].key) != NULL; ++i) {
+    for (i = 0; (key = vectors[i].key) != NULL; ++i)
+    {
         value = tableget(t, key);
         if (strcmp(vectors[i].value, value) != 0)
             goto destroyt;
@@ -41,13 +43,15 @@ int main(void)
     if (value != NULL)
         goto destroyt;
 
-    for (i = 0; (key = vectors[i].key) != NULL; ++i) {
+    for (i = 0; (key = vectors[i].key) != NULL; ++i)
+    {
         rc = tabledel(t, key, NULL);
         if (rc != 0)
             goto destroyt;
     }
 
-    for (i = 0; (key = vectors[i].key) != NULL; ++i) {
+    for (i = 0; (key = vectors[i].key) != NULL; ++i)
+    {
         value = tableget(t, key);
         if (value != NULL)
             goto destroyt;

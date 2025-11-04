@@ -5,7 +5,8 @@
 
 #include "bits.h"
 
-struct Channel {
+struct Channel
+{
     Message *buffer;       /**< Buffer to hold messages */
     uint8_t capacity;      /**< Maximum size of the buffer */
     size_t front;          /**< Index of the front message in the buffer */
@@ -25,7 +26,8 @@ static sem_t *semcreate(uint32_t value)
         return NULL;
 
     rc = sem_init(sem, 0, value);
-    if (rc == -1) {
+    if (rc == -1)
+    {
         free(sem);
         return NULL;
     }
@@ -52,7 +54,8 @@ static pthread_mutex_t *mutexcreate(void)
         return NULL;
 
     rc = pthread_mutex_init(mutex, NULL);
-    if (rc != 0) {
+    if (rc != 0)
+    {
         free(mutex);
         return NULL;
     }
@@ -114,19 +117,23 @@ static void channelfinish(Channel *c)
     c->front = 0;
     c->rear = 0;
 
-    if (c->buffer != NULL) {
+    if (c->buffer != NULL)
+    {
         free(c->buffer);
         c->buffer = NULL;
     }
-    if (c->empty != NULL) {
+    if (c->empty != NULL)
+    {
         semdestroy(c->empty);
         c->empty = NULL;
     }
-    if (c->full != NULL) {
+    if (c->full != NULL)
+    {
         semdestroy(c->full);
         c->full = NULL;
     }
-    if (c->lock != NULL) {
+    if (c->lock != NULL)
+    {
         mutexdestroy(c->lock);
         c->lock = NULL;
     }
@@ -142,7 +149,8 @@ Channel *channelcreate(uint8_t capacity)
         return NULL;
 
     rc = channelinit(c, capacity);
-    if (rc != 0) {
+    if (rc != 0)
+    {
         free(c);
         return NULL;
     }
@@ -157,11 +165,13 @@ void channeldestroy(Channel *c)
     if (c == NULL)
         return;
 
-    do {
+    do
+    {
         sem_getvalue(c->empty, &e);
         sem_getvalue(c->full, &f);
 
-        if (f > 0) {
+        if (f > 0)
+        {
             sem_wait(c->full);
             sem_post(c->full);
         }
@@ -183,7 +193,8 @@ int channelput(Channel *c, struct Message *in)
         return (errno == EAGAIN) ? 1 : -1;
 
     rc = pthread_mutex_lock(c->lock);
-    if (rc != 0) {
+    if (rc != 0)
+    {
         sem_post(c->empty);
         return -1;
     }
@@ -192,13 +203,15 @@ int channelput(Channel *c, struct Message *in)
     c->rear = (c->rear + 1) % c->capacity;
 
     rc = pthread_mutex_unlock(c->lock);
-    if (rc != 0) {
+    if (rc != 0)
+    {
         sem_post(c->empty);
         return -1;
     }
 
     rc = sem_post(c->full);
-    if (rc == -1) {
+    if (rc == -1)
+    {
         sem_post(c->empty);
         return -1;
     }
@@ -218,7 +231,8 @@ int channelget(Channel *c, struct Message *out)
         return -1;
 
     rc = pthread_mutex_lock(c->lock);
-    if (rc != 0) {
+    if (rc != 0)
+    {
         sem_post(c->full);
         return -1;
     }
@@ -227,13 +241,15 @@ int channelget(Channel *c, struct Message *out)
     c->front = (c->front + 1) % c->capacity;
 
     rc = pthread_mutex_unlock(c->lock);
-    if (rc != 0) {
+    if (rc != 0)
+    {
         sem_post(c->full);
         return -1;
     }
 
     rc = sem_post(c->empty);
-    if (rc == -1) {
+    if (rc == -1)
+    {
         sem_post(c->full);
         return -1;
     }

@@ -3,7 +3,8 @@
 #include "bits.h"
 #include "printf.h"
 
-static struct {
+static struct
+{
     char const *name;
     char const *toadd[8];
     char const *todelete[8];
@@ -56,38 +57,46 @@ static int run(Table *t, int test)
 
     char const *testname = testcases[test].name;
 
-    for (i = 0; testcases[test].toadd[i] != NULL; ++i) {
+    for (i = 0; testcases[test].toadd[i] != NULL; ++i)
+    {
         char const *key = testcases[test].toadd[i];
         value = i + 1;
         rc = tableput(t, key, (void *)value);
-        if (rc != 0) {
+        if (rc != 0)
+        {
             eprintf("FAIL %s: tableput failed for key '%s'\n", testname, key);
             return 0;
         }
     }
 
-    for (i = 0; testcases[test].todelete[i] != NULL; ++i) {
+    for (i = 0; testcases[test].todelete[i] != NULL; ++i)
+    {
         char const *key = testcases[test].todelete[i];
         rc = tabledel(t, key, NULL);
-        if (rc != 0) {
+        if (rc != 0)
+        {
             eprintf("FAIL %s: tabledel failed for key '%s'\n", testname, key);
             return 0;
         }
     }
 
-    for (i = 0; testcases[test].shouldnotexist[i] != NULL; ++i) {
+    for (i = 0; testcases[test].shouldnotexist[i] != NULL; ++i)
+    {
         char const *key = testcases[test].shouldnotexist[i];
         result = tableget(t, key);
-        if (result != NULL) {
+        if (result != NULL)
+        {
             eprintf("FAIL %s: key '%s' should not exist before compaction\n", testname, key);
             return 0;
         }
     }
 
-    for (i = 0; testcases[test].shouldexist[i] != NULL; ++i) {
+    for (i = 0; testcases[test].shouldexist[i] != NULL; ++i)
+    {
         char const *key = testcases[test].shouldexist[i];
         result = tableget(t, key);
-        if (result == NULL) {
+        if (result == NULL)
+        {
             eprintf("FAIL %s: key '%s' should exist before compaction\n", testname, key);
             return 0;
         }
@@ -95,19 +104,23 @@ static int run(Table *t, int test)
 
     tablecompact(t);
 
-    for (i = 0; testcases[test].shouldnotexist[i] != NULL; ++i) {
+    for (i = 0; testcases[test].shouldnotexist[i] != NULL; ++i)
+    {
         char const *key = testcases[test].shouldnotexist[i];
         result = tableget(t, key);
-        if (result != NULL) {
+        if (result != NULL)
+        {
             eprintf("FAIL %s: key '%s' should not exist after compaction\n", testname, key);
             return 0;
         }
     }
 
-    for (i = 0; testcases[test].shouldexist[i] != NULL; ++i) {
+    for (i = 0; testcases[test].shouldexist[i] != NULL; ++i)
+    {
         char const *key = testcases[test].shouldexist[i];
         result = tableget(t, key);
-        if (result == NULL) {
+        if (result == NULL)
+        {
             eprintf("FAIL %s: key '%s' should exist after compaction\n", testname, key);
             return 0;
         }
@@ -115,13 +128,15 @@ static int run(Table *t, int test)
 
     value = 999;
     rc = tableput(t, "post_compact_key", (void *)value);
-    if (rc != 0) {
+    if (rc != 0)
+    {
         eprintf("FAIL %s: tableput failed after compaction\n", testname);
         return 0;
     }
 
     result = tableget(t, "post_compact_key");
-    if (result != (void *)value) {
+    if (result != (void *)value)
+    {
         eprintf("FAIL %s: tableget failed for post-compaction key\n", testname);
         return 0;
     }
@@ -137,19 +152,22 @@ int main(void)
     int rc;
 
     t = tablecreate(8);
-    if (t == NULL) {
+    if (t == NULL)
+    {
         eprintf("FAIL: tablecreate failed\n");
         return EXIT_FAILURE;
     }
 
-    for (test = 0; testcases[test].name != NULL; ++test) {
+    for (test = 0; testcases[test].name != NULL; ++test)
+    {
         rc = run(t, test);
         if (!rc)
             goto destroyt;
 
         tabledestroy(t, NULL);
         t = tablecreate(8);
-        if (t == NULL) {
+        if (t == NULL)
+        {
             eprintf("FAIL: tablecreate failed during test cleanup\n");
             goto destroyt;
         }

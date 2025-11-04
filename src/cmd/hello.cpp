@@ -5,9 +5,11 @@
 
 #include "bits.hpp"
 
-namespace foo {
+namespace foo
+{
 
-enum class Message : uint8_t {
+enum class Message : uint8_t
+{
     Hello = 0,
     Goodbye = 1,
 };

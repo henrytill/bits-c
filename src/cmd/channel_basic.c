@@ -34,7 +34,8 @@ static void *produce(void *data)
 
     c = data;
 
-    for (v = 0; v <= count;) {
+    for (v = 0; v <= count;)
+    {
         m.tag = (v < count) ? Tsome : Tclose;
         m.value = v;
 
@@ -43,7 +44,8 @@ static void *produce(void *data)
             channelfail(rc, "channelput failed");
         else if (rc == 1)
             printf("blocked: {%d, %" PRIdPTR "}\n", m.tag, v);
-        else {
+        else
+        {
             printf("produced: {%d, %" PRIdPTR "}\n", m.tag, v);
             v += 1;
         }
@@ -77,20 +79,23 @@ int main(void)
         fail("channelcreate failed");
 
     rc = pthread_attr_init(&tattr);
-    if (rc != 0) {
+    if (rc != 0)
+    {
         errno = rc;
         perror("pthread_attr_init");
         goto destroyc;
     }
 
     rc = pthread_create(&tid, &tattr, produce, c);
-    if (rc != 0) {
+    if (rc != 0)
+    {
         errno = rc;
         perror("pthread_create");
         goto destroytattr;
     }
 
-    for (;;) {
+    for (;;)
+    {
         rc = consume(c, &m);
         if (rc == 0)
             break;
@@ -100,7 +105,8 @@ int main(void)
     }
 
     rc = pthread_join(tid, &tret);
-    if (rc != 0) {
+    if (rc != 0)
+    {
         errno = rc;
         perror("pthread_join");
         goto destroytattr;

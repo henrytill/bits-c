@@ -21,10 +21,13 @@ static void *produce(void *data)
     Channel *c = data;
     assert(data != NULL);
 
-    for (i = 0; i < expectedlen; ++i) {
-        for (rc = 1; rc == 1;) {
+    for (i = 0; i < expectedlen; ++i)
+    {
+        for (rc = 1; rc == 1;)
+        {
             rc = channelput(c, (Message *)&expected[i]);
-            if (rc < 0) {
+            if (rc < 0)
+            {
                 eprintf("channelput failed: error %d", rc);
                 exit(EXIT_FAILURE);
             }
@@ -43,13 +46,16 @@ static int consume(Channel *c)
     if (m == NULL)
         return 1;
 
-    for (i = 0; i < expectedlen; ++i) {
+    for (i = 0; i < expectedlen; ++i)
+    {
         sleep(delay);
         channelget(c, &m[i]);
     }
 
-    for (i = 0; i < expectedlen; ++i) {
-        if (m[i].tag != expected[i].tag || m[i].value != expected[i].value) {
+    for (i = 0; i < expectedlen; ++i)
+    {
+        if (m[i].tag != expected[i].tag || m[i].value != expected[i].value)
+        {
             free(m);
             return 1;
         }
@@ -69,33 +75,38 @@ int main(void)
     void *tret = NULL;
 
     c = channelcreate(cap);
-    if (c == NULL) {
+    if (c == NULL)
+    {
         eprintf("channelcreate failed");
         exit(EXIT_FAILURE);
     }
 
     rc = pthread_attr_init(&tattr);
-    if (rc != 0) {
+    if (rc != 0)
+    {
         errno = rc;
         perror("pthread_attr_init");
         goto destroyc;
     }
 
     rc = pthread_create(&tid, &tattr, &produce, c);
-    if (rc != 0) {
+    if (rc != 0)
+    {
         errno = rc;
         perror("pthread_create");
         goto destroytattr;
     }
 
     rc = consume(c);
-    if (rc != 0) {
+    if (rc != 0)
+    {
         eprintf("consume failed");
         goto destroytattr;
     }
 
     rc = pthread_join(tid, &tret);
-    if (rc != 0) {
+    if (rc != 0)
+    {
         errno = rc;
         perror("pthread_join");
         goto destroytattr;

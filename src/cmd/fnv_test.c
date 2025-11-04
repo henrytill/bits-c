@@ -6,7 +6,8 @@
 #include "printf.h"
 
 /* https://datatracker.ietf.org/doc/html/draft-eastlake-fnv-03#page-15 */
-static struct {
+static struct
+{
     char const *input;
     uint64_t expected;
 } const vectors[] = {
@@ -31,7 +32,8 @@ int main(void)
     char const *input;
     uint64_t expected, actual;
 
-    for (i = 0; (input = vectors[i].input) != NULL; ++i) {
+    for (i = 0; (input = vectors[i].input) != NULL; ++i)
+    {
         if (input == NULL)
             return EXIT_FAILURE;
 

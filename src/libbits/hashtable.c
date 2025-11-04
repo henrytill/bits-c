@@ -7,14 +7,16 @@
 
 typedef struct Entry Entry;
 
-struct Entry {
+struct Entry
+{
     Entry *next;
     char const *key;
     void *value;
     int deleted;
 };
 
-struct Table {
+struct Table
+{
     size_t len;
     Entry columns[1]; /* C89 flexible array member workaround */
 };
@@ -23,7 +25,8 @@ Table *tablecreate(size_t const len)
 {
     Table *ret;
 
-    if (!ISPOW2(len)) {
+    if (!ISPOW2(len))
+    {
         eprintf("len must be a power of 2\n");
         return NULL;
     }
@@ -43,9 +46,11 @@ void tabledestroy(Table *t, void finalize(void *))
     if (t == NULL)
         return;
 
-    for (i = 0; i < t->len; ++i) {
+    for (i = 0; i < t->len; ++i)
+    {
         curr = t->columns[i].next;
-        while (curr != NULL) {
+        while (curr != NULL)
+        {
             next = curr->next;
             if (finalize != NULL && curr->value != NULL)
                 finalize(curr->value);
@@ -88,17 +93,20 @@ int tableput(Table *t, char const *key, void *value)
     debugprintf("key: %s index: %d\n", key, i);
     curr = &t->columns[i];
 
-    while (curr != NULL && curr->key != NULL && !curr->deleted && strcmp(key, curr->key) != 0) {
+    while (curr != NULL && curr->key != NULL && !curr->deleted && strcmp(key, curr->key) != 0)
+    {
         prev = curr;
         curr = curr->next;
     }
     /* existing active node */
-    if (curr != NULL && curr->key != NULL && !curr->deleted) {
+    if (curr != NULL && curr->key != NULL && !curr->deleted)
+    {
         curr->value = value;
         return 0;
     }
     /* uninitialized or deleted node - reuse it */
-    if (curr != NULL) {
+    if (curr != NULL)
+    {
         if (curr->deleted && curr->key != NULL)
             free((char *)curr->key);
         curr->key = strdup(key);
@@ -115,7 +123,8 @@ int tableput(Table *t, char const *key, void *value)
 
     curr->next = NULL;
     curr->key = strdup(key);
-    if (curr->key == NULL) {
+    if (curr->key == NULL)
+    {
         free(curr);
         return -1;
     }
@@ -192,17 +201,20 @@ void tablecompact(Table *t)
     if (t == NULL)
         return;
 
-    for (i = 0; i < t->len; ++i) {
+    for (i = 0; i < t->len; ++i)
+    {
         curr = &t->columns[i];
 
         /* handle embedded entry */
-        if (curr->deleted && curr->next != NULL) {
+        if (curr->deleted && curr->next != NULL)
+        {
             /* move first non-deleted chained entry to embedded slot */
             replacement = curr->next;
             while (replacement != NULL && replacement->deleted)
                 replacement = replacement->next;
 
-            if (replacement != NULL) {
+            if (replacement != NULL)
+            {
                 /* copy replacement data to embedded entry */
                 curr->key = replacement->key;
                 curr->value = replacement->value;
@@ -215,12 +227,16 @@ void tablecompact(Table *t)
         /* clean up deleted entries in chain */
         prev = curr;
         curr = curr->next;
-        while (curr != NULL) {
+        while (curr != NULL)
+        {
             next = curr->next;
-            if (curr->deleted) {
+            if (curr->deleted)
+            {
                 prev->next = next;
                 free(curr);
-            } else {
+            }
+            else
+            {
                 prev = curr;
             }
             curr = next;

@@ -6,8 +6,10 @@
 typedef struct Message Message;
 typedef struct Channel Channel;
 
-struct Message {
-    enum {
+struct Message
+{
+    enum
+    {
         Tnone = 0,
         Tsome = 1,
         Tclose = 2

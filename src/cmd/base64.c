@@ -8,14 +8,16 @@
 #include "printf.h"
 
 #define TEST(e)                                         \
-    if (!(e)) {                                         \
+    if (!(e))                                           \
+    {                                                   \
         eprintf("%s:%d: %s\n", __FILE__, __LINE__, #e); \
         exit(EXIT_FAILURE);                             \
     }
 
 #define BASE64_STRLEN(s) (((strlen((s)) + 2) / 3) * 4)
 
-static struct {
+static struct
+{
     char const *input;
     size_t const inputlen;
     char const *base64;
@@ -52,7 +54,8 @@ int main(void)
     char actual[BASE64_LEN_MAX + 1];
     char output[INPUT_LEN_MAX + 1];
 
-    for (i = 0; (input = vectors[i].input) != NULL; ++i) {
+    for (i = 0; (input = vectors[i].input) != NULL; ++i)
+    {
         CLEAR(actual);
         CLEAR(output);
 

@@ -7,24 +7,30 @@
 #include "bits.h"
 #include "printf.h"
 
-struct Expr {
-    union {
-        struct {
+struct Expr
+{
+    union
+    {
+        struct
+        {
             char *name;
         } var;
 
-        struct {
+        struct
+        {
             char *param;
             struct Expr *body;
         } lam;
 
-        struct {
+        struct
+        {
             struct Expr *fun;
             struct Expr *arg;
         } app;
     } u;
 
-    enum {
+    enum
+    {
         Tvar,
         Tlam,
         Tapp
@@ -87,8 +93,10 @@ static struct Expr *appcreate(struct Expr *fun, struct Expr *arg)
     return e;
 }
 
-struct Stackitem {
-    enum {
+struct Stackitem
+{
+    enum
+    {
         Aexpr,
         Alamclose,
         Aappspace,
@@ -103,7 +111,8 @@ static int push(struct Stackitem **stack, int action, struct Expr *expr)
     struct Stackitem *item;
 
     item = aalloc(sizeof(*item), 1);
-    if (item == NULL) {
+    if (item == NULL)
+    {
         eprintf("allocation failed");
         return -1;
     }
@@ -125,13 +134,16 @@ static void show(struct Expr *e, FILE *out)
     if (rc < 0)
         return;
 
-    while (stack != NULL) {
+    while (stack != NULL)
+    {
         item = stack;
         stack = stack->next;
 
-        switch (item->action) {
+        switch (item->action)
+        {
         case Aexpr:
-            switch (item->expr->tag) {
+            switch (item->expr->tag)
+            {
             case Tvar:
                 (void)fprintf(out, "%s", item->expr->u.var.name);
                 break;
@@ -194,12 +206,14 @@ int main(void)
 
     /* (\x . x) */
     xvar = varcreate("x");
-    if (xvar == NULL) {
+    if (xvar == NULL)
+    {
         eprintf("failed to create variable");
         goto freearenas;
     }
     id = lamcreate("x", xvar);
-    if (id == NULL) {
+    if (id == NULL)
+    {
         eprintf("failed to create lambda");
         goto freearenas;
     }
@@ -208,17 +222,20 @@ int main(void)
 
     /* (\t . (\f . t)) */
     tvar = varcreate("t");
-    if (tvar == NULL) {
+    if (tvar == NULL)
+    {
         eprintf("failed to create variable");
         goto freearenas;
     }
     kinner = lamcreate("f", tvar);
-    if (kinner == NULL) {
+    if (kinner == NULL)
+    {
         eprintf("failed to create lambda");
         goto freearenas;
     }
     k = lamcreate("t", kinner);
-    if (k == NULL) {
+    if (k == NULL)
+    {
         eprintf("failed to create lambda");
         goto freearenas;
     }
@@ -227,12 +244,14 @@ int main(void)
 
     /* ((\x . x) y) */
     yvar = varcreate("y");
-    if (yvar == NULL) {
+    if (yvar == NULL)
+    {
         eprintf("failed to create variable");
         goto freearenas;
     }
     app = appcreate(id, yvar);
-    if (app == NULL) {
+    if (app == NULL)
+    {
         eprintf("failed to create application");
         goto freearenas;
     }
