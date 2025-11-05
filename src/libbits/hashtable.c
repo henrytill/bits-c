@@ -30,6 +30,7 @@ Table *tablecreate(size_t const len)
         eprintf("len must be a power of 2\n");
         return NULL;
     }
+
     ret = calloc(1, sizeof(*ret) + ((len - 1) * sizeof(Entry)));
     if (ret == NULL)
         return NULL;
@@ -98,12 +99,14 @@ int tableput(Table *t, char const *key, void *value)
         prev = curr;
         curr = curr->next;
     }
+
     /* existing active node */
     if (curr != NULL && curr->key != NULL && !curr->deleted)
     {
         curr->value = value;
         return 0;
     }
+
     /* uninitialized or deleted node - reuse it */
     if (curr != NULL)
     {
@@ -116,6 +119,7 @@ int tableput(Table *t, char const *key, void *value)
         curr->deleted = 0;
         return 0;
     }
+
     /* new node */
     curr = calloc(1, sizeof(*curr));
     if (curr == NULL)
@@ -128,8 +132,8 @@ int tableput(Table *t, char const *key, void *value)
         free(curr);
         return -1;
     }
-    curr->value = value;
 
+    curr->value = value;
     assert(prev != NULL);
     prev->next = curr;
 

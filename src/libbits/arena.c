@@ -134,12 +134,14 @@ void *aalloc(int n, int const t)
             eprintf("allocation size too large");
             exit(EXIT_FAILURE);
         }
+
         ap->next = calloc(1, s);
         if (ap->next == NULL)
         {
             eprintf("calloc failed");
             exit(EXIT_FAILURE);
         }
+
         ap = ap->next;
         ap->avail = (char *)ap + sizeof(*ap);
         ap->limit = (char *)ap + s;
