@@ -37,6 +37,7 @@
             inherit nativeBuildInputs;
 
             buildInputs = with pkgs; [
+              libpng
               openssl
             ];
           });

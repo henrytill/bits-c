@@ -12,6 +12,7 @@ project(
 
 add_project_arguments('-D_DEFAULT_SOURCE', language: 'c')
 
+libpng_dep = dependency('libpng')
 openssl_dep = dependency('openssl', required: false)
 threads_dep = dependency('threads')
 
@@ -50,6 +51,15 @@ executable(
     'demo_oop',
     'src/cmd/demo_oop.c',
     include_directories: inc_dir,
+    install: true,
+    install_dir: 'bin',
+)
+
+executable(
+    'mkavatar',
+    'src/cmd/mkavatar.c',
+    include_directories: inc_dir,
+    dependencies: libpng_dep,
     install: true,
     install_dir: 'bin',
 )
