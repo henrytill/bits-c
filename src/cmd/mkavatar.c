@@ -74,9 +74,11 @@ int main(void)
         goto destroypng;
 
     png_init_io(png, fp);
+
     png_set_IHDR(png, info, WIDTH, HEIGHT, 8, PNG_COLOR_TYPE_GRAY,
                  PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT,
                  PNG_FILTER_TYPE_DEFAULT);
+
     png_write_info(png, info);
 
     for (x = 0; x < WIDTH; ++x)

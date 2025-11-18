@@ -112,9 +112,11 @@ int tableput(Table *t, char const *key, void *value)
     {
         if (curr->deleted && curr->key != NULL)
             free((char *)curr->key);
+
         curr->key = strdup(key);
         if (curr->key == NULL)
             return -1;
+
         curr->value = value;
         curr->deleted = 0;
         return 0;
