@@ -8,8 +8,7 @@
 #define WIDTH  2048
 #define HEIGHT 2048
 
-struct Context
-{
+struct Context {
     char const *filename;
     int nerrors;
     int nwarnings;
@@ -18,13 +17,10 @@ struct Context
 static void onerror(png_structp png_ptr, png_const_charp msg)
 {
     struct Context *ctx = png_get_error_ptr(png_ptr);
-    if (ctx != NULL)
-    {
+    if (ctx != NULL) {
         eprintf("%s: libpng error: %s\n", ctx->filename, msg);
         ctx->nerrors++;
-    }
-    else
-    {
+    } else {
         eprintf("libpng error: %s\n", msg);
     }
 
@@ -34,13 +30,10 @@ static void onerror(png_structp png_ptr, png_const_charp msg)
 static void onwarning(png_structp png_ptr, png_const_charp msg)
 {
     struct Context *ctx = png_get_error_ptr(png_ptr);
-    if (ctx != NULL)
-    {
+    if (ctx != NULL) {
         eprintf("%s: libpng warning: %s\n", ctx->filename, msg);
         ctx->nwarnings++;
-    }
-    else
-    {
+    } else {
         eprintf("libpng warning: %s\n", msg);
     }
 }

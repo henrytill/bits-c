@@ -12,13 +12,11 @@ typedef struct Personops Personops;
 /* Derived class. */
 typedef struct Student Student;
 
-struct Personops
-{
+struct Personops {
     void (*hello)(Person const *self);
 };
 
-struct Person
-{
+struct Person {
     Personops const *ops;
     char *name;
     int age;
@@ -35,8 +33,7 @@ static Personops const pops = {
     phello,
 };
 
-struct Student
-{
+struct Student {
     Person person;
     char *school;
 };

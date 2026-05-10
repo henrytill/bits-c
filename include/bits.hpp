@@ -1,13 +1,11 @@
 #pragma once
 
-extern "C"
-{
+extern "C" {
 #include "bits.h"
 }
 
 template <typename F>
-struct Deferred
-{
+struct Deferred {
     F f;
     Deferred(F f)
         : f(f)

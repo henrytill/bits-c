@@ -32,8 +32,7 @@ int main(void)
     char const *input;
     uint64_t expected, actual;
 
-    for (i = 0; (input = vectors[i].input) != NULL; ++i)
-    {
+    for (i = 0; (input = vectors[i].input) != NULL; ++i) {
         if (input == NULL)
             return EXIT_FAILURE;
 

@@ -10,8 +10,7 @@ uint64_t fnv(size_t const datalen, unsigned char const *data)
     uint64_t hash = offsetbasis;
     size_t i;
 
-    for (i = 0; i < datalen; ++i)
-    {
+    for (i = 0; i < datalen; ++i) {
         hash ^= data[i];
         hash *= prime;
     }

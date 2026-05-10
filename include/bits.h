@@ -6,12 +6,10 @@
 typedef struct Message Message;
 typedef struct Channel Channel;
 
-struct Message
-{
+struct Message {
     intptr_t value;
 
-    enum
-    {
+    enum {
         Tnone = 0,
         Tsome = 1,
         Tclose = 2
