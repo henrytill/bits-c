@@ -58,6 +58,27 @@ const Ctx = struct {
             .root_module = m,
         });
     }
+
+    fn zigTest(
+        ctx: Ctx,
+        rootSourceFile: Build.LazyPath,
+        objs: []const *Build.Step.Compile,
+    ) *Build.Step.Compile {
+        const m = ctx.b.createModule(.{
+            .root_source_file = rootSourceFile,
+            .target = ctx.target,
+            .optimize = ctx.optimize,
+            .link_libc = true,
+        });
+
+        m.addIncludePath(ctx.includePath);
+
+        for (objs) |o| {
+            m.addObject(o);
+        }
+
+        return ctx.b.addTest(.{ .root_module = m });
+    }
 };
 
 pub fn build(b: *Build) void {
@@ -96,17 +117,7 @@ pub fn build(b: *Build) void {
 
     const hashtableCompactTestExe = ctx.cExe("hashtable_compact_test", &.{b.path("src/cmd/hashtable_compact_test.c")}, &.{bitsLibObj});
 
-    const hashtableZigTests = blk: {
-        const root = b.createModule(.{
-            .root_source_file = b.path("src/cmd/hashtable_test.zig"),
-            .target = target,
-            .optimize = optimize,
-        });
-        root.addIncludePath(includePath);
-        root.addObject(bitsLibObj);
-        const exe = b.addTest(.{ .root_module = root });
-        break :blk exe;
-    };
+    const hashtableZigTests = ctx.zigTest(b.path("src/cmd/hashtable_test.zig"), &.{bitsLibObj});
 
     const lambdaExe = ctx.cExe("lambda", &.{b.path("src/cmd/lambda.c")}, &.{bitsLibObj});
 
