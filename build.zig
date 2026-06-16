@@ -152,13 +152,13 @@ pub fn build(b: *Build) void {
         &.{bitsLibObj},
     );
 
-    const messageQueueBasicTestExe = ctx.cExe(
+    const channelBasicTestExe = ctx.cExe(
         "channel_basic_test",
         &.{b.path("src/cmd/channel_basic.c")},
         &.{bitsLibObj},
     );
 
-    const messageQueueBlockTestExe = ctx.cExe(
+    const channelBlockTestExe = ctx.cExe(
         "channel_block_test",
         &.{
             b.path("src/cmd/channel_block.c"),
@@ -176,8 +176,8 @@ pub fn build(b: *Build) void {
         .{ .exe = hashtableCompactTestExe, .run = true },
         .{ .exe = hashtableZigTests, .run = true },
         .{ .exe = lambdaExe, .run = true },
-        .{ .exe = messageQueueBasicTestExe, .run = true },
-        .{ .exe = messageQueueBlockTestExe, .run = true },
+        .{ .exe = channelBasicTestExe, .run = true },
+        .{ .exe = channelBlockTestExe, .run = true },
     };
 
     const testStep = b.step("test", "Run tests");
