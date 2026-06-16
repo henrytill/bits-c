@@ -2,146 +2,99 @@ const std = @import("std");
 
 const Build = std.Build;
 
-const Params = struct {
-    name: []const u8,
-    files: []const Build.LazyPath,
+const flags: []const []const u8 = &.{
+    "-std=c89",
+    "-Wall",
+    "-Wextra",
+    "-Wpedantic",
+    "-Wconversion",
+    "-Wsign-conversion",
+    "-D_DEFAULT_SOURCE",
+};
+
+const Ctx = struct {
+    b: *Build,
     target: Build.ResolvedTarget,
     optimize: std.builtin.OptimizeMode,
     includePath: Build.LazyPath,
-    flags: []const []const u8 = &.{
-        "-std=c89",
-        "-Wall",
-        "-Wextra",
-        "-Wpedantic",
-        "-Wconversion",
-        "-Wsign-conversion",
-        "-D_DEFAULT_SOURCE",
-    },
+
+    fn module(ctx: Ctx, files: []const Build.LazyPath) *Build.Module {
+        const m = ctx.b.createModule(.{
+            .target = ctx.target,
+            .optimize = ctx.optimize,
+            .link_libc = true,
+        });
+
+        m.addIncludePath(ctx.includePath);
+
+        for (files) |file| {
+            m.addCSourceFile(.{ .file = file, .flags = flags });
+        }
+
+        return m;
+    }
+
+    fn cObj(ctx: Ctx, name: []const u8, files: []const Build.LazyPath) *Build.Step.Compile {
+        return ctx.b.addObject(.{
+            .name = name,
+            .root_module = ctx.module(files),
+        });
+    }
+
+    fn cExe(
+        ctx: Ctx,
+        name: []const u8,
+        files: []const Build.LazyPath,
+        objs: []const *Build.Step.Compile,
+    ) *Build.Step.Compile {
+        const m = ctx.module(files);
+
+        for (objs) |o| {
+            m.addObject(o);
+        }
+
+        return ctx.b.addExecutable(.{
+            .name = name,
+            .root_module = m,
+        });
+    }
 };
-
-fn createCObj(
-    b: *Build,
-    ps: Params,
-) *Build.Step.Compile {
-    const root = b.createModule(.{
-        .target = ps.target,
-        .optimize = ps.optimize,
-        .link_libc = true,
-    });
-
-    root.addIncludePath(ps.includePath);
-
-    for (ps.files) |file| {
-        root.addCSourceFile(.{ .file = file, .flags = ps.flags });
-    }
-
-    const ret = b.addObject(.{
-        .name = ps.name,
-        .root_module = root,
-    });
-
-    return ret;
-}
-
-fn createCExecutable(
-    b: *Build,
-    ps: Params,
-    os: []const *Build.Step.Compile,
-) *Build.Step.Compile {
-    const root = b.createModule(.{
-        .target = ps.target,
-        .optimize = ps.optimize,
-        .link_libc = true,
-    });
-
-    root.addIncludePath(ps.includePath);
-
-    for (ps.files) |file| {
-        root.addCSourceFile(.{ .file = file, .flags = ps.flags });
-    }
-
-    for (os) |o| {
-        root.addObject(o);
-    }
-
-    const ret = b.addExecutable(.{
-        .name = ps.name,
-        .root_module = root,
-    });
-
-    return ret;
-}
 
 pub fn build(b: *Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
     const includePath = b.path("include");
 
-    const bitsLibObj = createCObj(b, .{
-        .name = "bits",
-        .files = &.{
-            b.path("src/libbits/arena.c"),
-            b.path("src/libbits/channel.c"),
-            b.path("src/libbits/fnv.c"),
-            b.path("src/libbits/hashtable.c"),
-        },
+    const ctx = Ctx{
+        .b = b,
         .target = target,
         .optimize = optimize,
         .includePath = includePath,
+    };
+
+    const bitsLibObj = ctx.cObj("bits", &.{
+        b.path("src/libbits/arena.c"),
+        b.path("src/libbits/channel.c"),
+        b.path("src/libbits/fnv.c"),
+        b.path("src/libbits/hashtable.c"),
     });
 
-    const arenaTestExe = createCExecutable(b, .{
-        .name = "arena_test",
-        .files = &.{b.path("src/cmd/arena_test.c")},
-        .target = target,
-        .optimize = optimize,
-        .includePath = includePath,
-    }, &.{bitsLibObj});
+    const arenaTestExe = ctx.cExe("arena_test", &.{b.path("src/cmd/arena_test.c")}, &.{bitsLibObj});
 
     const base64Exe = blk: {
-        const exe = createCExecutable(b, .{
-            .name = "base64",
-            .files = &.{b.path("src/cmd/base64.c")},
-            .target = target,
-            .optimize = optimize,
-            .includePath = includePath,
-        }, &.{bitsLibObj});
+        const exe = ctx.cExe("base64", &.{b.path("src/cmd/base64.c")}, &.{bitsLibObj});
         exe.root_module.linkSystemLibrary("ssl", .{});
         exe.root_module.linkSystemLibrary("crypto", .{});
         break :blk exe;
     };
 
-    const demoOopExe = createCExecutable(b, .{
-        .name = "demo_oop",
-        .files = &.{b.path("src/cmd/demo_oop.c")},
-        .target = target,
-        .optimize = optimize,
-        .includePath = includePath,
-    }, &.{});
+    const demoOopExe = ctx.cExe("demo_oop", &.{b.path("src/cmd/demo_oop.c")}, &.{});
 
-    const fnvTestExe = createCExecutable(b, .{
-        .name = "fnv_test",
-        .files = &.{b.path("src/cmd/fnv_test.c")},
-        .target = target,
-        .optimize = optimize,
-        .includePath = includePath,
-    }, &.{bitsLibObj});
+    const fnvTestExe = ctx.cExe("fnv_test", &.{b.path("src/cmd/fnv_test.c")}, &.{bitsLibObj});
 
-    const hashtableTestExe = createCExecutable(b, .{
-        .name = "hashtable_test",
-        .files = &.{b.path("src/cmd/hashtable_test.c")},
-        .target = target,
-        .optimize = optimize,
-        .includePath = includePath,
-    }, &.{bitsLibObj});
+    const hashtableTestExe = ctx.cExe("hashtable_test", &.{b.path("src/cmd/hashtable_test.c")}, &.{bitsLibObj});
 
-    const hashtableCompactTestExe = createCExecutable(b, .{
-        .name = "hashtable_compact_test",
-        .files = &.{b.path("src/cmd/hashtable_compact_test.c")},
-        .target = target,
-        .optimize = optimize,
-        .includePath = includePath,
-    }, &.{bitsLibObj});
+    const hashtableCompactTestExe = ctx.cExe("hashtable_compact_test", &.{b.path("src/cmd/hashtable_compact_test.c")}, &.{bitsLibObj});
 
     const hashtableZigTests = blk: {
         const root = b.createModule(.{
@@ -155,31 +108,13 @@ pub fn build(b: *Build) void {
         break :blk exe;
     };
 
-    const lambdaExe = createCExecutable(b, .{
-        .name = "lambda",
-        .files = &.{b.path("src/cmd/lambda.c")},
-        .target = target,
-        .optimize = optimize,
-        .includePath = includePath,
-    }, &.{bitsLibObj});
+    const lambdaExe = ctx.cExe("lambda", &.{b.path("src/cmd/lambda.c")}, &.{bitsLibObj});
 
-    const messageQueueBasicTestExe = createCExecutable(b, .{
-        .name = "channel_basic_test",
-        .files = &.{b.path("src/cmd/channel_basic.c")},
-        .target = target,
-        .optimize = optimize,
-        .includePath = includePath,
-    }, &.{bitsLibObj});
+    const messageQueueBasicTestExe = ctx.cExe("channel_basic_test", &.{b.path("src/cmd/channel_basic.c")}, &.{bitsLibObj});
 
-    const messageQueueBlockTestExe = createCExecutable(b, .{
-        .name = "channel_block_test",
-        .files = &.{
-            b.path("src/cmd/channel_block.c"),
-            b.path("src/cmd/channel_expected.c"),
-        },
-        .target = target,
-        .optimize = optimize,
-        .includePath = includePath,
+    const messageQueueBlockTestExe = ctx.cExe("channel_block_test", &.{
+        b.path("src/cmd/channel_block.c"),
+        b.path("src/cmd/channel_expected.c"),
     }, &.{bitsLibObj});
 
     const executables = [_]struct { exe: *Build.Step.Compile, run: bool }{
