@@ -64,7 +64,7 @@
         packages = {
           bits-zig = mkBitsPackage {
             nativeBuildInputs = with pkgs; [
-              zig_0_15.hook
+              zig_0_16.hook
             ];
           };
 

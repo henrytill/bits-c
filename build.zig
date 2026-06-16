@@ -106,8 +106,8 @@ pub fn build(b: *Build) void {
             .optimize = optimize,
             .includePath = includePath,
         }, &.{bitsLibObj});
-        exe.linkSystemLibrary("ssl");
-        exe.linkSystemLibrary("crypto");
+        exe.root_module.linkSystemLibrary("ssl", .{});
+        exe.root_module.linkSystemLibrary("crypto", .{});
         break :blk exe;
     };
 
