@@ -100,33 +100,72 @@ pub fn build(b: *Build) void {
         b.path("src/libbits/hashtable.c"),
     });
 
-    const arenaTestExe = ctx.cExe("arena_test", &.{b.path("src/cmd/arena_test.c")}, &.{bitsLibObj});
+    const arenaTestExe = ctx.cExe(
+        "arena_test",
+        &.{b.path("src/cmd/arena_test.c")},
+        &.{bitsLibObj},
+    );
 
     const base64Exe = blk: {
-        const exe = ctx.cExe("base64", &.{b.path("src/cmd/base64.c")}, &.{bitsLibObj});
+        const exe = ctx.cExe(
+            "base64",
+            &.{b.path("src/cmd/base64.c")},
+            &.{bitsLibObj},
+        );
         exe.root_module.linkSystemLibrary("ssl", .{});
         exe.root_module.linkSystemLibrary("crypto", .{});
         break :blk exe;
     };
 
-    const demoOopExe = ctx.cExe("demo_oop", &.{b.path("src/cmd/demo_oop.c")}, &.{});
+    const demoOopExe = ctx.cExe(
+        "demo_oop",
+        &.{b.path("src/cmd/demo_oop.c")},
+        &.{},
+    );
 
-    const fnvTestExe = ctx.cExe("fnv_test", &.{b.path("src/cmd/fnv_test.c")}, &.{bitsLibObj});
+    const fnvTestExe = ctx.cExe(
+        "fnv_test",
+        &.{b.path("src/cmd/fnv_test.c")},
+        &.{bitsLibObj},
+    );
 
-    const hashtableTestExe = ctx.cExe("hashtable_test", &.{b.path("src/cmd/hashtable_test.c")}, &.{bitsLibObj});
+    const hashtableTestExe = ctx.cExe(
+        "hashtable_test",
+        &.{b.path("src/cmd/hashtable_test.c")},
+        &.{bitsLibObj},
+    );
 
-    const hashtableCompactTestExe = ctx.cExe("hashtable_compact_test", &.{b.path("src/cmd/hashtable_compact_test.c")}, &.{bitsLibObj});
+    const hashtableCompactTestExe = ctx.cExe(
+        "hashtable_compact_test",
+        &.{b.path("src/cmd/hashtable_compact_test.c")},
+        &.{bitsLibObj},
+    );
 
-    const hashtableZigTests = ctx.zigTest(b.path("src/cmd/hashtable_test.zig"), &.{bitsLibObj});
+    const hashtableZigTests = ctx.zigTest(
+        b.path("src/cmd/hashtable_test.zig"),
+        &.{bitsLibObj},
+    );
 
-    const lambdaExe = ctx.cExe("lambda", &.{b.path("src/cmd/lambda.c")}, &.{bitsLibObj});
+    const lambdaExe = ctx.cExe(
+        "lambda",
+        &.{b.path("src/cmd/lambda.c")},
+        &.{bitsLibObj},
+    );
 
-    const messageQueueBasicTestExe = ctx.cExe("channel_basic_test", &.{b.path("src/cmd/channel_basic.c")}, &.{bitsLibObj});
+    const messageQueueBasicTestExe = ctx.cExe(
+        "channel_basic_test",
+        &.{b.path("src/cmd/channel_basic.c")},
+        &.{bitsLibObj},
+    );
 
-    const messageQueueBlockTestExe = ctx.cExe("channel_block_test", &.{
-        b.path("src/cmd/channel_block.c"),
-        b.path("src/cmd/channel_expected.c"),
-    }, &.{bitsLibObj});
+    const messageQueueBlockTestExe = ctx.cExe(
+        "channel_block_test",
+        &.{
+            b.path("src/cmd/channel_block.c"),
+            b.path("src/cmd/channel_expected.c"),
+        },
+        &.{bitsLibObj},
+    );
 
     const executables = [_]struct { exe: *Build.Step.Compile, run: bool }{
         .{ .exe = arenaTestExe, .run = true },
