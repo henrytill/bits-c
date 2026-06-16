@@ -2,7 +2,8 @@ const c = @cImport(@cInclude("bits.h"));
 const std = @import("std");
 const testing = std.testing;
 
-fn roundtrip(comptime T: type, t: *c.Table, key: [*c]const u8, value: T) !T {
+fn roundtrip(t: *c.Table, key: [*c]const u8, value: anytype) !@TypeOf(value) {
+    comptime std.debug.assert(@typeInfo(@TypeOf(value)) == .pointer);
     const rc = c.tableput(t, key, @as(*anyopaque, @constCast(value)));
     try testing.expectEqual(rc, 0);
     const retPtr = c.tableget(t, key) orelse return error.Failure;
@@ -15,7 +16,7 @@ test "roundtrip i32" {
 
     const key = "key";
     const expected: i32 = 42;
-    const actual = try roundtrip(@TypeOf(&expected), t, key, &expected);
+    const actual = try roundtrip(t, key, &expected);
 
     try testing.expectEqual(&expected, actual);
     try testing.expectEqual(expected, actual.*);
@@ -27,7 +28,7 @@ test "roundtrip string" {
 
     const key = "key";
     const expected = "value";
-    const actual = try roundtrip(@TypeOf(expected), t, key, expected);
+    const actual = try roundtrip(t, key, expected);
 
     try testing.expectEqual(expected.ptr, actual);
     try testing.expectEqualStrings(expected, actual);
