@@ -18,7 +18,7 @@ const Ctx = struct {
     optimize: std.builtin.OptimizeMode,
     includePath: Build.LazyPath,
 
-    fn module(ctx: Ctx, files: []const Build.LazyPath) *Build.Module {
+    fn cModule(ctx: Ctx, files: []const Build.LazyPath) *Build.Module {
         const m = ctx.b.createModule(.{
             .target = ctx.target,
             .optimize = ctx.optimize,
@@ -37,7 +37,7 @@ const Ctx = struct {
     fn cObj(ctx: Ctx, name: []const u8, files: []const Build.LazyPath) *Build.Step.Compile {
         return ctx.b.addObject(.{
             .name = name,
-            .root_module = ctx.module(files),
+            .root_module = ctx.cModule(files),
         });
     }
 
@@ -47,7 +47,7 @@ const Ctx = struct {
         files: []const Build.LazyPath,
         objs: []const *Build.Step.Compile,
     ) *Build.Step.Compile {
-        const m = ctx.module(files);
+        const m = ctx.cModule(files);
 
         for (objs) |o| {
             m.addObject(o);
