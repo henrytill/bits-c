@@ -73,7 +73,6 @@
               meson
               ninja
               pkg-config
-              dmd
             ];
           };
 
@@ -90,11 +89,7 @@
             '';
           };
 
-          bits-meson-shell = mkBitsShell self.packages.${system}.bits-meson {
-            packages = with pkgs; [
-              dub
-            ];
-          };
+          bits-meson-shell = mkBitsShell self.packages.${system}.bits-meson { };
 
           default = self.devShells.${system}.bits-meson-shell;
         };
