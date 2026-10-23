@@ -1,6 +1,7 @@
 __pycache__/
 /.hypothesis
 /.zig-cache
+/zig-pkg
 /zig-out
 /build*/
 /result*

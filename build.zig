@@ -1,4 +1,5 @@
 const std = @import("std");
+const Translator = @import("translate_c").Translator;
 
 const Build = std.Build;
 
@@ -62,6 +63,7 @@ const Ctx = struct {
     fn zigTest(
         ctx: Ctx,
         rootSourceFile: Build.LazyPath,
+        bits: *Build.Module,
         objs: []const *Build.Step.Compile,
     ) *Build.Step.Compile {
         const m = ctx.b.createModule(.{
@@ -72,6 +74,7 @@ const Ctx = struct {
         });
 
         m.addIncludePath(ctx.includePath);
+        m.addImport("bits", bits);
 
         for (objs) |o| {
             m.addObject(o);
@@ -92,6 +95,14 @@ pub fn build(b: *Build) void {
         .optimize = optimize,
         .includePath = includePath,
     };
+
+    const translate_c = ctx.b.dependency("translate_c", .{});
+
+    const t: Translator = .init(translate_c, .{
+        .c_source_file = ctx.b.path("include/bits.h"),
+        .target = ctx.target,
+        .optimize = ctx.optimize,
+    });
 
     const bitsLibObj = ctx.cObj("bits", &.{
         b.path("src/libbits/arena.c"),
@@ -143,6 +154,7 @@ pub fn build(b: *Build) void {
 
     const hashtableZigTests = ctx.zigTest(
         b.path("src/cmd/hashtable_test.zig"),
+        t.mod,
         &.{bitsLibObj},
     );
 

@@ -1,4 +1,4 @@
-const c = @cImport(@cInclude("bits.h"));
+const c = @import("bits");
 const std = @import("std");
 const testing = std.testing;
 
