@@ -17,7 +17,7 @@ const Ctx = struct {
     b: *Build,
     target: Build.ResolvedTarget,
     optimize: std.builtin.OptimizeMode,
-    includePath: Build.LazyPath,
+    include_path: Build.LazyPath,
 
     fn cModule(ctx: Ctx, files: []const Build.LazyPath) *Build.Module {
         const m = ctx.b.createModule(.{
@@ -26,7 +26,7 @@ const Ctx = struct {
             .link_libc = true,
         });
 
-        m.addIncludePath(ctx.includePath);
+        m.addIncludePath(ctx.include_path);
 
         for (files) |file| {
             m.addCSourceFile(.{ .file = file, .flags = flags });
@@ -62,18 +62,18 @@ const Ctx = struct {
 
     fn zigTest(
         ctx: Ctx,
-        rootSourceFile: Build.LazyPath,
+        root_source_file: Build.LazyPath,
         bits: *Build.Module,
         objs: []const *Build.Step.Compile,
     ) *Build.Step.Compile {
         const m = ctx.b.createModule(.{
-            .root_source_file = rootSourceFile,
+            .root_source_file = root_source_file,
             .target = ctx.target,
             .optimize = ctx.optimize,
             .link_libc = true,
         });
 
-        m.addIncludePath(ctx.includePath);
+        m.addIncludePath(ctx.include_path);
         m.addImport("bits", bits);
 
         for (objs) |o| {
@@ -87,13 +87,13 @@ const Ctx = struct {
 pub fn build(b: *Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
-    const includePath = b.path("include");
+    const include_path = b.path("include");
 
     const ctx = Ctx{
         .b = b,
         .target = target,
         .optimize = optimize,
-        .includePath = includePath,
+        .include_path = include_path,
     };
 
     const translate_c = ctx.b.dependency("translate_c", .{});
@@ -104,101 +104,101 @@ pub fn build(b: *Build) void {
         .optimize = ctx.optimize,
     });
 
-    const bitsLibObj = ctx.cObj("bits", &.{
+    const bits_lib_obj = ctx.cObj("bits", &.{
         b.path("src/libbits/arena.c"),
         b.path("src/libbits/channel.c"),
         b.path("src/libbits/fnv.c"),
         b.path("src/libbits/hashtable.c"),
     });
 
-    const arenaTestExe = ctx.cExe(
+    const arena_test_exe = ctx.cExe(
         "arena_test",
         &.{b.path("src/cmd/arena_test.c")},
-        &.{bitsLibObj},
+        &.{bits_lib_obj},
     );
 
-    const base64Exe = blk: {
+    const base64_exe = blk: {
         const exe = ctx.cExe(
             "base64",
             &.{b.path("src/cmd/base64.c")},
-            &.{bitsLibObj},
+            &.{bits_lib_obj},
         );
         exe.root_module.linkSystemLibrary("ssl", .{});
         exe.root_module.linkSystemLibrary("crypto", .{});
         break :blk exe;
     };
 
-    const demoOopExe = ctx.cExe(
+    const demo_oop_exe = ctx.cExe(
         "demo_oop",
         &.{b.path("src/cmd/demo_oop.c")},
         &.{},
     );
 
-    const fnvTestExe = ctx.cExe(
+    const fnv_test_exe = ctx.cExe(
         "fnv_test",
         &.{b.path("src/cmd/fnv_test.c")},
-        &.{bitsLibObj},
+        &.{bits_lib_obj},
     );
 
-    const hashtableTestExe = ctx.cExe(
+    const hashtable_test_exe = ctx.cExe(
         "hashtable_test",
         &.{b.path("src/cmd/hashtable_test.c")},
-        &.{bitsLibObj},
+        &.{bits_lib_obj},
     );
 
-    const hashtableCompactTestExe = ctx.cExe(
+    const hashtable_compact_test_exe = ctx.cExe(
         "hashtable_compact_test",
         &.{b.path("src/cmd/hashtable_compact_test.c")},
-        &.{bitsLibObj},
+        &.{bits_lib_obj},
     );
 
-    const hashtableZigTests = ctx.zigTest(
+    const hashtable_test_zig = ctx.zigTest(
         b.path("src/cmd/hashtable_test.zig"),
         t.mod,
-        &.{bitsLibObj},
+        &.{bits_lib_obj},
     );
 
-    const lambdaExe = ctx.cExe(
+    const lambda_exe = ctx.cExe(
         "lambda",
         &.{b.path("src/cmd/lambda.c")},
-        &.{bitsLibObj},
+        &.{bits_lib_obj},
     );
 
-    const channelBasicTestExe = ctx.cExe(
+    const channel_basic_test_exe = ctx.cExe(
         "channel_basic_test",
         &.{b.path("src/cmd/channel_basic.c")},
-        &.{bitsLibObj},
+        &.{bits_lib_obj},
     );
 
-    const channelBlockTestExe = ctx.cExe(
+    const channel_block_test_exe = ctx.cExe(
         "channel_block_test",
         &.{
             b.path("src/cmd/channel_block.c"),
             b.path("src/cmd/channel_expected.c"),
         },
-        &.{bitsLibObj},
+        &.{bits_lib_obj},
     );
 
     const executables = [_]struct { exe: *Build.Step.Compile, run: bool }{
-        .{ .exe = arenaTestExe, .run = true },
-        .{ .exe = base64Exe, .run = true },
-        .{ .exe = demoOopExe, .run = false },
-        .{ .exe = fnvTestExe, .run = true },
-        .{ .exe = hashtableTestExe, .run = true },
-        .{ .exe = hashtableCompactTestExe, .run = true },
-        .{ .exe = hashtableZigTests, .run = true },
-        .{ .exe = lambdaExe, .run = true },
-        .{ .exe = channelBasicTestExe, .run = true },
-        .{ .exe = channelBlockTestExe, .run = true },
+        .{ .exe = arena_test_exe, .run = true },
+        .{ .exe = base64_exe, .run = true },
+        .{ .exe = demo_oop_exe, .run = false },
+        .{ .exe = fnv_test_exe, .run = true },
+        .{ .exe = hashtable_test_exe, .run = true },
+        .{ .exe = hashtable_compact_test_exe, .run = true },
+        .{ .exe = hashtable_test_zig, .run = true },
+        .{ .exe = lambda_exe, .run = true },
+        .{ .exe = channel_basic_test_exe, .run = true },
+        .{ .exe = channel_block_test_exe, .run = true },
     };
 
-    const testStep = b.step("test", "Run tests");
+    const test_step = b.step("test", "Run tests");
 
     for (executables) |item| {
         b.installArtifact(item.exe);
         if (item.run) {
             const run = b.addRunArtifact(item.exe);
-            testStep.dependOn(&run.step);
+            test_step.dependOn(&run.step);
         }
     }
 }
