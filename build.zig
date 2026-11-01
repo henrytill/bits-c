@@ -164,6 +164,16 @@ pub fn build(b: *Build) void {
         &.{bits_lib_obj},
     );
 
+    const mkavatar_exe = blk: {
+        const exe = ctx.cExe(
+            "mkavatar",
+            &.{b.path("src/cmd/mkavatar.c")},
+            &.{},
+        );
+        exe.root_module.linkSystemLibrary("png", .{});
+        break :blk exe;
+    };
+
     const channel_basic_test_exe = ctx.cExe(
         "channel_basic_test",
         &.{b.path("src/cmd/channel_basic.c")},
@@ -188,6 +198,7 @@ pub fn build(b: *Build) void {
         .{ .exe = hashtable_compact_test_exe, .run = true },
         .{ .exe = hashtable_test_zig, .run = true },
         .{ .exe = lambda_exe, .run = true },
+        .{ .exe = mkavatar_exe, .run = false },
         .{ .exe = channel_basic_test_exe, .run = true },
         .{ .exe = channel_block_test_exe, .run = true },
     };
